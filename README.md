@@ -209,7 +209,7 @@ social-publisher's `scripts/e2e_data_to_video.sh` automates that whole run.
 ### Testing
 
 ```bash
-make test    # 69 offline tests, 2 to 4 s
+make test    # 69 offline tests; pytest reported 1.7 to 3.3 s over three runs
 make lint    # ruff + TypeScript type-check of slides and gallery
 make audit   # pip-audit, bandit, npm audit
 ```

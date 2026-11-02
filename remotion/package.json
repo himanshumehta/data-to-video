@@ -8,15 +8,15 @@
     "gallery": "vite dev --config src/gallery/vite.config.ts"
   },
   "dependencies": {
-    "@remotion/bundler": "^4.0.237",
-    "@remotion/cli": "4.0.237",
-    "@remotion/google-fonts": "4.0.237",
-    "@remotion/player": "^4.0.237",
-    "@remotion/renderer": "^4.0.237",
+    "@remotion/bundler": "4.0.536",
+    "@remotion/cli": "4.0.536",
+    "@remotion/google-fonts": "4.0.536",
+    "@remotion/player": "4.0.536",
+    "@remotion/renderer": "4.0.536",
     "p-limit": "^5.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "remotion": "4.0.237"
+    "remotion": "4.0.536"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
@@ -26,6 +26,6 @@
     "vite": "^8.0.1"
   },
   "overrides": {
-    "yauzl": "3.4.0"
+    "zod": "4.6.7"
   }
 }

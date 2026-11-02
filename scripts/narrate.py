@@ -33,7 +33,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from jinja2 import Template
+from jinja2.sandbox import SandboxedEnvironment
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -56,11 +56,15 @@ WORDS_PER_SEC = 2.5      # observed pace of the Gemini narrator at 1.2x
 MIN_SILENT_SEC = 2.5     # floor for --tts silent placeholder clips
 SILENT_PAD_SEC = 0.6     # breathing room added to the word-count estimate
 
+# Templates live in content_types/ (repo code); vehicle values are inserted as data, never
+# parsed as template syntax. The sandbox still blocks attribute tricks if a template is ever
+# sourced from data. autoescape is off because the output is speech for TTS, not HTML.
+_JINJA = SandboxedEnvironment(autoescape=False)  # nosemgrep: python.jinja2.security.audit.autoescape-disabled.autoescape-disabled
+
 
 def render_narration(template_str: str, vehicle_data: dict) -> str:
     """Render a Jinja2 narration template string with vehicle data."""
-    tmpl = Template(template_str)
-    rendered = tmpl.render(vehicle=vehicle_data)
+    rendered = _JINJA.from_string(template_str).render(vehicle=vehicle_data)  # nosemgrep
     return speech_friendly(rendered)
 
 
@@ -364,13 +368,14 @@ def load_narrations(vehicle: dict, content_type: str, platform: str, lang: str) 
     module = None
     if (vehicle.get("vehicle_type") or vehicle.get("type")) == "car":
         try:
-            module = importlib.import_module(module_path + "_car")
+            # Module path built from safe_id()-validated --type/--platform under content_types/.
+            module = importlib.import_module(module_path + "_car")  # nosemgrep: python.lang.security.audit.non-literal-import.non-literal-import
             print(f"  Using car-specific narrations: {module_path}_car")
         except ModuleNotFoundError:
             pass
     if module is None:
         try:
-            module = importlib.import_module(module_path)
+            module = importlib.import_module(module_path)  # nosemgrep: python.lang.security.audit.non-literal-import.non-literal-import
         except ModuleNotFoundError as e:
             sys.exit(f"ERROR: Cannot load narrations module '{module_path}': {e}")
     narrations = getattr(module, "NARRATIONS", {}).get(lang, {})

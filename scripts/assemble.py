@@ -247,7 +247,8 @@ def pick_bgm(explicit=None):
         if bgm_dir.is_dir() else []
     if not tracks:
         return None
-    chosen = random.choice(tracks)  # nosec B311 - picks a music track, not a secret
+    # Not security-relevant: picks a music track.
+    chosen = random.choice(tracks)  # nosec B311
     print(f"BGM (random): {chosen.name}")
     return chosen
 
@@ -285,7 +286,8 @@ def main():
     type_ = args.type.replace("-", "_")
     asm_path = f"content_types.{type_}.assembly.{args.platform.replace('-', '_')}"
     try:
-        asm = importlib.import_module(asm_path)
+        # Module path built from safe_id()-validated --type/--platform under content_types/.
+        asm = importlib.import_module(asm_path)  # nosemgrep: python.lang.security.audit.non-literal-import.non-literal-import
     except ModuleNotFoundError as e:
         sys.exit(f"ERROR: Cannot load assembly module '{asm_path}': {e}")
     slide_order = list(asm.SLIDE_ORDER)
@@ -297,7 +299,7 @@ def main():
     limit = max_duration(args.platform, load_platforms())
     if limit is not None and not args.no_curate:
         try:
-            scoring = importlib.import_module(f"content_types.{type_}.curation")
+            scoring = importlib.import_module(f"content_types.{type_}.curation")  # nosemgrep: python.lang.security.audit.non-literal-import.non-literal-import
         except ModuleNotFoundError:
             scoring = None
         durations = {sid: get_duration(audio_dir / f"{sid}.wav")

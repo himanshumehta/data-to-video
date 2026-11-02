@@ -6,6 +6,9 @@ Loads narration templates dynamically from content_types/{type}/narrations/{plat
 Renders Jinja2 templates with vehicle data, optionally rewords (EN) or translates
 (other languages) the script with an LLM, then produces one WAV per slide.
 
+Every LLM output is checked by scripts/lib/guard.py (numbers match the source
+text, no URLs, no banned phrases) before it is cached or voiced.
+
 Audio sources (--tts):
     gemini    Gemini TTS (needs GEMINI_API_KEY, or GOOGLE_CLOUD_PROJECT + ADC)
     prebaked  decode pre-generated narration from sample_data/narration/<slug>/<lang>/
@@ -38,12 +41,20 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.lib.tts import load_env, generate_tts, save_wav
-from scripts.lib.number_format import speech_friendly
-from scripts.lib.vehicle_data import load_vehicle, brand_slug, output_dir
+from scripts.lib.guard import (  # noqa: E402
+    NarrationGuardError, banned_phrases, identity_numbers, number_mismatch, url_mentions,
+)
+from scripts.lib.number_format import speech_friendly, spoken_model_name  # noqa: E402
+from scripts.lib.reword import (  # noqa: E402
+    load_script_cache, reword_slide, save_script_cache, scripts_dir, translate_slide,
+)
+from scripts.lib.tts import TTS_SAMPLE_RATE, generate_tts, load_env, save_wav  # noqa: E402
+from scripts.lib.vehicle_data import brand_slug, cli_id, load_vehicle, output_dir  # noqa: E402
 
 PREBAKED_ROOT = ROOT / "sample_data" / "narration"
-WORDS_PER_SEC = 2.5  # observed pace of the Gemini narrator at 1.2x
+WORDS_PER_SEC = 2.5      # observed pace of the Gemini narrator at 1.2x
+MIN_SILENT_SEC = 2.5     # floor for --tts silent placeholder clips
+SILENT_PAD_SEC = 0.6     # breathing room added to the word-count estimate
 
 
 def render_narration(template_str: str, vehicle_data: dict) -> str:
@@ -215,7 +226,7 @@ def print_staleness_table(results: list[dict], slug: str, content_type: str,
 def write_silent_wav(path: Path, text: str) -> float:
     """Write a 48kHz stereo silent WAV whose length approximates the spoken text."""
     words = len(text.split())
-    duration = max(2.5, words / WORDS_PER_SEC + 0.6)
+    duration = max(MIN_SILENT_SEC, words / WORDS_PER_SEC + SILENT_PAD_SEC)
     path.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(
         ["ffmpeg", "-v", "error", "-y", "-f", "lavfi",
@@ -235,8 +246,12 @@ def decode_prebaked(src: Path, dst: Path) -> float:
     return _wav_duration(dst)
 
 
+def _prebaked_dir(slug: str, lang: str) -> Path:
+    return Path(os.environ.get("PREBAKED_NARRATION_DIR") or PREBAKED_ROOT) / slug / lang
+
+
 def find_prebaked(slug: str, lang: str, slide_name: str):
-    base = Path(os.environ.get("PREBAKED_NARRATION_DIR") or PREBAKED_ROOT) / slug / lang
+    base = _prebaked_dir(slug, lang)
     for ext in (".mp3", ".wav", ".m4a"):
         p = base / f"{slide_name}{ext}"
         if p.exists():
@@ -245,25 +260,55 @@ def find_prebaked(slug: str, lang: str, slide_name: str):
 
 
 def prebaked_script(slug: str, lang: str):
-    p = Path(os.environ.get("PREBAKED_NARRATION_DIR") or PREBAKED_ROOT) / slug / lang / "script.json"
+    p = _prebaked_dir(slug, lang) / "script.json"
     if p.exists():
         return json.loads(p.read_text()).get("slides")
     return None
 
 
-def main():
+def audit_script(slides: dict, reference: Optional[dict], allowed=()) -> int:
+    """Run the guard over a script whose audio already exists (prebaked). Warns only.
+
+    `reference` is the EN script for a translation (numbers must match it), or None.
+    Returns the number of slides with findings.
+    """
+    flagged = 0
+    for slide, text in slides.items():
+        problems = url_mentions(text) + [f"banned phrase {p!r}" for p in banned_phrases(text)
+                                         if reference is None]
+        if reference and slide in reference:
+            problems += number_mismatch(reference[slide], text, allowed)
+        if problems:
+            flagged += 1
+            print(f"  WARN [guard] {slide}: {'; '.join(problems)}")
+    return flagged
+
+
+def _guard_or_exit(fn, *args):
+    """Run reword_slide/translate_slide; stop the run (nothing cached) if the guard fails."""
+    try:
+        return fn(*args)
+    except NarrationGuardError as e:
+        sys.exit(f"BLOCKED by narration guard: {e}\n  Last model output: {e.text[:300]!r}\n"
+                 "  Nothing was cached or voiced. Re-run, or fix the template.")
+    except RuntimeError as e:
+        sys.exit(f"ERROR: {e}")
+
+
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(
         description="Generate per-slide narration audio via Gemini TTS"
     )
-    parser.add_argument("--slug", help="Vehicle slug (fetches from DB or cache)")
-    parser.add_argument("--data-file", help="Cached vehicle JSON file")
-    parser.add_argument("--type", required=True,
+    parser.add_argument("--slug", type=lambda v: cli_id(v, "slug"),
+                        help="Vehicle slug (a file in VEHICLE_DATA_DIR)")
+    parser.add_argument("--data-file", help="Vehicle JSON file")
+    parser.add_argument("--type", required=True, type=lambda v: cli_id(v, "content type"),
                         help="Content type (e.g. ownership-cost)")
-    parser.add_argument("--platform", required=True,
-                        help="Platform (e.g. youtube, instagram)")
-    parser.add_argument("--ds", default="default",
-                        help="Design system (default: default)")
-    parser.add_argument("--lang", default="en",
+    parser.add_argument("--platform", required=True, type=lambda v: cli_id(v, "platform"),
+                        help="Platform (e.g. instagram-reels)")
+    parser.add_argument("--ds", default="default", type=lambda v: cli_id(v, "design system"),
+                        help="Output variant folder (default: default)")
+    parser.add_argument("--lang", default="en", type=lambda v: cli_id(v, "lang"),
                         help="Language code (default: en)")
     parser.add_argument("--voice", default="Achird",
                         help="Gemini TTS voice (default: Achird — Indian English male)")
@@ -273,9 +318,9 @@ def main():
         help="Path to .env file (default: repo-root .env)",
     )
     parser.add_argument(
-        "--tts", default="gemini", choices=["gemini", "prebaked", "silent"],
-        help="Audio source: gemini (needs credentials), prebaked (sample_data/narration), "
-             "silent (zero-credential placeholder audio)",
+        "--tts", default="silent", choices=["gemini", "prebaked", "silent"],
+        help="Audio source: silent (default; zero-credential placeholder audio), "
+             "prebaked (sample_data/narration), gemini (paid; needs credentials)",
     )
     parser.add_argument("--force", action="store_true",
                         help="Regenerate existing audio files")
@@ -284,7 +329,7 @@ def main():
         help="Seconds to wait between TTS calls for rate limiting (default: 25)",
     )
     parser.add_argument(
-        "--speed", type=float, default=1.2,
+        "--speed", type=_speed, default=1.2,
         help="Narration playback speed via ffmpeg atempo (default: 1.2, e.g. 1.0 = normal)",
     )
     parser.add_argument(
@@ -303,175 +348,128 @@ def main():
         help="Re-translate from cached EN script without re-rewording. "
              "Only valid for non-EN languages.",
     )
-    args = parser.parse_args()
+    return parser.parse_args(argv)
 
-    # Load environment (.env is optional)
-    load_env(args.env)
 
-    # Load vehicle data
-    vehicle = load_vehicle(slug=args.slug, data_file=args.data_file)
+def _speed(value: str) -> float:
+    v = float(value)
+    if not 0.5 <= v <= 2.0:  # ffmpeg atempo's single-filter range
+        raise argparse.ArgumentTypeError("--speed must be between 0.5 and 2.0")
+    return v
 
-    # Add spoken_name for TTS — converts digits to words (390 → three ninety)
-    if "spoken_name" not in vehicle:
-        _spoken_numbers = {
-            "110": "one ten", "125": "one twenty five", "150": "one fifty",
-            "160": "one sixty", "180": "one eighty", "200": "two hundred",
-            "250": "two fifty", "300": "three hundred", "310": "three ten",
-            "350": "three fifty", "390": "three ninety", "400": "four hundred",
-            "450": "four fifty", "457": "four fifty seven", "500": "five hundred",
-            "650": "six fifty", "660": "six sixty", "750": "seven fifty",
-            "790": "seven ninety", "1290": "twelve ninety", "1390": "thirteen ninety",
-        }
-        short_name = vehicle.get("short_name", "")
-        spoken_parts = []
-        for word in short_name.split():
-            spoken_parts.append(_spoken_numbers.get(word, word))
-        vehicle["spoken_name"] = " ".join(spoken_parts)
-        print(f"  Spoken name: {vehicle['spoken_name']}")
 
-    # Dynamically load narrations module: content_types/{type}/narrations/{platform}.py
-    # Auto-select car-specific narrations if vehicle is a car
-    type_ = args.type.replace("-", "_")
-    platform_module = args.platform.replace("-", "_")
-    vehicle_type = vehicle.get("vehicle_type") or vehicle.get("type", "motorcycle")
-    if vehicle_type == "car":
-        car_module_path = f"content_types.{type_}.narrations.{platform_module}_car"
+def load_narrations(vehicle: dict, content_type: str, platform: str, lang: str) -> dict:
+    """Templates for one language from content_types/{type}/narrations/{platform}[_car].py."""
+    module_path = f"content_types.{content_type.replace('-', '_')}.narrations.{platform.replace('-', '_')}"
+    module = None
+    if (vehicle.get("vehicle_type") or vehicle.get("type")) == "car":
         try:
-            narr_module = importlib.import_module(car_module_path)
-            print(f"  Using car-specific narrations: {car_module_path}")
+            module = importlib.import_module(module_path + "_car")
+            print(f"  Using car-specific narrations: {module_path}_car")
         except ModuleNotFoundError:
-            # Fallback to shared narrations if car-specific doesn't exist
-            module_path = f"content_types.{type_}.narrations.{platform_module}"
-            narr_module = importlib.import_module(module_path)
-    else:
-        module_path = f"content_types.{type_}.narrations.{platform_module}"
+            pass
+    if module is None:
         try:
-            narr_module = importlib.import_module(module_path)
+            module = importlib.import_module(module_path)
         except ModuleNotFoundError as e:
             sys.exit(f"ERROR: Cannot load narrations module '{module_path}': {e}")
-
-    # Check if this platform derives audio from another platform
-    audio_from = getattr(narr_module, "AUDIO_FROM", None)
-    if audio_from:
-        print(f"NOTE: {args.platform} uses AUDIO_FROM='{audio_from}' — no TTS needed.")
-        print(f"Run assemble.py --platform {args.platform} to copy audio from {audio_from} output.")
-        sys.exit(0)
-
-    # Get narration templates for this language
-    narrations_dict = getattr(narr_module, "NARRATIONS", {})
-    narrations = narrations_dict.get(args.lang, {})
+    narrations = getattr(module, "NARRATIONS", {}).get(lang, {})
     if not narrations:
-        print(f"No narration templates for {args.type}/{args.platform}/{args.lang}")
-        sys.exit(1)
+        sys.exit(f"No narration templates for {content_type}/{platform}/{lang}")
+    return narrations
 
-    # Output directory
-    brand = brand_slug(vehicle)
-    slug = vehicle["slug"]
-    audio_dir = output_dir(vehicle, args.type, args.platform, args.lang, args.ds) / "audio"
-    audio_dir.mkdir(parents=True, exist_ok=True)
 
-    # -- Staleness check (may exit early) --
-    if args.check_staleness:
-        results = check_staleness(narrations, vehicle, audio_dir)
-        stale_count = print_staleness_table(
-            results, slug, args.type, args.platform, args.lang
-        )
-        if not args.force:
-            sys.exit(0)
-        # --force was also passed: continue to regenerate everything
-        if stale_count == 0:
-            print("\nAll slides fresh — nothing to regenerate.")
-            sys.exit(0)
-        print(f"\n--force passed — proceeding to regenerate all slides.\n")
+def _translate_all(en_slides: dict, lang: str, vehicle: dict) -> dict:
+    print(f"Translating EN script to {lang} via Claude CLI...")
+    out = {}
+    for slide_name, en_text in en_slides.items():
+        print(f"  [translate->{lang}] {slide_name}...")
+        out[slide_name] = _guard_or_exit(translate_slide, en_text, slide_name, lang, vehicle)
+    return out
 
-    # ── Reword / translate script resolution ─────────────────────────────────
-    from scripts.lib.reword import (
-        reword_slide, translate_slide,
-        scripts_dir, load_script_cache, save_script_cache,
-    )
 
-    sc_dir = scripts_dir(ROOT, brand, slug, type_, args.ds, args.platform)
-    is_en = (args.lang == "en")
+def _reword_all(narrations: dict, vehicle: dict) -> dict:
+    print("Reword mode: generating unique EN script via Claude CLI...")
+    out = {}
+    for slide_name, template_str in narrations.items():
+        if template_str is None:
+            continue
+        print(f"  [reword] {slide_name}...")
+        out[slide_name] = _guard_or_exit(
+            reword_slide, render_narration(template_str, vehicle), slide_name, vehicle)
+    return out
+
+
+def _check_cached(cached: dict, sources: dict, label: str, allowed=()) -> None:
+    """A cached LLM script is only reused if its numbers still match the current sources.
+
+    Catches vehicle data that changed after the script was written.
+    """
+    stale = {k: number_mismatch(sources[k], v, allowed) for k, v in cached.items() if k in sources}
+    stale = {k: v for k, v in stale.items() if v}
+    if stale:
+        detail = "; ".join(f"{k}: {', '.join(v)}" for k, v in stale.items())
+        sys.exit(f"BLOCKED: cached {label} script no longer matches the data ({detail}).\n"
+                 "  Re-run with --reword (EN) or --retranslate (other languages).")
+
+
+def resolve_script(args, vehicle: dict, narrations: dict, sc_dir: Path) -> Optional[dict]:
+    """Decide the text for each slide. None means: render the templates directly.
+
+    prebaked  -> the script that ships with the audio (audited, warnings only)
+    silent    -> cached script if any, else templates; never calls the LLM
+    EN        -> --reword: LLM reword (guarded); else cached EN script or templates
+    other     -> translation of the EN script (guarded), cached per language
+    """
+    slug, is_en = vehicle["slug"], args.lang == "en"
+    rendered = {k: render_narration(t, vehicle) for k, t in narrations.items() if t is not None}
+    allowed = identity_numbers(vehicle)
 
     if args.tts == "prebaked":
-        # Pre-generated audio ships with its own script — use it verbatim.
         baked = prebaked_script(slug, args.lang)
         if baked:
+            reference = None if is_en else prebaked_script(slug, "en")
+            if audit_script(baked, reference, allowed):
+                print("  NOTE: prebaked audio is played as shipped; regenerate with "
+                      "--tts gemini to apply the guard.")
             save_script_cache(sc_dir, args.lang, slug, args.type, args.platform, baked)
-        script_texts = baked
-    elif args.tts == "silent" and not args.reword and not (not is_en and args.retranslate):
-        # Zero-credential mode: never call the LLM; render templates directly.
-        script_texts = None
+        return baked
+
+    if args.tts == "silent" and not args.reword and not args.retranslate:
         cached = load_script_cache(sc_dir, args.lang)
-        if cached is not None:
-            script_texts = cached["slides"]
-    elif is_en and args.reword:
-        # EN + --reword: render each slide, reword via Claude CLI, cache, then TTS
-        print(f"Reword mode: generating unique EN script via Claude CLI...")
-        reworded_slides = {}
-        for slide_name, template_str in narrations.items():
-            if template_str is None:
-                continue
-            base_text = render_narration(template_str, vehicle)
-            print(f"  [reword] {slide_name}...")
-            reworded_slides[slide_name] = reword_slide(base_text, slide_name, vehicle)
-        save_script_cache(sc_dir, "en", slug, args.type, args.platform, reworded_slides)
-        script_texts = reworded_slides
+        return cached["slides"] if cached else None
 
-    elif not is_en:
-        # Non-EN: always translate from cached reworded EN for variety.
-        # Templates are only used as fallback when no EN cache exists.
-        en_cache = load_script_cache(sc_dir, "en")
-        if en_cache is None:
-            if narrations:
-                # No EN cache but templates exist — use them as fallback
-                script_texts = None
-                en_cache = None
-                print(f"  WARN: No cached EN script — using {args.lang} templates (no variety)")
-            else:
-                sys.exit(
-                    f"ERROR: No cached EN script found at {sc_dir}/en.json\n"
-                    f"Run first: narrate.py --slug {slug} --type {args.type} "
-                    f"--platform {args.platform} --lang en --reword"
-                )
-        if en_cache is not None:
-            # Translate from cached EN script via Claude CLI
-            if args.retranslate or load_script_cache(sc_dir, args.lang) is None:
-                action = "Retranslating" if args.retranslate else "Translating"
-                print(f"{action} from EN script to {args.lang} via Claude CLI...")
-                translated_slides = {}
-                for slide_name, en_text in en_cache["slides"].items():
-                    print(f"  [translate→{args.lang}] {slide_name}...")
-                    translated_slides[slide_name] = translate_slide(
-                        en_text, slide_name, args.lang, vehicle
-                    )
-                save_script_cache(sc_dir, args.lang, slug, args.type,
-                                  args.platform, translated_slides)
-                script_texts = translated_slides
-            else:
-                # Use cached translation
-                lang_cache = load_script_cache(sc_dir, args.lang)
-                script_texts = lang_cache["slides"]
-                print(f"Using cached {args.lang} script from scripts/{args.lang}.json")
+    if is_en:
+        if args.reword:
+            script = _reword_all(narrations, vehicle)
+            save_script_cache(sc_dir, "en", slug, args.type, args.platform, script)
+            return script
+        cached = load_script_cache(sc_dir, "en")
+        if cached is None:
+            return None
+        _check_cached(cached["slides"], rendered, "EN", allowed)
+        print("Using cached EN script from scripts/en.json")
+        return cached["slides"]
 
-    else:
-        # EN without --reword: use cached EN script if available, else render template directly
-        en_cache = load_script_cache(sc_dir, "en")
-        if en_cache is not None:
-            script_texts = en_cache["slides"]
-            print(f"Using cached EN script from scripts/en.json")
-        else:
-            script_texts = None  # will render from templates per-slide below
+    en_cache = load_script_cache(sc_dir, "en")
+    if en_cache is None:
+        print(f"  WARN: No cached EN script; using {args.lang} templates (no LLM translation)")
+        return None
+    _check_cached(en_cache["slides"], rendered, "EN", allowed)
+    cached = load_script_cache(sc_dir, args.lang)
+    if cached is not None and not args.retranslate:
+        _check_cached(cached["slides"], en_cache["slides"], args.lang, allowed)
+        print(f"Using cached {args.lang} script from scripts/{args.lang}.json")
+        return cached["slides"]
+    script = _translate_all(en_cache["slides"], args.lang, vehicle)
+    save_script_cache(sc_dir, args.lang, slug, args.type, args.platform, script)
+    return script
 
-    # ── TTS generation ────────────────────────────────────────────────────────
-    print(f"Generating narration: {brand}/{slug} — {args.type}/{args.platform}")
-    print(f"Language: {args.lang}  Voice: {args.voice}  Speed: {args.speed}x")
-    print(f"Output: {audio_dir}\n")
 
-    success = 0
-    skipped = 0
-    tts_call_count = 0
-
+def voice_slides(args, vehicle: dict, narrations: dict, script: Optional[dict], audio_dir: Path):
+    """Write one WAV per slide. Returns (generated, skipped)."""
+    slug = vehicle["slug"]
+    success = skipped = tts_calls = 0
     for slide_name, template_str in narrations.items():
         if template_str is None:
             print(f"  [{slide_name}] No narration (skipped)")
@@ -479,20 +477,17 @@ def main():
 
         wav_path = audio_dir / f"{slide_name}.wav"
         if wav_path.exists() and not args.force:
-            duration = _wav_duration(wav_path)
-            print(f"  [{slide_name}] Already exists ({duration:.1f}s) — skipping (use --force to regenerate)")
+            print(f"  [{slide_name}] Already exists ({_wav_duration(wav_path):.1f}s); "
+                  "skipping (use --force to regenerate)")
             skipped += 1
             continue
 
-        # Resolve narration text: from script cache or rendered template
-        if script_texts is not None and slide_name in script_texts:
-            narration_text = script_texts[slide_name]
-        else:
-            narration_text = render_narration(template_str, vehicle)
+        text = script[slide_name] if script and slide_name in script \
+            else render_narration(template_str, vehicle)
 
         if args.tts == "silent":
-            duration = write_silent_wav(wav_path, narration_text)
-            print(f"  [{slide_name}] silent {duration:.1f}s  \"{narration_text[:70]}...\"")
+            duration = write_silent_wav(wav_path, text)
+            print(f"  [{slide_name}] silent {duration:.1f}s  \"{text[:70]}...\"")
             success += 1
             continue
         if args.tts == "prebaked":
@@ -505,27 +500,53 @@ def main():
             success += 1
             continue
 
-        if tts_call_count > 0:
+        if tts_calls > 0:
             print(f"  ... waiting {args.delay}s (rate limit)...")
             time.sleep(args.delay)
-
-        print(f"  [{slide_name}] \"{narration_text[:80]}...\"")
-        print(f"  [{slide_name}] Generating TTS ({len(narration_text)} chars)...")
-
+        tts_calls += 1
+        print(f"  [{slide_name}] Generating TTS ({len(text)} chars): \"{text[:80]}...\"")
         try:
-            pcm_data = generate_tts(narration_text, voice=args.voice, lang=args.lang)
-            save_wav(pcm_data, wav_path, speed=args.speed)
-            duration = len(pcm_data) / (24000 * 2)  # 24kHz, 16-bit mono
-            print(f"  [{slide_name}] Saved: {wav_path.name} ({duration:.1f}s)")
+            pcm = generate_tts(text, voice=args.voice, lang=args.lang)
+            save_wav(pcm, wav_path, speed=args.speed)
+            print(f"  [{slide_name}] Saved: {wav_path.name} "
+                  f"({len(pcm) / (TTS_SAMPLE_RATE * 2) / args.speed:.1f}s)")
             success += 1
-            tts_call_count += 1
-        except Exception as e:
-            print(f"  [{slide_name}] ERROR: {e}")
-            tts_call_count += 1
+        except Exception as e:  # one failed slide must not stop the others; render refuses gaps
+            print(f"  [{slide_name}] ERROR: {type(e).__name__}: {e}")
+    return success, skipped
 
-    print(f"\nDone: {success} generated, {skipped} skipped → {audio_dir}")
 
-    # -- Write staleness state file after successful generation --
+def main(argv=None):
+    args = parse_args(argv)
+    load_env(args.env)  # .env is optional
+    vehicle = load_vehicle(slug=args.slug, data_file=args.data_file)
+
+    # spoken_name for TTS: model numbers as words (350 -> three fifty)
+    if "spoken_name" not in vehicle:
+        vehicle["spoken_name"] = spoken_model_name(vehicle.get("short_name", ""))
+        print(f"  Spoken name: {vehicle['spoken_name']}")
+
+    narrations = load_narrations(vehicle, args.type, args.platform, args.lang)
+    brand, slug = brand_slug(vehicle), vehicle["slug"]
+    audio_dir = output_dir(vehicle, args.type, args.platform, args.lang, args.ds) / "audio"
+    audio_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.check_staleness:
+        results = check_staleness(narrations, vehicle, audio_dir)
+        stale_count = print_staleness_table(results, slug, args.type, args.platform, args.lang)
+        if not args.force or stale_count == 0:
+            sys.exit(0)
+        print("\n--force passed: regenerating all slides.\n")
+
+    sc_dir = scripts_dir(ROOT, brand, slug, args.type.replace("-", "_"), args.ds, args.platform)
+    script = resolve_script(args, vehicle, narrations, sc_dir)
+
+    print(f"Generating narration: {brand}/{slug} | {args.type}/{args.platform}")
+    print(f"Language: {args.lang}  Voice: {args.voice}  Speed: {args.speed}x  Source: {args.tts}")
+    print(f"Output: {audio_dir}\n")
+    success, skipped = voice_slides(args, vehicle, narrations, script, audio_dir)
+    print(f"\nDone: {success} generated, {skipped} skipped -> {audio_dir}")
+
     if success > 0:
         snapshot = build_field_snapshot(narrations, vehicle)
         save_state(audio_dir, slug, args.type, args.platform, args.lang, snapshot)

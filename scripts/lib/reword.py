@@ -1,8 +1,9 @@
 """
-reword.py — Narration reword and translation via Claude CLI.
+reword.py: narration reword and translation via the Claude Code CLI.
 
-Gives each bike a unique narration voice while preserving all data values.
-Uses `claude -p` subprocess — no API key required, runs inside Claude CLI session.
+Gives each vehicle its own narration voice while preserving every data value.
+Runs `claude -p` as a subprocess with all tools disabled, so the model can only
+return text; it cannot read or write files.
 
 Two operations:
   reword_slide(text, slide_name, vehicle)
@@ -11,13 +12,14 @@ Two operations:
   translate_slide(en_text, slide_name, target_lang, vehicle)
       → translates unique EN script to hi/te/mr/ta/kn/ml/bn
 
-Rules enforced by prompts (never breakable):
-  - All money amounts stay exactly as-is ("rupees about 3 lakh")
-  - All distances stay exactly as-is ("10 thousand Kilometers")
-  - All ratios/multipliers stay exactly as-is ("2.29 times the purchase price")
-  - No URLs
-  - ±15% word count (keeps audio duration predictable)
-  - Brand names and model names unchanged in translations
+Rules stated in the prompts, then checked in code (scripts/lib/guard.py) before
+any text reaches TTS:
+  - Every number in the source text appears in the output, and no new number
+    appears (amounts, distances, ratios, ratings). Indic digits count as digits.
+  - No URLs, domains or "dot com"
+  - No banned stock phrases (EN reword only)
+A failed check re-prompts the model with the exact problems; if it still fails,
+NarrationGuardError is raised and nothing is cached or voiced.
 
 Script caching:
   Scripts are saved to output/{brand}/{slug}/{type}/{ds}/{platform}/scripts/{lang}.json
@@ -28,9 +30,16 @@ Script caching:
 
 import json
 import subprocess
-import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Callable, List
+
+from scripts.lib.guard import (
+    NarrationGuardError, banned_phrases, identity_numbers, number_mismatch, url_mentions,
+)
+
+CLAUDE_TIMEOUT_SEC = 180
+MAX_FIX_ATTEMPTS = 2
 
 LANG_NAMES = {
     "en": "English",
@@ -92,7 +101,6 @@ def _get_vehicle_character(vehicle: dict) -> str:
     vtype = vehicle.get("vehicle_type", "motorcycle")
     price = vehicle.get("price_ex_showroom", 0)
     best_for = vehicle.get("best_for", "")
-    cc = vehicle.get("engine_cc", 0)
 
     # Price tier
     if price > 1000000:
@@ -158,8 +166,10 @@ RULES:
 2. Keep brand names and model names in English (do not translate "{brand}" or "{model}")
 3. Natural conversational {lang_name} — not a word-for-word literal translation
 4. Same approximate length as the English
-5. No URLs
+5. No URLs, domains or "dot com"
 6. Technical terms (service, insurance, depreciation) use common Indian {lang_name} equivalents
+7. Write every number in Western digits exactly as it appears in the English (2.51 stays 2.51,
+   90 stays 90). Never round, convert or spell out a number, and never add a new one.
 
 ENGLISH NARRATION:
 {en_text}
@@ -168,110 +178,91 @@ Output the {lang_name} translation only — no explanation, no quotes around it.
 
 
 def _run_claude(prompt: str) -> str:
-    """Call `claude -p` with the given prompt and return the response text.
+    """Send `prompt` to `claude -p` (tools disabled) and return the reply text.
 
-    Raises RuntimeError if the claude CLI is not available or returns an error.
+    The prompt goes over stdin, not argv, so it never shows up in `ps`.
+    Raises RuntimeError if the CLI is missing, fails or times out.
     """
-    result = subprocess.run(
-        ["claude", "-p", prompt],
-        capture_output=True,
-        text=True,
-    )
+    try:
+        result = subprocess.run(
+            ["claude", "-p", "--tools", ""],
+            input=prompt, capture_output=True, text=True,
+            timeout=CLAUDE_TIMEOUT_SEC, check=False,
+        )
+    except FileNotFoundError as e:
+        raise RuntimeError("`claude` CLI not found: install Claude Code or drop --reword") from e
+    except subprocess.TimeoutExpired as e:
+        raise RuntimeError(f"claude CLI timed out after {CLAUDE_TIMEOUT_SEC}s") from e
     if result.returncode != 0:
         raise RuntimeError(
-            f"claude CLI error (exit {result.returncode}):\n{result.stderr.strip()}"
+            f"claude CLI error (exit {result.returncode}):\n{result.stderr.strip()[:500]}"
         )
     return result.stdout.strip()
 
 
-BANNED_PHRASES = [
-    "cheap to buy", "adds up", "yearly damage", "bookmark", "coming your way",
-    "so you're", "let's break", "here's what", "over five years", "here's how",
-    "let me tell you", "did you know", "ever wondered",
-    "wallet", "pocket", "piggy bank", "deep dive", "the real cost",
-    "bang for buck", "value for money", "worth every rupee",
-    "no-nonsense", "eye-opening", "game-changer", "sticker shock",
-    "drumroll", "spoiler alert", "plot twist",
-    "without further ado", "bottom line", "at the end of the day",
-    "dot com", "dot in", ".com", ".in",
-]
-
-
-def _validate_reword(text: str) -> list[str]:
-    """Return list of banned phrases found in text (case-insensitive)."""
-    lower = text.lower()
-    return [p for p in BANNED_PHRASES if p in lower]
-
-
-def reword_slide(rendered_text: str, slide_name: str, vehicle: dict,
-                 max_retries: int = 2) -> str:
-    """Reword a single rendered EN narration slide.
-
-    Runs a post-validation pass: if any banned phrase survives the reword,
-    re-prompts Claude with explicit correction (up to max_retries times).
-
-    Args:
-        rendered_text: Already speech_friendly()-processed narration text.
-        slide_name: Slide ID e.g. "02-intro-hook" (used in prompt for context).
-        vehicle: Vehicle dict (for brand/model in prompt).
-        max_retries: Number of times to re-prompt if banned phrases slip through.
-
-    Returns:
-        Reworded narration text — same data, different wording, no banned phrases.
-    """
-    brand = vehicle.get("brand_name", "")
-    model = vehicle.get("short_name", vehicle.get("name", ""))
-    character = _get_vehicle_character(vehicle)
-    prompt = REWORD_PROMPT.format(
-        brand=brand,
-        model=model,
-        slide_name=slide_name,
-        rendered_text=rendered_text,
-        vehicle_character=character,
-    )
+def _guarded(prompt: str, slide_name: str, check: Callable[[str], List[str]]) -> str:
+    """Run the model, then re-prompt with the exact problems until `check` passes."""
     result = _run_claude(prompt)
-
-    # Post-validation: catch any banned phrases that slipped through.
-    for attempt in range(max_retries):
-        violations = _validate_reword(result)
-        if not violations:
-            break
-        print(f"    [reword] retry {attempt + 1}: found banned phrases {violations}")
-        fix_prompt = (
-            f"Your rewrite contains BANNED phrases that must be removed: {violations}\n\n"
-            f"CURRENT TEXT:\n{result}\n\n"
-            f"Rewrite again, removing those exact phrases. Keep all facts/numbers intact. "
-            f"Output ONLY the fixed text."
+    for attempt in range(MAX_FIX_ATTEMPTS):
+        problems = check(result)
+        if not problems:
+            return result
+        print(f"    [guard] {slide_name} retry {attempt + 1}: {'; '.join(problems)}")
+        result = _run_claude(
+            "Your previous output broke these rules:\n- " + "\n- ".join(problems)
+            + f"\n\nPREVIOUS OUTPUT:\n{result}\n\nORIGINAL TASK:\n{prompt}\n\n"
+            "Fix only those problems. Output ONLY the corrected text."
         )
-        result = _run_claude(fix_prompt)
-
+    problems = check(result)
+    if problems:
+        raise NarrationGuardError(slide_name, problems, result)
     return result
 
 
-def translate_slide(en_text: str, slide_name: str, target_lang: str,
-                    vehicle: dict) -> str:
-    """Translate a unique EN narration slide to another language.
+def reword_slide(rendered_text: str, slide_name: str, vehicle: dict) -> str:
+    """Reword one rendered EN narration slide: same numbers, new wording.
 
-    Args:
-        en_text: The unique (already reworded) EN narration for this slide.
-        slide_name: Slide ID e.g. "02-intro-hook".
-        target_lang: Language code e.g. "hi", "te", "mr".
-        vehicle: Vehicle dict (for brand/model in prompt).
-
-    Returns:
-        Translated narration text.
+    The output must keep exactly the numbers of `rendered_text` (which came from
+    the vehicle data via the Jinja2 template), contain no URL and no banned
+    phrase; otherwise the model is re-prompted, then NarrationGuardError is raised.
     """
-    lang_name = LANG_NAMES.get(target_lang, target_lang)
-    brand = vehicle.get("brand_name", "")
-    model = vehicle.get("short_name", vehicle.get("name", ""))
+    prompt = REWORD_PROMPT.format(
+        brand=vehicle.get("brand_name", ""),
+        model=vehicle.get("short_name", vehicle.get("name", "")),
+        slide_name=slide_name,
+        rendered_text=rendered_text,
+        vehicle_character=_get_vehicle_character(vehicle),
+    )
+
+    allowed = identity_numbers(vehicle)
+
+    def check(text: str) -> List[str]:
+        return (number_mismatch(rendered_text, text, allowed) + url_mentions(text)
+                + [f"banned phrase {p!r}" for p in banned_phrases(text)])
+
+    return _guarded(prompt, slide_name, check)
+
+
+def translate_slide(en_text: str, slide_name: str, target_lang: str, vehicle: dict) -> str:
+    """Translate one EN narration slide (hi, te, mr, ...), keeping every number.
+
+    The translation must carry exactly the numbers of the English text (Indic
+    digits are normalised first) and no URL; otherwise NarrationGuardError.
+    """
     prompt = TRANSLATE_PROMPT.format(
-        lang_name=lang_name,
-        brand=brand,
-        model=model,
+        lang_name=LANG_NAMES.get(target_lang, target_lang),
+        brand=vehicle.get("brand_name", ""),
+        model=vehicle.get("short_name", vehicle.get("name", "")),
         slide_name=slide_name,
         en_text=en_text,
     )
-    return _run_claude(prompt)
+
+    allowed = identity_numbers(vehicle)
+
+    def check(text: str) -> List[str]:
+        return number_mismatch(en_text, text, allowed) + url_mentions(text)
+
+    return _guarded(prompt, slide_name, check)
 
 
 # ── Script cache helpers ──────────────────────────────────────────────────────

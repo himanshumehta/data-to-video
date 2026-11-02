@@ -1,6 +1,6 @@
 # Tests, lint and security scanning (make test / make lint / make audit)
 -r requirements.txt
 pytest>=9.0.3,<10
-ruff>=0.8,<1
+ruff>=0.17.2,<1
 bandit>=1.8,<2
 pip-audit>=2.7,<3

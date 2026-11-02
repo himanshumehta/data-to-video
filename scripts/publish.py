@@ -259,7 +259,8 @@ def main():
     kind = "replayed, no new post" if res.get("replayed") else "new post"
     print(f"  sent {label}: post_id={res.get('post_id')} video_id={res.get('video_id')} "
           f"status={res.get('status')} ({kind})")
-    print("  The post waits for admin approval in social-publisher before anything is published.")
+    if res.get("status") in ("pending_review", "flagged"):
+        print("  The post waits for admin approval in social-publisher before anything is published.")
 
 
 if __name__ == "__main__":

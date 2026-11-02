@@ -4,12 +4,16 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7 # let new releases age a week before proposing them
     open-pull-requests-limit: 5
 
   - package-ecosystem: npm
     directory: "/remotion"
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7 # let new releases age a week before proposing them
     open-pull-requests-limit: 5
     groups:
       # Remotion refuses to run with mixed package versions: update them together.
@@ -20,3 +24,5 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7 # let new releases age a week before proposing them

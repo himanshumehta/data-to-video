@@ -82,17 +82,28 @@ def test_number_formatting():
     assert spoken_model_name("Classic 350") == "Classic three fifty"
 
 
-def test_publish_fan_out_and_dry_run(tmp_path):
+def test_publish_fan_out_builds_one_request(tmp_path):
     from scripts import publish
     out = tmp_path / "output" / "royal-enfield" / "x-350" / "ownership_cost" / "default" / "instagram-reels" / "en"
     out.mkdir(parents=True)
     (out / "video.mp4").write_bytes(b"not really a video")
-    (out / "description.txt").write_text("Title line\n\nBody")
-    posts = publish.build_posts(out)
-    targets = {p["target"] for p in posts}
-    assert targets == {"instagram-reels", "facebook-reels", "threads-reels", "youtube-shorts"}
-    assert all(p["title"] == "Title line" for p in posts)
-    assert len({p["idempotency_key"] for p in posts}) == len(posts)
+    (out / "description.txt").write_text("Title line\n\n" + "Body " * 200)
+    req = publish.build_request(out)
+    assert set(req["targets"]) == {"instagram-reels", "facebook-reels", "threads-reels", "youtube-shorts"}
+    meta = req["metadata"]
+    assert meta["title"] == "Title line"
+    assert set(meta["target_platforms"]) == {"instagram", "facebook", "threads", "youtube"}
+    # Each caption fits its platform's limit; Threads (500) is the one that gets cut.
+    cfg = json.loads((ROOT / "config" / "platforms.json").read_text())
+    for target in req["targets"]:
+        spec = cfg["targets"][target]
+        assert len(meta["platform_posts"][spec["network"]]["text"]) <= spec["caption_max_chars"]
+    assert meta["platform_posts"]["threads"]["text"].endswith("…")
+    assert meta["platform_posts"]["youtube"]["text"] == meta["description"]
+
+    only = publish.build_request(out, only_target="youtube-shorts")
+    assert only["metadata"]["target_platforms"] == ["youtube"]
+    assert only["idempotency_key"] != req["idempotency_key"]
 
 
 def test_four_networks_configured():

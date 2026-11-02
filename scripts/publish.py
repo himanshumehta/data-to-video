@@ -2,33 +2,41 @@
 """
 publish.py — hand a finished video to the social-publisher service.
 
-This repo does not talk to social networks directly. It posts each finished
+This repo does not talk to social networks directly. It uploads each finished
 video to a separate publishing service (configured by URL), which owns channel
-credentials, scheduling and per-network upload quirks.
+credentials, the admin review gate, scheduling and per-network upload quirks.
 
 Given an output folder that holds video.mp4 (+ description.txt, thumbnail.jpg),
-it works out which targets that video fans out to (config/platforms.json) and
-builds one post per (target, language).
+it works out which targets that video fans out to (config/platforms.json),
+maps each target's network onto a social-publisher platform name, and sends
+ONE request for the video carrying every platform that takes this language.
+The service turns it into one post in pending_review; nothing is published
+until an admin approves it there.
 
-Dry run is the default: payloads are printed, nothing is sent. With --send:
+Dry run is the default: the request is printed, nothing is sent. With --send:
   * the service URL must be https:// unless it points at this machine
     (localhost / 127.0.0.1 / ::1), so the bearer token never crosses a network
     in clear text; --allow-insecure-http overrides this for a trusted LAN;
-  * TLS certificates are verified (requests default) and every request has a
-    connect and a read timeout;
+  * TLS certificates are verified (requests default), every request has a
+    connect and a read timeout, and redirects are refused, not followed;
   * the token is sent only in the Authorization header and never printed.
 
 Usage:
     python scripts/publish.py output/royal-enfield/royal-enfield-classic-350-2024/ownership_cost/default/instagram-reels/en
-    python scripts/publish.py <dir> --send          # POST to $SOCIAL_PUBLISHER_URL
+    python scripts/publish.py <dir> --send          # upload to $SOCIAL_PUBLISHER_URL
     python scripts/publish.py <dir> --target youtube-shorts --send
 
-HTTP contract (one request per target):
-    POST {SOCIAL_PUBLISHER_URL}/v1/posts            multipart/form-data
-      Authorization: Bearer {SOCIAL_PUBLISHER_TOKEN}  (if set)
-      Idempotency-Key: sha256(slug, content_type, target, lang, video sha256)
-      fields: target, network, lang, title, description, slug, content_type
-      files:  video (video/mp4), thumbnail (image/jpeg, optional)
+HTTP contract (social-publisher POST /api/v1/external/videos):
+    POST {SOCIAL_PUBLISHER_URL}/api/v1/external/videos     multipart/form-data
+      Authorization: Bearer {SOCIAL_PUBLISHER_TOKEN}   API key with posts:create
+      Idempotency-Key: sha256(slug|content_type|lang|sorted platforms|video sha256)
+      parts:  metadata   JSON {title, description, target_platforms,
+                               platform_posts: {platform: {text}}, tags}
+              video      video/mp4
+              thumbnail  image/jpeg (optional)
+    201 {post_id, video_id, status: "pending_review", replayed: false}
+    200 same body with replayed: true   (same key, same payload: no new post)
+    409 same key, different payload      (reported as a failure)
 """
 
 import argparse
@@ -48,10 +56,23 @@ from scripts.lib.platforms import load_platforms, targets_for  # noqa: E402
 from scripts.lib.tts import load_env  # noqa: E402
 from scripts.lib.vehicle_data import safe_id, safe_lang  # noqa: E402
 
+INGEST_PATH = "/api/v1/external/videos"
 CONNECT_TIMEOUT_SEC = 10
-UPLOAD_TIMEOUT_SEC = 600      # read timeout: the service may transcode before answering
-MAX_DESCRIPTION_CHARS = 5000  # the strictest network caption limit we target is larger than this
+UPLOAD_TIMEOUT_SEC = 600      # read timeout: the service stores the upload before answering
+MAX_TITLE_CHARS = 300         # social-publisher rejects longer titles
 DRY_RUN_PREVIEW_CHARS = 80
+ELLIPSIS = "…"
+
+# config/platforms.json network -> social-publisher platform name.
+NETWORK_TO_PLATFORM = {
+    "instagram": "instagram",
+    "facebook": "facebook",
+    "threads": "threads",
+    "youtube": "youtube",
+    "linkedin": "linkedin",
+    "x": "twitter",
+    "twitter": "twitter",
+}
 
 
 def parse_output_dir(path: Path) -> dict:
@@ -102,51 +123,79 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def build_posts(out_dir: Path, only_target=None) -> list:
+def platform_for(network: str) -> str:
+    """The social-publisher platform name for a platforms.json network."""
+    try:
+        return NETWORK_TO_PLATFORM[network]
+    except KeyError:
+        sys.exit(f"ERROR: network {network!r} has no social-publisher platform; "
+                 f"known: {', '.join(sorted(NETWORK_TO_PLATFORM))}")
+
+
+def clip(text: str, limit: int) -> str:
+    """text, cut to at most `limit` characters with an ellipsis when cut."""
+    return text if len(text) <= limit else text[:limit - 1].rstrip() + ELLIPSIS
+
+
+def build_request(out_dir: Path, only_target=None):
+    """The one ingest request for this video, or None when no target takes it."""
     meta = parse_output_dir(out_dir)
     video = out_dir / "video.mp4"
     if not video.exists():
         sys.exit(f"ERROR: no video.mp4 in {out_dir} — run the assemble step first")
     desc_path = out_dir / "description.txt"
-    description = desc_path.read_text().strip()[:MAX_DESCRIPTION_CHARS] if desc_path.exists() else ""
-    title = description.split("\n", 1)[0].strip() if description else meta["slug"]
+    description = desc_path.read_text().strip() if desc_path.exists() else ""
+    title = clip(description.split("\n", 1)[0].strip() if description else meta["slug"], MAX_TITLE_CHARS)
     thumb = out_dir / "thumbnail.jpg"
 
     cfg = load_platforms()
+    targets = [t for t in targets_for(meta["platform"], meta["lang"], cfg)
+               if not only_target or t == only_target]
+    if not targets:
+        return None
+
+    # Several targets can share a platform; the strictest caption limit wins.
+    limits = {}
+    for t in targets:
+        spec = cfg["targets"][t]
+        p = platform_for(spec["network"])
+        limits[p] = min(limits.get(p, spec["caption_max_chars"]), spec["caption_max_chars"])
+    platforms = list(limits)
+    text = description or title
+    metadata = {
+        "title": title,
+        "description": description,
+        "target_platforms": platforms,
+        "platform_posts": {p: {"text": clip(text, limits[p])} for p in platforms},
+        "tags": [meta["content_type"], meta["slug"], meta["lang"]],
+    }
+
     video_sha = sha256_file(video)
-    posts = []
-    for target in targets_for(meta["platform"], meta["lang"], cfg):
-        if only_target and target != only_target:
-            continue
-        key_src = "|".join([meta["slug"], meta["content_type"], target, meta["lang"], video_sha])
-        posts.append({
-            "target": target,
-            "network": cfg["targets"][target]["network"],
-            "lang": meta["lang"],
-            "slug": meta["slug"],
-            "content_type": meta["content_type"],
-            "title": title,
-            "description": description,
-            "video": str(video),
-            "thumbnail": str(thumb) if thumb.exists() else None,
-            "idempotency_key": hashlib.sha256(key_src.encode()).hexdigest(),
-        })
-    return posts
+    key_src = "|".join([meta["slug"], meta["content_type"], meta["lang"],
+                        ",".join(sorted(platforms)), video_sha])
+    return {
+        "targets": targets,
+        "lang": meta["lang"],
+        "metadata": metadata,
+        "video": str(video),
+        "thumbnail": str(thumb) if thumb.exists() else None,
+        "idempotency_key": hashlib.sha256(key_src.encode()).hexdigest(),
+    }
 
 
-def send(post: dict, base_url: str, token: str = None) -> dict:
+def send(req: dict, base_url: str, token: str = None) -> dict:
     import requests  # only needed for real sends
 
-    headers = {"Idempotency-Key": post["idempotency_key"]}
+    headers = {"Idempotency-Key": req["idempotency_key"]}
     if token:
         headers["Authorization"] = f"Bearer {token}"
-    fields = {k: post[k] for k in ("target", "network", "lang", "title", "description",
-                                   "slug", "content_type")}
-    files = {"video": ("video.mp4", open(post["video"], "rb"), "video/mp4")}
-    if post.get("thumbnail"):
-        files["thumbnail"] = ("thumbnail.jpg", open(post["thumbnail"], "rb"), "image/jpeg")
+    # metadata goes first: the service validates it before reading the video.
+    data = {"metadata": json.dumps(req["metadata"], ensure_ascii=False)}
+    files = {"video": ("video.mp4", open(req["video"], "rb"), "video/mp4")}
+    if req.get("thumbnail"):
+        files["thumbnail"] = ("thumbnail.jpg", open(req["thumbnail"], "rb"), "image/jpeg")
     try:
-        r = requests.post(f"{base_url}/v1/posts", data=fields, files=files, headers=headers,
+        r = requests.post(f"{base_url}{INGEST_PATH}", data=data, files=files, headers=headers,
                           timeout=(CONNECT_TIMEOUT_SEC, UPLOAD_TIMEOUT_SEC), allow_redirects=False)
     finally:
         for _, fh, _ in files.values():
@@ -154,6 +203,9 @@ def send(post: dict, base_url: str, token: str = None) -> dict:
     if r.is_redirect:
         # requests would replay the bearer token to the new host; refuse instead.
         raise RuntimeError(f"publisher answered with a redirect ({r.status_code}); not following")
+    if r.status_code == 409:
+        raise RuntimeError("409: this video was already sent with a different payload "
+                           "(same Idempotency-Key); not creating a second post")
     r.raise_for_status()
     return r.json() if r.content else {}
 
@@ -163,25 +215,29 @@ def main():
     parser.add_argument("output_dir", help="output/<brand>/<slug>/<type>/<ds>/<platform>/<lang>")
     parser.add_argument("--target", help="Only this target (e.g. youtube-shorts)")
     parser.add_argument("--send", action="store_true",
-                        help="Actually POST to SOCIAL_PUBLISHER_URL (default: dry run)")
+                        help="Actually upload to SOCIAL_PUBLISHER_URL (default: dry run)")
     parser.add_argument("--allow-insecure-http", action="store_true",
                         help="Allow http:// to a non-local publisher (token sent in clear text)")
     args = parser.parse_args()
 
     load_env(ROOT / ".env")
-    posts = build_posts(Path(args.output_dir), args.target)
-    if not posts:
+    req = build_request(Path(args.output_dir), args.target)
+    if req is None:
         print("No targets configured for this platform/language in config/platforms.json")
         return
+    platforms = req["metadata"]["target_platforms"]
 
     if not args.send:
-        print(f"DRY RUN — {len(posts)} post(s) would be sent to "
-              f"{os.environ.get('SOCIAL_PUBLISHER_URL') or '$SOCIAL_PUBLISHER_URL (unset)'}:")
-        for p in posts:
-            desc = p["description"]
-            shown = dict(p, description=(desc[:DRY_RUN_PREVIEW_CHARS] + "…")
-                         if len(desc) > DRY_RUN_PREVIEW_CHARS else desc)
-            print(json.dumps(shown, indent=2, ensure_ascii=False))
+        url = os.environ.get("SOCIAL_PUBLISHER_URL") or "$SOCIAL_PUBLISHER_URL (unset)"
+        print(f"DRY RUN — 1 request for {len(platforms)} platform(s) would be sent to {url}{INGEST_PATH}:")
+        shown = json.loads(json.dumps(req))
+        for pp in shown["metadata"]["platform_posts"].values():
+            if len(pp["text"]) > DRY_RUN_PREVIEW_CHARS:
+                pp["text"] = pp["text"][:DRY_RUN_PREVIEW_CHARS] + ELLIPSIS
+        desc = shown["metadata"]["description"]
+        if len(desc) > DRY_RUN_PREVIEW_CHARS:
+            shown["metadata"]["description"] = desc[:DRY_RUN_PREVIEW_CHARS] + ELLIPSIS
+        print(json.dumps(shown, indent=2, ensure_ascii=False))
         print("Re-run with --send to publish.")
         return
 
@@ -193,16 +249,17 @@ def main():
     except ValueError as e:
         sys.exit(f"ERROR: {e}")
     token = os.environ.get("SOCIAL_PUBLISHER_TOKEN")
-    failed = 0
-    for p in posts:
-        try:
-            res = send(p, base_url, token)
-            print(f"  sent {p['target']}/{p['lang']}: {json.dumps(res)[:200]}")
-        except Exception as e:  # keep going; report at the end
-            failed += 1
-            # Only the exception type and message: they never include request headers.
-            print(f"  FAILED {p['target']}/{p['lang']}: {type(e).__name__}: {str(e)[:300]}")
-    sys.exit(1 if failed else 0)
+    label = f"{','.join(platforms)}/{req['lang']}"
+    try:
+        res = send(req, base_url, token)
+    except Exception as e:
+        # Only the exception type and message: they never include request headers.
+        print(f"  FAILED {label}: {type(e).__name__}: {str(e)[:300]}")
+        sys.exit(1)
+    kind = "replayed, no new post" if res.get("replayed") else "new post"
+    print(f"  sent {label}: post_id={res.get('post_id')} video_id={res.get('video_id')} "
+          f"status={res.get('status')} ({kind})")
+    print("  The post waits for admin approval in social-publisher before anything is published.")
 
 
 if __name__ == "__main__":

@@ -8,9 +8,9 @@
     }
   },
   "targets": {
-    "instagram-reels": { "network": "instagram", "languages": ["en", "hi", "te"], "max_duration_s": 90 },
-    "facebook-reels":  { "network": "facebook",  "languages": ["en", "hi"],       "max_duration_s": 90 },
-    "threads-reels":   { "network": "threads",   "languages": ["en", "hi"],       "max_duration_s": 90 },
-    "youtube-shorts":  { "network": "youtube",   "languages": ["en", "hi", "te"], "max_duration_s": 180 }
+    "instagram-reels": { "network": "instagram", "languages": ["en", "hi", "te"], "max_duration_s": 90,  "caption_max_chars": 2200 },
+    "facebook-reels":  { "network": "facebook",  "languages": ["en", "hi"],       "max_duration_s": 90,  "caption_max_chars": 63206 },
+    "threads-reels":   { "network": "threads",   "languages": ["en", "hi"],       "max_duration_s": 90,  "caption_max_chars": 500 },
+    "youtube-shorts":  { "network": "youtube",   "languages": ["en", "hi", "te"], "max_duration_s": 180, "caption_max_chars": 5000 }
   }
 }

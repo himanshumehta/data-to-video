@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.lib import vehicle_data  # noqa: E402
-from scripts.lib.number_format import format_inr, speech_friendly  # noqa: E402
+from scripts.lib.number_format import speech_friendly, spoken_model_name  # noqa: E402
 from scripts.narrate import render_narration  # noqa: E402
 from scripts.ownership_pipeline import REQUIRED_FIELDS  # noqa: E402
 
@@ -56,18 +56,30 @@ def test_narration_templates_render(slug, lang):
 
 @pytest.mark.parametrize("slug", SLUGS)
 def test_reels_curation_respects_platform_limit(slug):
-    from scripts.lib.claude_step import curate, PLATFORM_LIMITS
-    v = vehicle_data.load_vehicle(slug)
-    durations = {s: 12.0 for s in importlib.import_module(
-        "content_types.ownership_cost.assembly.instagram_reels").SLIDE_ORDER}
-    res = curate(slug, v, durations, "instagram-reels")
-    assert res["totalDuration"] <= PLATFORM_LIMITS["instagram-reels"]
-    assert "00-what-you-will-learn" in res["selectedSlides"]
+    from content_types.ownership_cost import curation
+    from scripts.lib.curate import curate
+    from scripts.lib.platforms import load_platforms, max_duration
+    order = importlib.import_module("content_types.ownership_cost.assembly.instagram_reels").SLIDE_ORDER
+    limit = max_duration("instagram-reels", load_platforms())
+    assert limit == 90  # shortest limit among the 9:16 targets
+    res = curate(order, {s: 12.0 for s in order},
+                 curation.interest_scores(vehicle_data.load_vehicle(slug)), curation.PINNED, limit)
+    assert res["totalDuration"] <= limit
+    assert set(curation.PINNED) <= set(res["selectedSlides"])
+    assert res["selectedSlides"] == [s for s in order if s in res["selectedSlides"]]  # story order kept
+    assert set(res["selectedSlides"]) | set(res["excludedSlides"]) == set(order)
+
+
+def test_curation_without_limit_keeps_everything():
+    from scripts.lib.curate import curate
+    res = curate(["a", "b"], {"a": 100.0, "b": 100.0}, {}, [], None)
+    assert res["selectedSlides"] == ["a", "b"] and res["excludedSlides"] == []
 
 
 def test_number_formatting():
-    assert format_inr(771102) == "7,71,102"
-    assert "lakh" in speech_friendly("₹ 4,28,321 over five years")
+    assert speech_friendly("₹ 4,28,321 over five years") == "rupees 4.3 lakh over five years"
+    assert speech_friendly("₹ 89,685 a year") == "rupees about 90 thousand a year"
+    assert spoken_model_name("Classic 350") == "Classic three fifty"
 
 
 def test_publish_fan_out_and_dry_run(tmp_path):
@@ -83,7 +95,18 @@ def test_publish_fan_out_and_dry_run(tmp_path):
     assert len({p["idempotency_key"] for p in posts}) == len(posts)
 
 
-def test_six_networks_configured():
+def test_four_networks_configured():
     cfg = json.loads((ROOT / "config" / "platforms.json").read_text())
     networks = {t["network"] for t in cfg["targets"].values()}
-    assert networks == {"youtube", "instagram", "facebook", "threads", "linkedin", "twitter"}
+    assert networks == {"youtube", "instagram", "facebook", "threads"}
+
+
+def test_registry_components_exist():
+    """Every component named in remotion.json is exported by the reel slide barrel."""
+    reg = json.loads((ROOT / "content_types" / "ownership_cost" / "remotion.json").read_text())
+    barrel = (ROOT / "remotion" / "src" / "slides" / "reels" / "index.ts").read_text()
+    order = importlib.import_module("content_types.ownership_cost.assembly.instagram_reels").SLIDE_ORDER
+    comps = reg["reelsCompositions"]
+    assert set(order) | {"thumbnail"} == set(comps)
+    for cfg in comps.values():
+        assert f"export {{ {cfg['component']} }}" in barrel

@@ -1,12 +1,12 @@
 """
-Assembly config for ownership-cost Instagram Reels (9:16, 1080x1920).
-9 slides rendered via Remotion batch (remotion.json reelsCompositions).
-Audio: own TTS via narrations/instagram_reels.py (independent from posts).
+Assembly config for the ownership-cost reel (9:16, 1080x1920): slide order and
+post descriptions. The same master is published to every 9:16 target in
+config/platforms.json.
 
-Workflow:
-  python scripts/remotion_render.py --batch --slug <slug> --type ownership-cost --platform instagram-reels --lang en
-  python scripts/narrate.py --slug <slug> --type ownership-cost --platform instagram-reels --lang en --reword
-  python scripts/assemble.py <slug> --type ownership-cost --platform instagram-reels --lang en --curate
+Workflow (scripts/ownership_pipeline.py runs these in order):
+  python scripts/narrate.py --slug <slug> --type ownership-cost --platform instagram-reels --lang en
+  python scripts/remotion_render.py --slug <slug> --type ownership-cost --platform instagram-reels --lang en
+  python scripts/assemble.py <slug> --type ownership-cost --platform instagram-reels --lang en
 """
 
 # Slide IDs match remotion.json reelsCompositions keys
@@ -21,20 +21,6 @@ SLIDE_ORDER = [
     "10-review-cta",
     "11-end-card",
 ]
-
-SLIDE_SHORT = {
-    "00-what-you-will-learn": "00",
-    "01-hook":                "01",
-    "02-annual-breakdown":    "02",
-    "03-service-deep-dive":   "03",
-    "04-year-by-year":        "04",
-    "05-depreciation":        "05",
-    "07-vs-segment":          "07",
-    "10-review-cta":          "10",
-    "11-end-card":            "11",
-}
-
-CHAPTER_LABELS = {}   # Reels don't support chapters
 
 DESCRIPTION_TEMPLATES = {
     "en": """{brand} {name} — real ownership cost

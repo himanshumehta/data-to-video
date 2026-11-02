@@ -1,31 +1,16 @@
 {
-  "_comment": "Where a rendered video goes. One rendered master per aspect ratio is fanned out to every target listed for that ratio. Channel credentials live in the social-publisher service, not here.",
+  "_comment": "Where a rendered video goes. One master is rendered per aspect ratio and fanned out to every target listed for that ratio, in the languages each target takes. The master is cut to the shortest max_duration_s among its targets. Channel credentials live in the social-publisher service, not here.",
   "formats": {
     "9:16": {
       "resolution": "1080x1920",
       "rendered_as": "instagram-reels",
       "targets": ["instagram-reels", "facebook-reels", "threads-reels", "youtube-shorts"]
-    },
-    "4:5": {
-      "resolution": "1080x1350",
-      "rendered_as": "instagram",
-      "targets": ["instagram", "facebook", "linkedin", "twitter"]
-    },
-    "16:9": {
-      "resolution": "3840x2160",
-      "rendered_as": "youtube",
-      "targets": ["youtube"]
     }
   },
   "targets": {
-    "instagram-reels": { "network": "instagram", "languages": ["en", "hi", "te"] },
-    "facebook-reels":  { "network": "facebook",  "languages": ["en", "hi"] },
-    "threads-reels":   { "network": "threads",   "languages": ["en", "hi"] },
-    "youtube-shorts":  { "network": "youtube",   "languages": ["en", "hi", "mr", "te"] },
-    "instagram":       { "network": "instagram", "languages": ["en", "hi", "te"] },
-    "facebook":        { "network": "facebook",  "languages": ["en", "hi"] },
-    "linkedin":        { "network": "linkedin",  "languages": ["en"] },
-    "twitter":         { "network": "twitter",   "languages": ["en"] },
-    "youtube":         { "network": "youtube",   "languages": ["en", "hi", "mr", "te"] }
+    "instagram-reels": { "network": "instagram", "languages": ["en", "hi", "te"], "max_duration_s": 90 },
+    "facebook-reels":  { "network": "facebook",  "languages": ["en", "hi"],       "max_duration_s": 90 },
+    "threads-reels":   { "network": "threads",   "languages": ["en", "hi"],       "max_duration_s": 90 },
+    "youtube-shorts":  { "network": "youtube",   "languages": ["en", "hi", "te"], "max_duration_s": 180 }
   }
 }

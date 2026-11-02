@@ -6,14 +6,12 @@ Builds a render queue from content_types/<type>/remotion.json (platform -> forma
 -> composition set), writes per-slide props, then hands the queue to
 remotion/scripts/render-batch.mjs which bundles once and renders N jobs in parallel.
 
-Usage:
-    # Batch render (one vehicle, one platform, one language):
-    python scripts/remotion_render.py --batch \
-        --slug ktm-250-duke --type ownership-cost --platform instagram-reels --lang en
+Each slide's length is the end of speech in its narration WAV; the render is
+refused if any slide is missing its WAV.
 
-    # Single composition with explicit props:
-    python scripts/remotion_render.py --composition HookReels \
-        --props '{"vehicle": {...}, "durationSec": 5}' --out /tmp/hook.mp4
+Usage:
+    python scripts/remotion_render.py \
+        --slug ktm-250-duke --type ownership-cost --platform instagram-reels --lang en
 
 Requires: Node.js, ffmpeg, and `npm ci` inside remotion/.
 """
@@ -30,19 +28,16 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.lib.vehicle_data import load_vehicle, stage_image, output_dir
-REMOTION_DIR = ROOT / "remotion"
-REMOTION_ENTRY = "src/index.ts"
+from scripts.lib.tts import load_env  # noqa: E402
+from scripts.lib.vehicle_data import cli_id, load_vehicle, output_dir, stage_image  # noqa: E402
 
-# ── Platform CLI shorthands → registry keys ──────────────────────
-PLATFORM_SHORTHANDS = {
-    "youtube": "youtube",
-    "instagram": "instagram-posts",
-    "instagram-reels": "instagram-reels",
-    "youtube-shorts": "youtube-shorts",
-    "facebook": "facebook-posts",
-    "threads": "threads-posts",
-}
+REMOTION_DIR = ROOT / "remotion"
+WORK_DIR = ROOT / "output" / "_work"
+SILENCE_DB = -40           # silencedetect threshold for "speech has ended"
+SILENCE_MIN_SEC = 0.15
+MIN_SLIDE_SEC = 1.0        # never cut a slide shorter than this
+ALL_SILENT_SEC = 0.05      # trailing silence starting before this = silent placeholder clip
+PORTRAIT_MAX_WIDTH = 1080  # formats this narrow render at 2x by default for sharper text
 
 def get_wav_duration(path):
     """Get WAV duration using wave module."""
@@ -50,13 +45,13 @@ def get_wav_duration(path):
         return wf.getnframes() / wf.getframerate()
 
 
-def get_speech_end(wav_path, silence_db=-40, silence_min=0.15):
+def get_speech_end(wav_path, silence_db=SILENCE_DB, silence_min=SILENCE_MIN_SEC):
     """Return the time when speech effectively ends by detecting trailing silence."""
     result = subprocess.run([
         "ffmpeg", "-i", str(wav_path),
         "-af", f"silencedetect=noise={silence_db}dB:d={silence_min}",
         "-f", "null", "-"
-    ], capture_output=True, text=True)
+    ], capture_output=True, text=True, check=False)
 
     last_start = None
     last_end = None
@@ -73,74 +68,12 @@ def get_speech_end(wav_path, silence_db=-40, silence_min=0.15):
                 pass
 
     if last_start is not None and (last_end is None or last_start > last_end):
-        if last_start < 0.05:
+        if last_start < ALL_SILENT_SEC:
             # Entirely silent clip (e.g. narrate.py --tts silent): keep full length.
             return get_wav_duration(wav_path)
-        return max(last_start, 1.0)
+        return max(last_start, MIN_SLIDE_SEC)
 
     return get_wav_duration(wav_path)
-
-
-def render_composition(comp_id, props_json, out_path, width=3840, height=2160, fps=60, concurrency=None):
-    """Render a single Remotion composition to MP4."""
-    cmd = [
-        "npx", "remotion", "render",
-        REMOTION_ENTRY,
-        comp_id,
-        str(out_path),
-        "--props", props_json,
-        "--width", str(width),
-        "--height", str(height),
-        "--fps", str(fps),
-        "--codec", "h264",
-        "--crf", "18",
-        "--log", "error",
-    ]
-    if concurrency:
-        cmd += ["--concurrency", str(concurrency)]
-
-    result = subprocess.run(
-        cmd,
-        cwd=str(REMOTION_DIR),
-        capture_output=True,
-        text=True,
-    )
-
-    if result.returncode != 0:
-        print(f"  ERROR rendering {comp_id}:")
-        stderr_lines = result.stderr.strip().split("\n")
-        for line in stderr_lines[-15:]:
-            print(f"    {line}")
-        return False
-
-    return True
-
-
-def single_render(args):
-    """Render a single composition with explicit props."""
-    comp_id = args.composition
-    props_json = args.props
-    out_path = Path(args.out).resolve()
-
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-
-    print(f"Rendering {comp_id} -> {out_path}")
-    ok = render_composition(comp_id, props_json, out_path)
-    if ok:
-        size_mb = out_path.stat().st_size / (1024 * 1024)
-        print(f"  Done: {out_path} ({size_mb:.1f} MB)")
-    else:
-        print(f"  FAILED: {comp_id}")
-    return ok
-
-
-# ══════════════════════════════════════════════════════════════════
-#  Batch mode — reads remotion.json, builds queue, invokes Node
-# ══════════════════════════════════════════════════════════════════
-
-def resolve_platform(platform_arg):
-    """Resolve platform CLI shorthand to registry key."""
-    return PLATFORM_SHORTHANDS.get(platform_arg, platform_arg)
 
 
 def load_registry(content_type):
@@ -174,16 +107,16 @@ def load_vehicles(args):
     elif args.slug:
         return [load_vehicle(slug=args.slug)]
     else:
-        print("ERROR: --slug, --data-file, or --vehicles is required with --batch")
+        print("ERROR: --slug, --data-file, or --vehicles is required")
         sys.exit(1)
 
 
-def build_render_queue(vehicles, content_type, theme_name, platform, lang,
-                       allow_partial_narration=False, scale=None):
+def build_render_queue(vehicles, content_type, platform, lang,
+                       allow_partial_narration=False, scale=None, ds="default"):
     """Build render-queue.json for all vehicles x slides.
 
-    Vehicle/theme data written to separate JSON files (referenced by path
-    in queue) to keep queue JSON small.
+    Vehicle data is written to one props JSON file per slide (referenced by
+    path in the queue) to keep the queue small.
 
     Narration guard: by default, refuses to build a queue when any non-thumbnail
     slide is missing its narration WAV. Without this guard, missing WAVs
@@ -194,16 +127,8 @@ def build_render_queue(vehicles, content_type, theme_name, platform, lang,
     missing_narration = []  # list[(slug, slide_id, expected_wav_path)]
     registry = load_registry(content_type)
 
-    # Load theme
-    theme_path = ROOT / "design-systems" / theme_name / "theme.json"
-    if theme_path.exists():
-        theme = json.loads(theme_path.read_text())
-    else:
-        print(f"WARN: theme.json not found for '{theme_name}', using empty theme")
-        theme = {"name": theme_name}
-
     # Resolve platform → format → composition set
-    platform_key = resolve_platform(platform)
+    platform_key = platform
     platform_config = registry.get("platforms", {}).get(platform_key)
     if not platform_config:
         available = ", ".join(registry.get("platforms", {}).keys())
@@ -216,32 +141,24 @@ def build_render_queue(vehicles, content_type, theme_name, platform, lang,
         print(f"ERROR: Format '{format_name}' not found in registry")
         sys.exit(1)
 
-    # Select composition set (base or themed variant)
-    base_comp_set = format_config["compositionSet"]
-    comp_key = f"{base_comp_set}-{theme_name}" if theme_name != "default" else base_comp_set
-    compositions = registry.get(comp_key, registry.get(base_comp_set, {}))
-
+    comp_key = format_config["compositionSet"]
+    compositions = registry.get(comp_key, {})
     if not compositions:
-        print(f"ERROR: No compositions found for key '{comp_key}' (or '{base_comp_set}')")
+        print(f"ERROR: No compositions found for key '{comp_key}'")
         sys.exit(1)
 
     # Exclude thumbnail from slide count (it's a still, not part of the video)
     video_compositions = {k: v for k, v in compositions.items() if k != "thumbnail"}
     total_slides = len(video_compositions) if "portrait" in format_name else None
-    width = format_config["width"]
-    height = format_config["height"]
-    fps = format_config["fps"]
 
     # Props directory for per-slide JSON files
-    props_dir = ROOT / "output" / "_work" / "props"
+    props_dir = WORK_DIR / "props"
     props_dir.mkdir(parents=True, exist_ok=True)
 
     queue = []
-    skipped_vehicles = []
 
     for vehicle in vehicles:
         slug = vehicle["slug"]
-        brand = vehicle.get("brand_slug", slug.split("-")[0])
 
         # Pre-render image validation — HARD FAIL, do not skip silently.
         # Every reel needs a transparent-background (nobg) vehicle image.
@@ -249,13 +166,13 @@ def build_render_queue(vehicles, content_type, theme_name, platform, lang,
         if not nobg or "placeholder" in (nobg or ""):
             print(f"\n{'='*70}")
             print(f"  RENDER BLOCKED: {slug} has no primary_nobg_url")
-            print(f"  Add a transparent PNG and set primary_nobg_url to an https:// URL")
+            print("  Add a transparent PNG and set primary_nobg_url to an https:// URL")
             print(f"  or to 'vehicles/{slug}.png' with the file in VEHICLE_IMAGE_DIR.")
             print(f"{'='*70}")
             sys.exit(1)
         stage_image(vehicle)
 
-        lang_dir = output_dir(vehicle, content_type, platform_key, lang, theme_name)
+        lang_dir = output_dir(vehicle, content_type, platform_key, lang, ds)
         audio_dir = lang_dir / "audio"
 
         video_idx = 0
@@ -276,7 +193,6 @@ def build_render_queue(vehicles, content_type, theme_name, platform, lang,
 
             props = {
                 "vehicle": vehicle,
-                "theme": theme,
                 "durationSec": duration,
                 "contentMonthYear": datetime.now().strftime("%B %Y"),
                 "lang": lang,
@@ -303,7 +219,7 @@ def build_render_queue(vehicles, content_type, theme_name, platform, lang,
             output_path = lang_dir / "slides" / f"{slide_id}.mp4"
 
             # Default: 2x scale for portrait formats (sharper text on mobile)
-            job_scale = scale if scale else (2 if format_config["width"] <= 1080 else 1)
+            job_scale = scale if scale else (2 if format_config["width"] <= PORTRAIT_MAX_WIDTH else 1)
 
             queue.append({
                 "compositionId": comp_config["component"],
@@ -314,9 +230,6 @@ def build_render_queue(vehicles, content_type, theme_name, platform, lang,
                 "scale": job_scale,
                 "durationSec": duration,
             })
-
-    if skipped_vehicles:
-        print(f"\nWARN: {len(skipped_vehicles)} vehicles skipped due to errors")
 
     # Narration guard. Without this, missing WAVs silently degrade slides to
     # "still" render mode (PNG instead of MP4) — assemble.py then can't find
@@ -338,13 +251,13 @@ def build_render_queue(vehicles, content_type, theme_name, platform, lang,
                 print(f"    [{slide_id}]  expected: {rel}")
             if len(items) > 10:
                 print(f"    (+ {len(items) - 10} more)")
-            print(f"\n    Generate the missing WAVs first:")
+            print("\n    Generate the missing WAVs first:")
             print(f"      python scripts/narrate.py --slug {slug} --type {content_type} \\")
-            print(f"          --platform {resolve_platform(platform)} --lang {lang}"
+            print(f"          --platform {platform} --lang {lang}"
                   + ("  --reword" if lang == "en" else ""))
-        print(f"\n  Once narration is complete, re-run this --batch command.")
-        print(f"  To intentionally render stills for un-narrated slides "
-              f"(rare), pass --allow-partial-narration.")
+        print("\n  Once narration is complete, re-run this render command.")
+        print("  To intentionally render stills for un-narrated slides "
+              "(rare), pass --allow-partial-narration.")
         print(f"{'='*70}\n")
         sys.exit(1)
 
@@ -353,7 +266,7 @@ def build_render_queue(vehicles, content_type, theme_name, platform, lang,
 
 def invoke_batch_renderer(queue, concurrency=3, resume=False, dry_run=False, test=False, gl=None):
     """Write queue to JSON, invoke Node batch renderer."""
-    queue_path = ROOT / "output" / "_work" / "render-queue.json"
+    queue_path = WORK_DIR / "render-queue.json"
     queue_path.parent.mkdir(parents=True, exist_ok=True)
     queue_path.write_text(json.dumps(queue, indent=2, default=str))
 
@@ -372,7 +285,7 @@ def invoke_batch_renderer(queue, concurrency=3, resume=False, dry_run=False, tes
         cmd.append(f"--gl={gl}")
 
     print(f"\nInvoking batch renderer: {len(queue)} jobs, concurrency={concurrency}")
-    result = subprocess.run(cmd, cwd=str(ROOT / "remotion"))
+    result = subprocess.run(cmd, cwd=str(REMOTION_DIR), check=False)
 
     # Read results if available
     results_path = str(queue_path).replace(".json", "-results.json")
@@ -384,41 +297,13 @@ def invoke_batch_renderer(queue, concurrency=3, resume=False, dry_run=False, tes
 
 def batch_render(args):
     """Batch render: read registry, build queue, invoke Node renderer."""
-    content_type = args.type or "ownership-cost"
-    theme_name = args.theme or "default"
-    platform = args.platform or "youtube"
-    lang = args.lang or "en"
-
-    if args.validate_registry:
-        registry = load_registry(content_type)
-        print(f"Registry for {content_type}:")
-        for key in ["compositions", "portraitCompositions"]:
-            if key in registry:
-                print(f"  {key}: {len(registry[key])} slides")
-        print("Registry valid.")
-        return True
-
-    if args.list_types:
-        # Discover all content types with remotion.json
-        ct_dir = ROOT / "content_types"
-        for d in sorted(ct_dir.iterdir()):
-            rj = d / "remotion.json"
-            if rj.exists():
-                reg = json.loads(rj.read_text())
-                parts = []
-                for key, comps in reg.items():
-                    if key.endswith("Compositions") or key == "compositions":
-                        parts.append(f"{len(comps)} {key}")
-                print(f"  {reg.get('contentType', d.name)}: {', '.join(parts)}")
-        return True
-
     vehicles = load_vehicles(args)
     print(f"Loaded {len(vehicles)} vehicle(s)")
 
     queue = build_render_queue(
-        vehicles, content_type, theme_name, platform, lang,
-        allow_partial_narration=getattr(args, "allow_partial_narration", False),
-        scale=args.scale,
+        vehicles, args.type, args.platform, args.lang,
+        allow_partial_narration=args.allow_partial_narration,
+        scale=args.scale, ds=args.ds,
     )
     print(f"Built queue: {len(queue)} jobs")
 
@@ -437,82 +322,39 @@ def batch_render(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Render slide clips via Remotion"
-    )
-    subparsers = parser.add_subparsers(dest="mode")
-
-    # Single render mode (default when --composition is used)
-    parser.add_argument("--composition", help="Remotion composition ID (single mode)")
-    parser.add_argument("--props", help="JSON props string (single mode)")
-    parser.add_argument("--out", help="Output MP4 path (single mode)")
-
-    # Batch mode (new — fast path via render-batch.mjs)
-    parser.add_argument("--batch", action="store_true",
-                        help="Batch render via render-batch.mjs (fast path)")
-    parser.add_argument("--type", default="ownership-cost",
+    parser = argparse.ArgumentParser(description="Render slide clips via Remotion")
+    parser.add_argument("--type", default="ownership-cost", type=lambda v: cli_id(v, "content type"),
                         help="Content type (default: ownership-cost)")
-    parser.add_argument("--theme", default="default",
-                        help="Theme name (default: default)")
-    parser.add_argument("--platform", default="youtube",
-                        help="Platform (youtube, instagram, youtube-shorts, etc.)")
-    parser.add_argument("--vehicles",
-                        help="File with vehicle slugs, one per line")
-    parser.add_argument("--resume", action="store_true",
-                        help="Skip already-rendered outputs (--batch mode)")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Validate and print queue without rendering")
-    parser.add_argument("--test", action="store_true",
-                        help="Render one job only to verify setup")
-    parser.add_argument("--validate-registry", action="store_true",
-                        help="Check remotion.json validity, no rendering")
-    parser.add_argument("--list-types", action="store_true",
-                        help="List registered content types and composition counts")
+    parser.add_argument("--platform", default="instagram-reels", type=lambda v: cli_id(v, "platform"),
+                        help="Platform key in remotion.json (default: instagram-reels)")
+    parser.add_argument("--ds", default="default", type=lambda v: cli_id(v, "design system"),
+                        help="Output variant folder (default: default)")
+    parser.add_argument("--slug", type=lambda v: cli_id(v, "slug"), help="Vehicle slug")
+    parser.add_argument("--data-file", help="Vehicle JSON file")
+    parser.add_argument("--vehicles", help="File with vehicle slugs, one per line")
+    parser.add_argument("--lang", default="en", type=lambda v: cli_id(v, "lang"),
+                        help="Language code (default: en)")
+    parser.add_argument("--resume", action="store_true", help="Skip already-rendered outputs")
+    parser.add_argument("--dry-run", action="store_true", help="Print the queue without rendering")
+    parser.add_argument("--test", action="store_true", help="Render one job only to verify setup")
     parser.add_argument("--allow-partial-narration", action="store_true",
                         help="Render stills for slides whose narration WAV is missing. "
-                             "By default --batch refuses to start unless every non-thumbnail "
-                             "slide has its WAV in place — without this guard, missing WAVs "
-                             "silently fall back to PNG stills and break assemble.py.")
-
-    # Shared flags
-    parser.add_argument("--slug", help="Vehicle slug")
-    parser.add_argument("--data-file", help="Vehicle JSON file (skip DB)")
-    parser.add_argument("--lang", default="en", help="Language code (default: en)")
-    parser.add_argument("--concurrency", type=int, default=None,
-                        help="Render concurrency (default: 3)")
+                             "By default the batch refuses to start unless every non-thumbnail "
+                             "slide has its WAV: missing WAVs would silently become PNG stills "
+                             "and break assemble.py.")
+    parser.add_argument("--concurrency", type=int, default=None, help="Render concurrency (default: 3)")
     parser.add_argument("--scale", type=int, default=None,
                         help="Render scale factor (default: 2 for portrait, 1 for landscape)")
-    parser.add_argument("--gl", default=None,
+    parser.add_argument("--gl", default=None, choices=["angle", "egl", "swangle", "swiftshader", "vulkan"],
                         help="Chromium GL backend passed to Remotion (default: angle)")
-
     args = parser.parse_args()
 
-    from scripts.lib.tts import load_env
     load_env(ROOT / ".env")
 
-    # Check remotion dir exists
-    if not REMOTION_DIR.exists():
-        print(f"ERROR: Remotion project not found at {REMOTION_DIR}")
-        print("Run: cd remotion && npm install")
-        sys.exit(1)
-
-    # Check node_modules
     if not (REMOTION_DIR / "node_modules").exists():
-        print(f"ERROR: node_modules not found. Run: cd remotion && npm install")
-        sys.exit(1)
+        sys.exit("ERROR: remotion/node_modules not found. Run: make setup")
 
-    if args.batch or args.validate_registry or args.list_types:
-        ok = batch_render(args)
-        sys.exit(0 if ok else 1)
-    elif args.composition:
-        if not args.props or not args.out:
-            print("ERROR: --props and --out are required with --composition")
-            sys.exit(1)
-        ok = single_render(args)
-        sys.exit(0 if ok else 1)
-    else:
-        parser.print_help()
-        sys.exit(1)
+    sys.exit(0 if batch_render(args) else 1)
 
 
 if __name__ == "__main__":

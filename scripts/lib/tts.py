@@ -1,15 +1,18 @@
 """
-tts.py — Gemini TTS utilities: generate_tts, save_wav, TTS_PROMPTS, load_env.
-
-Extracted from ownership_narrate.py for use by scripts/narrate.py and
-any content_types module that needs TTS generation.
-Never import * from this module — always use named imports.
+tts.py: Gemini TTS (generate_tts, save_wav) and the .env loader.
 """
 
 import os
+import re
+import subprocess
 import time
 import wave
 from pathlib import Path
+
+TTS_SAMPLE_RATE = 24000      # Gemini TTS returns 16-bit mono PCM at 24 kHz
+OUTPUT_SAMPLE_RATE = 48000   # the assembler mixes at 48 kHz stereo
+DEFAULT_TTS_MODEL = "gemini-2.5-flash-preview-tts"
+DEFAULT_RETRY_DELAY_SEC = 30
 
 
 # ── TTS prompts per language ───────────────────────────────────────────────────
@@ -58,7 +61,6 @@ def generate_tts(text: str, voice: str = "Achird", lang: str = "en",
 
     Automatically retries on 429 rate limits, respecting the API's retryDelay.
     """
-    import re
     from google import genai
     from google.genai import types
 
@@ -103,7 +105,7 @@ def generate_tts(text: str, voice: str = "Achird", lang: str = "en",
     for attempt in range(max_retries + 1):
         try:
             response = client.models.generate_content(
-                model=os.environ.get("GEMINI_TTS_MODEL", "gemini-2.5-flash-preview-tts"),
+                model=os.environ.get("GEMINI_TTS_MODEL", DEFAULT_TTS_MODEL),
                 contents=prompt,
                 config=config,
             )
@@ -118,7 +120,7 @@ def generate_tts(text: str, voice: str = "Achird", lang: str = "en",
             err_str = str(e)
             if "429" in err_str and attempt < max_retries:
                 m = re.search(r'retryDelay.*?(\d+\.?\d*)s', err_str)
-                delay = float(m.group(1)) + 2 if m else 30
+                delay = float(m.group(1)) + 2 if m else DEFAULT_RETRY_DELAY_SEC
                 print(f"    Rate limited, waiting {delay:.0f}s (attempt {attempt + 1}/{max_retries})...")
                 time.sleep(delay)
             else:
@@ -128,35 +130,26 @@ def generate_tts(text: str, voice: str = "Achird", lang: str = "en",
 
 
 def save_wav(pcm_data: bytes, path: Path, speed: float = 1.0) -> Path:
-    """Wrap raw PCM in WAV, then convert to 48kHz stereo.
+    """Wrap raw TTS PCM in a WAV, then resample to 48 kHz stereo (optionally sped up).
 
-    Gemini TTS outputs 24kHz mono PCM. The assembler mixes at 48kHz stereo, so we
-    write the raw WAV first, then use ffmpeg to resample + upmix.
-    Optional speed adjustment via atempo filter (e.g., 1.2 = 20% faster).
+    Raises RuntimeError if ffmpeg fails, so a broken clip never reaches the render.
     """
-    import subprocess
     path.parent.mkdir(parents=True, exist_ok=True)
-
-    # Write raw 24kHz mono WAV from Gemini
     raw_path = path.with_suffix(".raw.wav")
     with wave.open(str(raw_path), "wb") as wf:
         wf.setnchannels(1)
-        wf.setsampwidth(2)  # 16-bit = 2 bytes
-        wf.setframerate(24000)
+        wf.setsampwidth(2)  # 16-bit
+        wf.setframerate(TTS_SAMPLE_RATE)
         wf.writeframes(pcm_data)
 
-    # Convert to 48kHz stereo, with optional speed adjustment
-    ffmpeg_cmd = ["ffmpeg", "-y", "-i", str(raw_path)]
+    cmd = ["ffmpeg", "-v", "error", "-y", "-i", str(raw_path)]
     if speed != 1.0:
-        ffmpeg_cmd += ["-filter:a", f"atempo={speed}"]
-    ffmpeg_cmd += ["-ar", "48000", "-ac", "2", str(path)]
-
-    result = subprocess.run(ffmpeg_cmd, capture_output=True)
-    raw_path.unlink(missing_ok=True)
-
+        cmd += ["-filter:a", f"atempo={speed}"]
+    cmd += ["-ar", str(OUTPUT_SAMPLE_RATE), "-ac", "2", str(path)]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+    finally:
+        raw_path.unlink(missing_ok=True)
     if result.returncode != 0:
-        # Fallback: keep raw 24kHz if ffmpeg fails
-        raw_path2 = path.with_suffix(".raw.wav")
-        if raw_path2.exists():
-            raw_path2.rename(path)
+        raise RuntimeError(f"ffmpeg could not convert TTS audio: {result.stderr.strip()[-300:]}")
     return path

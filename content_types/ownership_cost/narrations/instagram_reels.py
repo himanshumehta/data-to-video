@@ -14,105 +14,21 @@ Data confidence:
 Narrations use Jinja2 {% if %} to switch wording based on confidence.
 """
 
-import random
-
-# 10 intro variants for A/B testing — all focus on ownership cost hook.
-# narrate.py picks one via INTRO_VARIANTS[hash(slug) % len(INTRO_VARIANTS)].
-# To test a specific variant: --intro-variant 4
-INTRO_VARIANTS = [
-    # 1. Ownership cost overview
-    (
-        "{{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }}. "
-        "{% if vehicle.data_confidence == 'verified' %}"
-        "Five-year ownership cost, covering fuel, service, insurance, tyres, and depreciation. "
-        "{% else %}"
-        "Estimated five-year ownership cost, based on available owner data and platform analysis. "
-        "{% endif %}"
-        "Complete breakdown in sixty seconds."
-    ),
-    # 2. Direct question
-    (
-        "How much does a {{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }} cost to own? "
-        "Fuel, service, insurance, tyres, depreciation. "
-        "{% if vehicle.data_confidence == 'verified' %}"
-        "Five-year ownership cost, right here."
-        "{% else %}"
-        "Estimated five-year ownership cost, right here."
-        "{% endif %}"
-    ),
-    # 3. Beyond showroom price
-    (
-        "{{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }}. "
-        "{{ vehicle.price_formatted }} is the showroom price. "
-        "Here's what five years of ownership looks like beyond that."
-    ),
-    # 4. "Thinking of buying" — SELECTED DEFAULT
-    (
-        "Thinking of buying a {{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }}? "
-        "{% if vehicle.data_confidence == 'verified' %}"
-        "Here's the complete ownership cost. "
-        "{% else %}"
-        "Here's the estimated ownership cost. "
-        "{% endif %}"
-        "Not just the showroom price. The total cost over five years."
-    ),
-    # 5. Total cost framing
-    (
-        "{{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }}. "
-        "Showroom price plus five years of running costs. "
-        "Fuel, service, insurance, and everything in between."
-    ),
-    # 6. Multiplier framing
-    (
-        "{{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }}. "
-        "Over five years, the total ownership cost is {{ vehicle.multiplier }} times the purchase price. "
-        "Here's the full breakdown."
-    ),
-    # 7. Cost per km
-    (
-        "{{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }}. "
-        "{{ vehicle.cost_per_km_display }} per kilometer to own. "
-        "Here's how that breaks down over five years."
-    ),
-    # 8. Complete picture
-    (
-        "{{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }}. "
-        "{% if vehicle.data_confidence == 'verified' %}"
-        "Every cost you'll pay over five years of ownership. "
-        "{% else %}"
-        "Estimated costs over five years of ownership. "
-        "{% endif %}"
-        "Sixty seconds. Complete breakdown."
-    ),
-    # 9. Purchase vs running
-    (
-        "{{ vehicle.spoken_name or vehicle.short_name }}. "
-        "{{ vehicle.price_formatted }} to buy. "
-        "{{ vehicle.total_cost_5yr_display }} to run over five years. "
-        "Here's where that goes."
-    ),
-    # 10. Ownership overview
-    (
-        "{{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }} ownership cost. "
-        "{{ vehicle.multiplier }} times the purchase price over five years. "
-        "Fuel, insurance, tyres, everything covered in sixty seconds."
-    ),
-]
-
-# Default variant index (0-indexed). Change this to rotate which intro is used.
-DEFAULT_INTRO_VARIANT = 3  # "Thinking of buying..."
-
-
-def pick_intro(slug: str, variant: int = None) -> str:
-    """Pick an intro variant. Uses explicit variant if given, else DEFAULT."""
-    if variant is not None:
-        return INTRO_VARIANTS[variant % len(INTRO_VARIANTS)]
-    return INTRO_VARIANTS[DEFAULT_INTRO_VARIANT]
+# Opening line. Several variants were A/B tested; this one is in production.
+INTRO = (
+    "Thinking of buying a {{ vehicle.brand_name }} {{ vehicle.spoken_name or vehicle.short_name }}? "
+    "{% if vehicle.data_confidence == 'verified' %}"
+    "Here's the complete ownership cost. "
+    "{% else %}"
+    "Here's the estimated ownership cost. "
+    "{% endif %}"
+    "Not just the showroom price. The total cost over five years."
+)
 
 
 NARRATIONS = {
     "en": {
-        "00-what-you-will-learn": INTRO_VARIANTS[DEFAULT_INTRO_VARIANT],
+        "00-what-you-will-learn": INTRO,
         "01-hook": (
             "{{ vehicle.net_5yr_display }} over five years. "
             "That's {{ vehicle.multiplier }} times the purchase price. "

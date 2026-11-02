@@ -16,5 +16,5 @@
     "lib": ["ES2020", "DOM"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/gallery"]
+  "exclude": ["node_modules", "dist", "src/gallery/vite.config.ts"]
 }

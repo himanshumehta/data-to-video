@@ -1,48 +1,12 @@
 """
-number_format.py — INR formatting and speech-friendly number conversion.
-
-Extracted from svg_render.py (fmt_inr_short, fmt_inr_full) and
-ownership_narrate.py (_indian_number_to_words, speech_friendly).
-Never import * from this module — always use named imports.
+number_format.py: turn rendered rupee figures into what the narrator should say.
 """
 
 import re
 
 
-def fmt_inr_short(v) -> str:
-    """Format number as short INR: 8.1L / 42K style."""
-    if v is None:
-        return "\u20b9 0"
-    v = float(v)
-    if v >= 100000:
-        return f"\u20b9 {v / 100000:.1f}L"
-    if v >= 1000:
-        return f"\u20b9 {v / 1000:.0f}K"
-    return f"\u20b9 {v:.0f}"
-
-
-def fmt_inr_full(v) -> str:
-    """Indian comma formatting: 1,23,456."""
-    if v is None:
-        return "\u20b9 0"
-    n = int(v)
-    neg = n < 0
-    n = abs(n)
-    s = str(n)
-    if len(s) <= 3:
-        return f"\u20b9 {'-' if neg else ''}{s}"
-    last3 = s[-3:]
-    rest = s[:-3]
-    parts = []
-    while rest:
-        parts.append(rest[-2:] if len(rest) >= 2 else rest)
-        rest = rest[:-2]
-    parts.reverse()
-    return f"\u20b9 {'-' if neg else ''}{','.join(parts)},{last3}"
-
-
 def _indian_number_to_words(num: int) -> str:
-    """Convert integer to spoken form that matches fmt_inr_short display.
+    """Convert integer to spoken form that matches the short figure on the slide.
 
     Mirrors the screen's rounding exactly so narration says the same number shown:
       ≥ 1 lakh  → "X.x lakh"   (matches ₹X.xL on screen)
@@ -84,19 +48,18 @@ def speech_friendly(text: str) -> str:
     return text.strip()
 
 
-def format_inr(amount) -> str:
-    """Format an amount in Indian digit grouping (e.g. 7,71,102)."""
-    if not amount:
-        return "0"
-    amount = int(amount)
-    if amount < 0:
-        return f"-{format_inr(-amount)}"
-    s = str(amount)
-    if len(s) <= 3:
-        return s
-    result = s[-3:]
-    s = s[:-3]
-    while s:
-        result = s[-2:] + "," + result
-        s = s[:-2]
-    return result
+# Model numbers as a narrator says them ("Classic 350" -> "Classic three fifty").
+_SPOKEN_MODEL_NUMBERS = {
+    "110": "one ten", "125": "one twenty five", "150": "one fifty",
+    "160": "one sixty", "180": "one eighty", "200": "two hundred",
+    "250": "two fifty", "300": "three hundred", "310": "three ten",
+    "350": "three fifty", "390": "three ninety", "400": "four hundred",
+    "450": "four fifty", "457": "four fifty seven", "500": "five hundred",
+    "650": "six fifty", "660": "six sixty", "750": "seven fifty",
+    "790": "seven ninety", "1290": "twelve ninety", "1390": "thirteen ninety",
+}
+
+
+def spoken_model_name(short_name: str) -> str:
+    """Replace known model numbers with their spoken form; other words are kept."""
+    return " ".join(_SPOKEN_MODEL_NUMBERS.get(w, w) for w in short_name.split())

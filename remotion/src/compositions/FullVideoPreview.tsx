@@ -2,17 +2,6 @@ import React from "react";
 import { AbsoluteFill, Audio, Series, Video, useVideoConfig } from "remotion";
 import { loadFont } from "@remotion/google-fonts/Inter";
 
-// Portrait slides (4:5)
-import { WhatYouWillLearnPortrait } from "../slides/portrait/WhatYouWillLearnPortrait";
-import { HookPortrait } from "../slides/portrait/HookPortrait";
-import { AnnualBreakdownPortrait } from "../slides/portrait/AnnualBreakdownPortrait";
-import { ServiceDeepDivePortrait } from "../slides/portrait/ServiceDeepDivePortrait";
-import { YearByYearPortrait } from "../slides/portrait/YearByYearPortrait";
-import { DepreciationPortrait } from "../slides/portrait/DepreciationPortrait";
-import { VsSegmentPortrait } from "../slides/portrait/VsSegmentPortrait";
-import { ReviewCtaPortrait } from "../slides/portrait/ReviewCtaPortrait";
-import { EndCardPortrait } from "../slides/portrait/EndCardPortrait";
-
 // Reels slides (9:16)
 import { WhatYouWillLearnReels } from "../slides/reels/WhatYouWillLearnReels";
 import { HookReels } from "../slides/reels/HookReels";
@@ -30,24 +19,14 @@ import { usePreloadImage } from "../utils/usePreloadImage";
 
 loadFont();
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/** Matches assemble.py: the reel opens with a 300 ms thumbnail frame. */
+const THUMBNAIL_FLASH_SEC = 0.3;
+
 interface SlideEntry {
   id: string;
   name: string;
-  component: React.FC<any>;
+  component: React.FC<PortraitSlideProps>;
 }
-
-export const PORTRAIT_SLIDES: SlideEntry[] = [
-  { id: "00-what-you-will-learn", name: "What You'll Learn", component: WhatYouWillLearnPortrait },
-  { id: "01-hook", name: "Hook", component: HookPortrait },
-  { id: "02-annual-breakdown", name: "Annual Breakdown", component: AnnualBreakdownPortrait },
-  { id: "03-service-deep-dive", name: "Service Deep Dive", component: ServiceDeepDivePortrait },
-  { id: "04-year-by-year", name: "Year by Year", component: YearByYearPortrait },
-  { id: "05-depreciation", name: "Depreciation", component: DepreciationPortrait },
-  { id: "07-vs-segment", name: "vs Segment", component: VsSegmentPortrait },
-  { id: "10-review-cta", name: "Review CTA", component: ReviewCtaPortrait },
-  { id: "11-end-card", name: "End Card", component: EndCardPortrait },
-];
 
 export const REELS_SLIDES: SlideEntry[] = [
   { id: "00-what-you-will-learn", name: "What You'll Learn", component: WhatYouWillLearnReels },
@@ -61,10 +40,7 @@ export const REELS_SLIDES: SlideEntry[] = [
   { id: "11-end-card", name: "End Card", component: EndCardReels },
 ];
 
-// Backward compat — Gallery narration timing uses this
-export const SLIDES = PORTRAIT_SLIDES;
-
-export interface FullVideoProps {
+export type FullVideoProps = {
   vehicle: Vehicle;
   slideDurations: Record<string, number>;
   defaultDuration: number;
@@ -75,9 +51,7 @@ export interface FullVideoProps {
   bgVideoSrc?: string;
   bgVideoOpacity?: number;
   narrationPaths?: Record<string, string>;
-  /** Which slide set to use — "portrait" (4:5) or "reels" (9:16) */
-  format?: "portrait" | "reels";
-}
+};
 
 export const FullVideoPreview: React.FC<FullVideoProps> = ({
   vehicle,
@@ -90,12 +64,11 @@ export const FullVideoPreview: React.FC<FullVideoProps> = ({
   bgVideoSrc,
   bgVideoOpacity = 0.2,
   narrationPaths = {},
-  format = "portrait",
 }) => {
   // Preload vehicle image so frame 0 (thumbnail) renders with image ready
   usePreloadImage(vehicle.primary_nobg_url);
   const { fps } = useVideoConfig();
-  const slideSet = format === "reels" ? REELS_SLIDES : PORTRAIT_SLIDES;
+  const slideSet = REELS_SLIDES;
 
   return (
     <AbsoluteFill style={{ fontFamily: "Inter, sans-serif" }}>
@@ -113,20 +86,17 @@ export const FullVideoPreview: React.FC<FullVideoProps> = ({
 
       {/* Sequenced slides — thumbnail flash + curated slides, with narration audio */}
       <Series>
-        {/* Thumbnail flash — 300ms at start (reels only) */}
-        {format === "reels" && (
-          <Series.Sequence durationInFrames={Math.ceil(0.3 * fps)}>
-            <ThumbnailReels
-              vehicle={vehicle}
-              theme={{ name: "default" } as PortraitSlideProps["theme"]}
-              durationSec={0.3}
-              contentMonthYear={contentMonthYear}
-              lang={lang}
-              slideNumber={0}
-              totalSlides={slideSet.length}
-            />
-          </Series.Sequence>
-        )}
+        {/* Thumbnail flash at the start, so frame 0 is the cover image */}
+        <Series.Sequence durationInFrames={Math.ceil(THUMBNAIL_FLASH_SEC * fps)}>
+          <ThumbnailReels
+            vehicle={vehicle}
+            durationSec={THUMBNAIL_FLASH_SEC}
+            contentMonthYear={contentMonthYear}
+            lang={lang}
+            slideNumber={0}
+            totalSlides={slideSet.length}
+          />
+        </Series.Sequence>
         {(() => {
           const hasEntries = Object.keys(slideDurations).length > 0;
           const activeSlides = slideSet.filter(
@@ -142,7 +112,6 @@ export const FullVideoPreview: React.FC<FullVideoProps> = ({
 
             const props: PortraitSlideProps = {
               vehicle,
-              theme: { name: "default" } as PortraitSlideProps["theme"],
               durationSec: durSec,
               contentMonthYear,
               lang,
@@ -175,14 +144,11 @@ export const FullVideoPreview: React.FC<FullVideoProps> = ({
 export function computeTotalFrames(
   slideDurations: Record<string, number>,
   defaultDuration: number,
-  fps: number,
-  format: "portrait" | "reels" = "portrait"
+  fps: number
 ): number {
-  const slideSet = format === "reels" ? REELS_SLIDES : PORTRAIT_SLIDES;
   const hasEntries = Object.keys(slideDurations).length > 0;
-  // 300ms thumbnail flash at start for reels
-  const thumbnailFrames = format === "reels" ? Math.ceil(0.3 * fps) : 0;
-  return slideSet
+  const thumbnailFrames = Math.ceil(THUMBNAIL_FLASH_SEC * fps);
+  return REELS_SLIDES
     .filter((slide) => !hasEntries || slideDurations[slide.id] != null)
     .reduce((total, slide) => {
       const dur = slideDurations[slide.id] ?? defaultDuration;

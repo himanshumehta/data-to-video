@@ -5,9 +5,12 @@ ownership_pipeline.py -- End-to-end pipeline for ownership-cost reels (9:16).
 Steps:
   1. preview  -- Load + validate vehicle data, write remotion/public/current-vehicle.json
   2. narrate  -- Narration script (templates, optional LLM reword/translate) + audio (narrate.py)
-  3. render   -- Render Remotion slides via remotion_render.py --batch
+  3. render   -- Render Remotion slides via remotion_render.py
   4. assemble -- Drift check, then assemble the final video via assemble.py
   5. publish  -- Hand the video to the social-publisher service (dry run unless --publish)
+
+Paid or networked calls are opt-in: Gemini TTS needs --tts gemini, the LLM
+reword needs --reword, and publishing needs --publish.
 
 Usage:
     # Zero credentials: pre-generated narration shipped in sample_data/
@@ -23,7 +26,6 @@ Usage:
 
 import argparse
 import json
-import os
 import subprocess
 import sys
 import wave
@@ -35,11 +37,15 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-
-from scripts.lib.vehicle_data import load_vehicle, output_dir
+from content_types.ownership_cost.assembly.instagram_reels import SLIDE_ORDER  # noqa: E402
+from scripts.lib.tts import load_env  # noqa: E402
+from scripts.lib.vehicle_data import cli_id, load_vehicle, output_dir, stage_image  # noqa: E402
 
 CONTENT_TYPE = "ownership-cost"
 PLATFORM = "instagram-reels"
+NARRATION_SPEED = 1.2          # ffmpeg atempo applied to TTS output
+DRIFT_WARN_SEC = 1.0           # slide clip vs narration length
+DRIFT_BLOCK_SEC = 2.0          # above this, assembly is refused
 
 
 # ---------------------------------------------------------------------------
@@ -88,18 +94,15 @@ def validate_vehicle(vehicle):
         print(f"  WARN: {w}")
 
     if errors:
-        print(f"\n  BLOCKED -- cannot produce content:")
+        print("\n  BLOCKED -- cannot produce content:")
         for e in errors:
             print(f"  ERROR: {e}")
         sys.exit(1)
 
-    slug = vehicle.get("slug", "?")
-    brand = vehicle.get("brand_name", "?")
-    name = vehicle.get("short_name", "?")
-    print(f"  Vehicle: {brand} {name} ({slug})")
-    print(f"  Net 5yr: {vehicle.get('net_5yr_display', 'N/A')}")
-    print(f"  NoBG:    {vehicle.get('primary_nobg_url', 'N/A')[:80]}")
-    print(f"  Validated OK")
+    print(f"  Vehicle: {vehicle['brand_name']} {vehicle['short_name']} ({vehicle['slug']})")
+    print(f"  Net 5yr: {vehicle['net_5yr_display']}")
+    print(f"  NoBG:    {vehicle['primary_nobg_url'][:80]}")
+    print("  Validated OK")
     return True
 
 
@@ -108,24 +111,24 @@ def validate_vehicle(vehicle):
 # ---------------------------------------------------------------------------
 
 def _wav_duration(path):
-    """Get WAV file duration in seconds."""
+    """Get WAV file duration in seconds (0.0 if unreadable)."""
     try:
         with wave.open(str(path), "rb") as wf:
             return wf.getnframes() / wf.getframerate()
-    except Exception:
+    except (OSError, EOFError, wave.Error):
         return 0.0
 
 
 def _mp4_duration(path):
-    """Get MP4 file duration in seconds via ffprobe."""
+    """Get MP4 file duration in seconds via ffprobe (0.0 if unreadable)."""
     try:
         result = subprocess.run(
             ["ffprobe", "-v", "error", "-show_entries", "format=duration",
              "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
-            capture_output=True, text=True,
+            capture_output=True, text=True, timeout=60,
         )
         return float(result.stdout.strip())
-    except Exception:
+    except (OSError, ValueError, subprocess.TimeoutExpired):
         return 0.0
 
 
@@ -155,41 +158,31 @@ def run_cmd(cmd, label, cwd=None, check=True):
 # Pipeline steps
 # ---------------------------------------------------------------------------
 
-def step_preview(vehicle, lang):
-    """Write vehicle data to remotion/public/current-vehicle.json for preview."""
-    import datetime
-    import decimal
-
-    def _json_default(o):
-        if isinstance(o, (datetime.datetime, datetime.date)):
-            return o.isoformat()
-        if isinstance(o, decimal.Decimal):
-            return float(o)
-        raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
-
+def step_preview(vehicle):
+    """Write vehicle data to remotion/public/current-vehicle.json for the live gallery."""
     public_dir = ROOT / "remotion" / "public"
     public_dir.mkdir(parents=True, exist_ok=True)
 
     vehicle_path = public_dir / "current-vehicle.json"
-    vehicle_path.write_text(json.dumps(vehicle, indent=2, default=_json_default, ensure_ascii=False))
+    vehicle_path.write_text(json.dumps(vehicle, indent=2, ensure_ascii=False))
     print(f"  Vehicle data written to {vehicle_path}")
-    from scripts.lib.vehicle_data import stage_image
     stage_image(vehicle)
 
-    print(f"\n  Optional live preview: cd remotion && npm run gallery  (http://localhost:5173)")
+    print("\n  Optional live preview: cd remotion && npm run gallery  (http://localhost:5173)")
     print(f"  Brand: {vehicle.get('brand_name', '?')}")
     print(f"  Name:  {vehicle.get('short_name', '?')}")
     print(f"  Net 5yr: {vehicle.get('net_5yr_display', 'N/A')}")
 
 
 def resolve_tts(slug, lang, tts):
-    """'auto' -> prebaked if sample narration exists, gemini if credentials exist, else silent."""
+    """'auto' -> prebaked if sample narration exists, else silent.
+
+    'auto' never picks Gemini, even when a key is set: paid calls are opt-in.
+    """
     if tts != "auto":
         return tts
     if (ROOT / "sample_data" / "narration" / slug / lang).is_dir():
         return "prebaked"
-    if os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_CLOUD_PROJECT"):
-        return "gemini"
     return "silent"
 
 
@@ -204,7 +197,7 @@ def step_narrate(vehicle, lang, tts="auto", reword=False, force=False):
         "--type", CONTENT_TYPE,
         "--platform", PLATFORM,
         "--lang", lang,
-        "--speed", "1.2",
+        "--speed", str(NARRATION_SPEED),
         "--tts", tts,
     ]
 
@@ -220,16 +213,14 @@ def step_narrate(vehicle, lang, tts="auto", reword=False, force=False):
 
 
 def step_render(vehicle, lang, scale=None):
-    """Render Remotion slides via remotion_render.py --batch."""
+    """Render Remotion slides via remotion_render.py."""
     slug = vehicle.get("slug", "unknown")
 
     cmd = [
         sys.executable, str(ROOT / "scripts" / "remotion_render.py"),
-        "--batch",
         "--slug", slug,
         "--type", CONTENT_TYPE,
         "--platform", PLATFORM,
-        "--theme", "default",
         "--lang", lang,
     ]
     if scale:
@@ -238,18 +229,15 @@ def step_render(vehicle, lang, scale=None):
     run_cmd(cmd, f"RENDER: {slug} [{lang}]")
 
 
-def step_assemble(vehicle, lang, force=False):
+def step_assemble(vehicle, lang):
     """Assemble final video via assemble.py, with drift validation first."""
     slug = vehicle.get("slug", "unknown")
     out_dir = get_output_dir(vehicle, lang)
     audio_dir = out_dir / "audio"
     slides_dir = out_dir / "slides"
 
-    # --- Drift validation (block assembly if slide MP4 vs WAV drift > 2s) ---
-    print(f"\n  Checking slide/narration drift...")
-
-    # Load slide order from assembly config
-    from content_types.ownership_cost.assembly.instagram_reels import SLIDE_ORDER
+    # --- Drift validation (block assembly if slide MP4 vs WAV drift is too large) ---
+    print("\n  Checking slide/narration drift...")
 
     drift_issues = []
     max_drift = 0.0
@@ -269,10 +257,10 @@ def step_assemble(vehicle, lang, force=False):
         slide_count += 1
 
         flag = ""
-        if drift > 2.0:
+        if drift > DRIFT_BLOCK_SEC:
             flag = " << BLOCKED"
             drift_issues.append(slide_id)
-        elif drift > 1.0:
+        elif drift > DRIFT_WARN_SEC:
             flag = " << WARNING"
 
         print(f"    {slide_id:35s} mp4={mp4_dur:.1f}s  wav={wav_dur:.1f}s  drift={drift:.1f}s{flag}")
@@ -284,13 +272,14 @@ def step_assemble(vehicle, lang, force=False):
         )
 
     if drift_issues:
-        print(f"\n  BLOCKED: {len(drift_issues)} slide(s) have drift > 2s: {', '.join(drift_issues)}")
+        print(f"\n  BLOCKED: {len(drift_issues)} slide(s) have drift > {DRIFT_BLOCK_SEC:g}s: "
+              f"{', '.join(drift_issues)}")
         print(f"  Max drift: {max_drift:.1f}s")
         print(f"  Re-render stale slides: python scripts/ownership_pipeline.py --slug {slug} --lang {lang} --step render")
         sys.exit(1)
 
-    if max_drift > 1.0:
-        print(f"\n  WARNING: max drift {max_drift:.1f}s (threshold 2s). Proceeding with assembly.")
+    if max_drift > DRIFT_WARN_SEC:
+        print(f"\n  WARNING: max drift {max_drift:.1f}s (threshold {DRIFT_BLOCK_SEC:g}s). Proceeding.")
     else:
         print(f"  Drift OK (max {max_drift:.1f}s, {slide_count} slides checked)")
 
@@ -333,15 +322,17 @@ def main():
     parser = argparse.ArgumentParser(
         description="Ownership cost reels pipeline (preview -> narrate -> render -> assemble)"
     )
-    parser.add_argument("--slug", required=True, help="Vehicle slug (see sample_data/vehicles/)")
-    parser.add_argument("--lang", default="en", help="Language code (en, hi, te, etc.)")
+    parser.add_argument("--slug", required=True, type=lambda v: cli_id(v, "slug"),
+                        help="Vehicle slug (see sample_data/vehicles/)")
+    parser.add_argument("--lang", default="en", type=lambda v: cli_id(v, "lang"),
+                        help="Language code (en, hi, te, etc.)")
     parser.add_argument(
         "--step", default="all",
         choices=["all", "preview", "narrate", "render", "assemble", "publish"],
         help="Run a specific step (default: all)",
     )
     parser.add_argument("--tts", default="auto", choices=["auto", "gemini", "prebaked", "silent"],
-                        help="Narration audio source (default: auto)")
+                        help="Narration audio source (default: auto = prebaked if shipped, else silent)")
     parser.add_argument("--reword", action="store_true",
                         help="EN only: LLM-reword the narration script (needs the `claude` CLI)")
     parser.add_argument("--scale", type=int, default=None,
@@ -351,15 +342,14 @@ def main():
     parser.add_argument("--force", action="store_true", help="Force regenerate narration")
     args = parser.parse_args()
 
-    from scripts.lib.tts import load_env
     load_env(ROOT / ".env")
 
-    print(f"\n  Ownership Cost Pipeline")
+    print("\n  Ownership Cost Pipeline")
     print(f"  Slug: {args.slug}")
     print(f"  Lang: {args.lang}")
     print(f"  Step: {args.step}")
     if args.force:
-        print(f"  Force: yes")
+        print("  Force: yes")
     print()
 
     # Load vehicle data
@@ -370,19 +360,19 @@ def main():
         validate_vehicle(vehicle)
 
     # Execute steps
-    if args.step == "preview" or args.step == "all":
-        step_preview(vehicle, args.lang)
+    if args.step in ("preview", "all"):
+        step_preview(vehicle)
 
-    if args.step == "narrate" or args.step == "all":
+    if args.step in ("narrate", "all"):
         step_narrate(vehicle, args.lang, tts=args.tts, reword=args.reword, force=args.force)
 
-    if args.step == "render" or args.step == "all":
+    if args.step in ("render", "all"):
         step_render(vehicle, args.lang, scale=args.scale)
 
-    if args.step == "assemble" or args.step == "all":
-        step_assemble(vehicle, args.lang, force=args.force)
+    if args.step in ("assemble", "all"):
+        step_assemble(vehicle, args.lang)
 
-    if args.step == "publish" or args.step == "all":
+    if args.step in ("publish", "all"):
         step_publish(vehicle, args.lang, send=args.publish)
 
     # Summary
@@ -390,7 +380,7 @@ def main():
         out_dir = get_output_dir(vehicle, args.lang)
         video = out_dir / "video.mp4"
         print(f"\n{'=' * 70}")
-        print(f"  PIPELINE COMPLETE")
+        print("  PIPELINE COMPLETE")
         print(f"{'=' * 70}")
         print(f"  Vehicle: {vehicle.get('brand_name', '?')} {vehicle.get('short_name', '?')}")
         print(f"  Lang:    {args.lang}")

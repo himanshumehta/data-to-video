@@ -1,57 +1,6 @@
 {
   "contentType": "ownership-cost",
 
-  "compositions": {
-    "00-what-you-will-learn": { "component": "WhatYouWillLearn", "defaultDuration": 7.0 },
-    "02-intro-hook":          { "component": "IntroHook",        "defaultDuration": 3.0 },
-    "04-annual-breakdown":    { "component": "AnnualBreakdown",  "defaultDuration": 3.0 },
-    "06-service-deep-dive":   { "component": "ServiceDeepDive",  "defaultDuration": 3.0 },
-    "07-insurance-breakdown": { "component": "InsuranceBreakdown","defaultDuration": 3.0 },
-    "11-major-overhauls":     { "component": "MajorOverhauls",   "defaultDuration": 3.0 },
-    "13-depreciation":        { "component": "Depreciation",     "defaultDuration": 3.0 },
-    "15-vs-segment":          { "component": "VsSegment",        "defaultDuration": 3.0 },
-    "17-verdict":             { "component": "Verdict",          "defaultDuration": 3.0 },
-    "17A-review-summary":     { "component": "ReviewSummary",    "defaultDuration": 3.0 },
-    "17B-review-cta":         { "component": "ReviewCta",        "defaultDuration": 3.0 },
-    "18-end-card":            { "component": "EndCard",          "defaultDuration": 3.0 }
-  },
-
-  "portraitCompositions": {
-    "00-what-you-will-learn": { "component": "WhatYouWillLearnPortrait", "defaultDuration": 5.0, "animationFrames": 60 },
-    "01-hook":                { "component": "HookPortrait",             "defaultDuration": 5.0, "animationFrames": 90 },
-    "02-annual-breakdown":    { "component": "AnnualBreakdownPortrait",  "defaultDuration": 5.0, "animationFrames": 80 },
-    "03-service-deep-dive":   { "component": "ServiceDeepDivePortrait",  "defaultDuration": 5.0, "animationFrames": 65 },
-    "04-year-by-year":        { "component": "YearByYearPortrait",       "defaultDuration": 5.0, "animationFrames": 70 },
-    "05-depreciation":        { "component": "DepreciationPortrait",     "defaultDuration": 5.0, "animationFrames": 65 },
-    "07-vs-segment":          { "component": "VsSegmentPortrait",        "defaultDuration": 5.0, "animationFrames": 65 },
-    "10-review-cta":          { "component": "ReviewCtaPortrait",        "defaultDuration": 5.0, "animationFrames": 65 },
-    "11-end-card":            { "component": "EndCardPortrait",          "defaultDuration": 5.0, "animationFrames": 50 }
-  },
-
-  "portraitCompositions-beast": {
-    "00-what-you-will-learn": { "component": "WhatYouWillLearnPortraitBeast", "defaultDuration": 5.0, "animationFrames": 72 },
-    "01-hook":                { "component": "HookPortraitBeast",             "defaultDuration": 5.0, "animationFrames": 108 },
-    "02-annual-breakdown":    { "component": "AnnualBreakdownPortraitBeast",  "defaultDuration": 5.0, "animationFrames": 96 },
-    "03-service-deep-dive":   { "component": "ServiceDeepDivePortraitBeast",  "defaultDuration": 5.0, "animationFrames": 78 },
-    "04-year-by-year":        { "component": "YearByYearPortraitBeast",       "defaultDuration": 5.0, "animationFrames": 84 },
-    "05-depreciation":        { "component": "DepreciationPortraitBeast",     "defaultDuration": 5.0, "animationFrames": 78 },
-    "07-vs-segment":          { "component": "VsSegmentPortraitBeast",        "defaultDuration": 5.0, "animationFrames": 78 },
-    "10-review-cta":          { "component": "ReviewCtaPortraitBeast",        "defaultDuration": 5.0, "animationFrames": 78 },
-    "11-end-card":            { "component": "EndCardPortraitBeast",          "defaultDuration": 5.0, "animationFrames": 60 }
-  },
-
-  "optionsCompositions": {
-    "option-a": { "component": "OptionA", "defaultDuration": 5.0, "animationFrames": 90 },
-    "option-b": { "component": "OptionB", "defaultDuration": 5.0, "animationFrames": 90 },
-    "option-c": { "component": "OptionC", "defaultDuration": 5.0, "animationFrames": 90 },
-    "option-d": { "component": "OptionD", "defaultDuration": 5.0, "animationFrames": 90 },
-    "option-e": { "component": "OptionE", "defaultDuration": 5.0, "animationFrames": 90 },
-    "option-f": { "component": "OptionF", "defaultDuration": 5.0, "animationFrames": 90 },
-    "option-g": { "component": "OptionG", "defaultDuration": 5.0, "animationFrames": 90 },
-    "option-h": { "component": "OptionH", "defaultDuration": 5.0, "animationFrames": 90 },
-    "option-i": { "component": "OptionI", "defaultDuration": 5.0, "animationFrames": 90 }
-  },
-
   "reelsCompositions": {
     "00-what-you-will-learn": { "component": "WhatYouWillLearnReels", "defaultDuration": 5.0, "animationFrames": 60 },
     "01-hook":                { "component": "HookReels",             "defaultDuration": 5.0, "animationFrames": 90 },
@@ -62,24 +11,14 @@
     "07-vs-segment":          { "component": "VsSegmentReels",        "defaultDuration": 5.0, "animationFrames": 65 },
     "10-review-cta":          { "component": "ReviewCtaReels",        "defaultDuration": 5.0, "animationFrames": 65 },
     "11-end-card":            { "component": "EndCardReels",          "defaultDuration": 5.0, "animationFrames": 50 },
-    "thumbnail":              { "component": "ThumbnailReels",       "defaultDuration": 1.0, "animationFrames": 0 }
+    "thumbnail":              { "component": "ThumbnailReels",        "defaultDuration": 1.0, "animationFrames": 0 }
   },
 
   "formats": {
-    "landscape":      { "width": 3840, "height": 2160, "fps": 60, "compositionSet": "compositions" },
-    "portrait-4x5":   { "width": 1080, "height": 1350, "fps": 30, "compositionSet": "portraitCompositions" },
-    "portrait-9x16":  { "width": 1080, "height": 1920, "fps": 30, "compositionSet": "reelsCompositions" },
-    "portrait-options": { "width": 1080, "height": 1920, "fps": 30, "compositionSet": "optionsCompositions" }
+    "portrait-9x16": { "width": 1080, "height": 1920, "fps": 30, "compositionSet": "reelsCompositions" }
   },
 
   "platforms": {
-    "youtube":           { "format": "landscape",     "maxDuration": null, "includeCTA": true },
-    "instagram-posts":   { "format": "portrait-4x5",  "maxDuration": null, "includeCTA": false },
-    "instagram-reels":   { "format": "portrait-9x16", "maxDuration": 90,   "includeCTA": false },
-    "youtube-shorts":    { "format": "portrait-9x16", "maxDuration": 180,  "includeCTA": false },
-    "facebook-posts":    { "format": "portrait-4x5",  "maxDuration": null, "includeCTA": false },
-    "facebook-reels":    { "format": "portrait-9x16", "maxDuration": 90,   "includeCTA": false },
-    "threads-posts":     { "format": "portrait-4x5",  "maxDuration": null, "includeCTA": false },
-    "threads-reels":     { "format": "portrait-9x16", "maxDuration": 90,   "includeCTA": false }
+    "instagram-reels": { "format": "portrait-9x16" }
   }
 }

@@ -1,8 +1,0 @@
-{# Progress dots — bottom center of every slide
-   Args: slide_number (int), total_slides (int)
-#}
-<div class="progress-dots">
-  {%- for i in range(1, total_slides + 1) %}
-  <div class="dot{% if i == slide_number %} active{% endif %}"></div>
-  {%- endfor %}
-</div>

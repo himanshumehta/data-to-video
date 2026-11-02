@@ -19,7 +19,7 @@
 
 import { bundle } from "@remotion/bundler";
 import { renderMedia, renderStill, selectComposition } from "@remotion/renderer";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import pLimit from "p-limit";
@@ -30,14 +30,25 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // ── Parse CLI args ──────────────────────────────────────────────────
 const args = process.argv.slice(2);
 const queuePath = args.find((a) => !a.startsWith("-")) || "render-queue.json";
-const concurrency = parseInt(
-  args.find((a) => a.startsWith("--concurrency="))?.split("=")[1] || "3"
+const concurrency = Number.parseInt(
+  args.find((a) => a.startsWith("--concurrency="))?.split("=")[1] || "3",
+  10
 );
+if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 16) {
+  console.error("--concurrency must be an integer between 1 and 16");
+  process.exit(1);
+}
 const resume = args.includes("--resume");
 const dryRun = args.includes("--dry-run");
 const testMode = args.includes("--test");
+const GL_BACKENDS = ["angle", "egl", "swangle", "swiftshader", "vulkan"];
 const glBackend =
   args.find((a) => a.startsWith("--gl="))?.split("=")[1] || "angle";
+if (!GL_BACKENDS.includes(glBackend)) {
+  console.error(`--gl must be one of: ${GL_BACKENDS.join(", ")}`);
+  process.exit(1);
+}
+const RENDER_MODES = ["still", "animation", "full"];
 
 // ── Load queue ──────────────────────────────────────────────────────
 if (!fs.existsSync(queuePath)) {
@@ -51,6 +62,19 @@ const queue = JSON.parse(fs.readFileSync(queuePath, "utf-8"));
 if (!Array.isArray(queue) || queue.length === 0) {
   console.error("Queue is empty or not an array");
   process.exit(1);
+}
+// The queue is written by remotion_render.py; reject anything malformed up front.
+for (const [i, j] of queue.entries()) {
+  const ok =
+    typeof j.compositionId === "string" &&
+    typeof j.outputPath === "string" &&
+    j.outputPath.endsWith(".mp4") &&
+    (j.propsPath === undefined || typeof j.propsPath === "string") &&
+    RENDER_MODES.includes(j.renderMode || "full");
+  if (!ok) {
+    console.error(`Queue job ${i} is malformed`);
+    process.exit(1);
+  }
 }
 
 // ── Resume: filter out jobs whose output already exists ─────────────
@@ -105,10 +129,14 @@ const batchStart = Date.now();
  * Extend a short video to target duration by cloning the last frame.
  * tpad + libx264 re-encodes the video (~1-2s overhead). Still faster
  * than rendering all frames in Remotion for static-after-animation slides.
+ * ffprobe/ffmpeg get argument arrays (no shell), so paths are never parsed
+ * as shell syntax.
  */
 function extendWithFfmpeg(inputPath, outputPath, targetDurationSec) {
-  const probe = execSync(
-    `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${inputPath}"`,
+  const probe = execFileSync(
+    "ffprobe",
+    ["-v", "error", "-show_entries", "format=duration",
+     "-of", "default=noprint_wrappers=1:nokey=1", inputPath],
     { encoding: "utf-8" }
   ).trim();
   const currentDuration = parseFloat(probe);
@@ -120,8 +148,11 @@ function extendWithFfmpeg(inputPath, outputPath, targetDurationSec) {
     return;
   }
 
-  execSync(
-    `ffmpeg -y -i "${inputPath}" -vf "tpad=stop_mode=clone:stop_duration=${padDuration.toFixed(2)}" -c:v libx264 -crf 12 -preset medium "${outputPath}"`,
+  execFileSync(
+    "ffmpeg",
+    ["-y", "-i", inputPath,
+     "-vf", `tpad=stop_mode=clone:stop_duration=${padDuration.toFixed(2)}`,
+     "-c:v", "libx264", "-crf", "12", "-preset", "medium", outputPath],
     { stdio: "pipe" }
   );
   // Clean up temp file

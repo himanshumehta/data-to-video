@@ -1,0 +1,20 @@
+# Tool configuration only; the pipeline is a set of scripts, not an installable package.
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+extend-exclude = ["remotion", "output"]
+
+[tool.ruff.lint]
+select = ["F", "E9", "ARG", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "remotion", "output"]
+# B404/B603/B607: running ffmpeg, ffprobe, node and the claude CLI is this pipeline's job.
+# Every call passes an argument list (never shell=True), and every path segment is
+# validated by scripts/lib/vehicle_data.safe_id() first. Tools are resolved on PATH on
+# purpose so system and Homebrew installs both work.
+skips = ["B404", "B603", "B607"]

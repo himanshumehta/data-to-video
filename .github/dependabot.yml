@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: npm
+    directory: "/remotion"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # Remotion refuses to run with mixed package versions: update them together.
+      remotion:
+        patterns: ["remotion", "@remotion/*"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly

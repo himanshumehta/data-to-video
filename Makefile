@@ -1,12 +1,15 @@
 # data-to-video — common tasks. Run `make help`.
-PYTHON ?= python3
+# Newest Python 3.11+ on PATH (Pillow 13 and the patched urllib3/requests need 3.11).
+PYTHON ?= $(shell for v in python3.14 python3.13 python3.12 python3.11 python3; do \
+            command -v $$v >/dev/null 2>&1 && $$v -c 'import sys; sys.exit(sys.version_info < (3, 11))' \
+            && { echo $$v; break; }; done)
 VENV   := .venv
 PY     := $(VENV)/bin/python
 SLUG   ?= royal-enfield-classic-350-2024
 LANG_  ?= en
 SCALE  ?= 1
 
-.PHONY: help setup demo demo-hi demo-silent test lint clean
+.PHONY: help setup demo demo-hi demo-silent test lint audit clean
 
 help:
 	@echo "make setup        Python venv + Remotion node modules"
@@ -14,8 +17,11 @@ help:
 	@echo "make demo-hi      same, Hindi narration"
 	@echo "make demo-silent  any sample vehicle with silent narration: make demo-silent SLUG=ktm-250-duke"
 	@echo "make test         offline unit tests"
+	@echo "make lint         ruff + TypeScript type-check"
+	@echo "make audit        dependency audits (pip-audit, npm audit) + bandit"
 
 setup:
+	@test -n "$(PYTHON)" || { echo "Python 3.11 or newer is required"; exit 1; }
 	$(PYTHON) -m venv $(VENV)
 	$(PY) -m pip install --quiet --upgrade pip
 	$(PY) -m pip install --quiet -r requirements-dev.txt
@@ -34,8 +40,13 @@ test:
 	$(PY) -m pytest -q
 
 lint:
-	$(PY) -m compileall -q scripts content_types tests
+	$(VENV)/bin/ruff check .
 	cd remotion && npx tsc --noEmit
+
+audit:
+	$(VENV)/bin/pip-audit -r requirements.txt -r requirements-tts.txt -r requirements-dev.txt
+	$(VENV)/bin/bandit -q -c pyproject.toml -r scripts content_types
+	cd remotion && npm audit --omit=dev --audit-level=high
 
 clean:
 	rm -rf output remotion/public/current-*.json remotion/public/vehicles

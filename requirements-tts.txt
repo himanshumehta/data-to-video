@@ -1,2 +1,2 @@
 # Optional: real narration audio via Gemini TTS (narrate.py --tts gemini)
-google-genai>=1.0
+google-genai>=1.47.0,<2

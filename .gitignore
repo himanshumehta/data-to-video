@@ -5,23 +5,19 @@ venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+.ruff_cache/
 
-# Secrets — only .env.example is tracked
+# Secrets: only .env.example is tracked
 .env
 .env.*
 !.env.example
 
 # Generated output (videos, audio, render queues, staged runtime files)
 output/
-remotion/output/
-preview/
 remotion/public/current-*.json
-remotion/public/gallery-config*.json
-remotion/public/narration/
 remotion/public/vehicles/
-remotion/public/bikes/
 
-# Media you bring yourself (music, intros, CTA clips) — not distributed
+# Media you bring yourself (music) - not distributed
 assets/
 
 # Video / large binaries anywhere except the README demo assets
@@ -30,14 +26,6 @@ assets/
 *.wav
 !docs/demo/**
 !remotion/public/click.wav
-
-# Model files
-*.onnx
-*.pt
-*.pth
-*.safetensors
-*.bin
-*.gguf
 
 # OS / editor
 .DS_Store

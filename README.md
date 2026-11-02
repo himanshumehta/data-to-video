@@ -134,7 +134,7 @@ The first render downloads Chrome Headless Shell for Remotion. A completed run p
 output/royal-enfield/royal-enfield-classic-350-2024/ownership_cost/default/instagram-reels/en/video.mp4
 ```
 
-Measured on an Apple M2 Max: the batch renderer produced the 10 slide jobs in 31.7 s, and the result is a 75.8 s, 1080×1920 H.264/AAC file of 6.6 MB with at most 0.1 s of drift between any slide and its narration.
+Measured in a fresh clone on an Apple M2 Max: `make demo` took 56 s end to end, 39 s of it rendering the 10 slide jobs (32–39 s across four runs). The result is a 75.8 s, 1080×1920 H.264/AAC file of 6.7 MB, with at most 0.1 s of drift between any slide and its narration.
 
 Other runs that need no credentials:
 

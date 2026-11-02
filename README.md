@@ -39,7 +39,7 @@ flowchart LR
   V --> R["Remotion batch render<br/>slide length = speech length"]
   R --> S["ffmpeg assemble<br/>drift gate, curation"]
   S --> P["publish.py<br/>dry run by default"]
-  P -- "--send" --> Q[("Publishing service<br/>Instagram, Facebook,<br/>Threads, YouTube Shorts")]
+  P -- "--send: one multipart upload<br/>+ Idempotency-Key" --> Q[("social-publisher<br/>admin review, then<br/>Instagram, Facebook,<br/>Threads, YouTube Shorts")]
 ```
 
 Each stage is a separate script you can run alone. `scripts/ownership_pipeline.py` runs them in order (`--step preview|narrate|render|assemble|publish`) and stops the run when a check fails.
@@ -55,7 +55,7 @@ Each stage is a separate script you can run alone. `scripts/ownership_pipeline.p
 | Batch renderer | Bundle once, render N slides in parallel, hold the last frame | `remotion/scripts/render-batch.mjs` |
 | Slides | Ten React components for the 9:16 reel | `remotion/src/slides/reels/` |
 | Assembler | Curate to the time limit, drift gate, ffmpeg filter graph, thumbnail | `scripts/assemble.py`, `scripts/lib/curate.py` |
-| Fan-out | One master → targets and languages per network | `config/platforms.json`, `scripts/publish.py` |
+| Fan-out and upload | One master → targets and languages per network → one upload to social-publisher | `config/platforms.json`, `scripts/publish.py` |
 | Content type | Templates, slide order, curation scores, Remotion registry | `content_types/ownership_cost/` |
 
 ## Design decisions and trade-offs
@@ -102,15 +102,15 @@ Trade-off: the full path needs more flags than the demo.
 - **Fallbacks.** No credentials: prebaked audio (when it ships) or silent clips timed from the word count (2.5 words/s). No English cache: per-language templates. Gemini 429: waits the `retryDelay` the API returns, up to 3 times.
 - **Determinism.** The same data and templates give the same script and the same curation. Only the LLM and TTS steps vary, and their output is cached per language.
 - **Cost and latency controls.** One TTS call per slide with a 25 s gap (free-tier quota), cached WAVs reused unless `--force`, one Remotion bundle shared by all slide renders, `--scale 1` for drafts.
-- **Human in the loop.** Publishing is a dry run that prints every payload until you pass `--send`. `npm run gallery` previews every slide with the current vehicle before a render.
+- **Human in the loop.** Publishing is a dry run that prints the request until you pass `--send`, and a sent video lands in social-publisher as a `pending_review` post that an admin must approve before anything goes out. `npm run gallery` previews every slide with the current vehicle before a render.
 - **Evals.** `tests/test_guard.py` runs the real retry-and-refuse loop against a fake `claude` executable that replays scripted answers: the known 2.51 → 2.69 drift, a URL, a banned phrase. It also runs the guard over the shipped sample scripts. On the prebaked Royal Enfield Classic 350 narration it flags 4 English slides (3 banned phrases, 1 "dot com") and 2 Hindi slides (year numbers said as words, "dot com"). That audio predates the guard, so `make demo` prints these as warnings and plays it as shipped.
 
 ## Reliability and operations
 
 - **Fail before you spend.** Missing required fields, a missing image, a missing WAV or more than 2 s of clip-to-narration drift each stop the run before the expensive step that would follow.
-- **Idempotency.** Existing WAVs are skipped unless `--force`. `remotion_render.py --resume` skips rendered clips. Every publish request carries an `Idempotency-Key` (SHA-256 of slug, content type, target, language and the video's own SHA-256), so a retried upload can be de-duplicated by the service.
+- **Idempotency.** Existing WAVs are skipped unless `--force`. `remotion_render.py --resume` skips rendered clips. Every upload carries an `Idempotency-Key` (SHA-256 of slug, content type, language, the sorted platform list and the video's own SHA-256). social-publisher stores it per API key owner: re-sending the same video returns the original post (`replayed, no new post`), and the same key with a changed description is refused with 409 instead of creating a second post.
 - **Staleness.** `narrate.py --check-staleness` compares the vehicle fields each slide's template uses with the snapshot saved at the last generation (`.narrate_state.json`) and lists stale slides.
-- **Partial failure.** A failed TTS slide is logged and the others continue. The render then refuses to start until every slide has audio. A failed publish target is reported and the others are still sent; the exit code is non-zero.
+- **Partial failure.** A failed TTS slide is logged and the others continue. The render then refuses to start until every slide has audio. A failed upload is reported with the exception type and message only, and the exit code is non-zero; re-running `--send` is safe because of the idempotency key.
 - **Observability.** Plain logs on stdout per stage. The batch renderer writes `output/_work/render-queue-results.json` with per-job status and seconds.
 
 ## Security
@@ -128,7 +128,7 @@ make setup   # .venv with the newest Python 3.11+ on PATH, then `npm ci` in remo
 make demo    # sample data -> prebaked English narration -> render -> MP4 -> publish dry run
 ```
 
-The first render downloads Chrome Headless Shell for Remotion. A completed run prints `PIPELINE COMPLETE` after a dry run of the 4 publish payloads. The video is written to:
+The first render downloads Chrome Headless Shell for Remotion. A completed run prints `PIPELINE COMPLETE` after a dry run of the one upload request (4 targets: Instagram, Facebook, Threads, YouTube). The video is written to:
 
 ```
 output/royal-enfield/royal-enfield-classic-350-2024/ownership_cost/default/instagram-reels/en/video.mp4
@@ -164,8 +164,8 @@ Every variable is optional. Copy `.env.example` to `.env`; the scripts read it, 
 | `GEMINI_API_KEY` | unset | Gemini TTS key, used only with `--tts gemini` |
 | `GOOGLE_CLOUD_PROJECT` / `GOOGLE_CLOUD_LOCATION` | unset / `us-central1` | Use Vertex AI for TTS instead of an API key (needs ADC) |
 | `GEMINI_TTS_MODEL` | `gemini-2.5-flash-preview-tts` | TTS model |
-| `SOCIAL_PUBLISHER_URL` | unset | Base URL of the publishing service; posts go to `$URL/v1/posts`. Must be https unless localhost |
-| `SOCIAL_PUBLISHER_TOKEN` | unset | Bearer token for that service, sent only with `--send` |
+| `SOCIAL_PUBLISHER_URL` | unset | Base URL of social-publisher; videos go to `$URL/api/v1/external/videos`. Must be https unless localhost |
+| `SOCIAL_PUBLISHER_TOKEN` | unset | social-publisher API key with the `posts:create` scope, sent only with `--send`, never printed |
 | `VEHICLE_DATA_DIR` | `sample_data/vehicles` | Folder of `<slug>.json` files |
 | `VEHICLE_IMAGE_DIR` | `sample_data/images` | Transparent vehicle PNGs |
 | `PREBAKED_NARRATION_DIR` | `sample_data/narration` | Pre-generated clips `<slug>/<lang>/<slide>.mp3` |
@@ -173,21 +173,52 @@ Every variable is optional. Copy `.env.example` to `.env`; the scripts read it, 
 | `BRAND_HASHTAG` | `#BikeNCars` | Hashtag in generated descriptions |
 | `VITE_PORT` | `5173` | Port for the slide gallery |
 
-Where each video goes is set in `config/platforms.json`: format → targets, and per target the network, accepted languages and time limit. Channel credentials live in the publishing service, not here.
+Where each video goes is set in `config/platforms.json`: format → targets, and per target the network (a social-publisher platform name; `x` maps to `twitter`), accepted languages, time limit and caption limit. Channel credentials live in the publishing service, not here.
+
+### Publishing to social-publisher
+
+`scripts/publish.py <output dir> --send` sends one request per video to [social-publisher](https://github.com/himanshumehta/social-publisher)'s `POST /api/v1/external/videos`:
+
+| Part / header | Content |
+|---|---|
+| `Authorization` | `Bearer $SOCIAL_PUBLISHER_TOKEN` |
+| `Idempotency-Key` | SHA-256 of slug, content type, language, sorted platforms and the video's SHA-256 |
+| `metadata` (sent first) | JSON: `title` (first line of `description.txt`), `description`, `target_platforms`, `platform_posts` (the description cut to each platform's `caption_max_chars`), `tags` (content type, slug, language) |
+| `video`, `thumbnail` | `video.mp4` (`video/mp4`) and `thumbnail.jpg` (`image/jpeg`, when present) |
+
+A 201 is a new post in `pending_review`; a 200 with `replayed` is the post from an earlier send; a 409 means the same video was sent before with different text. Redirects are refused, not followed, so the token is never replayed to another host. Against a local social-publisher (dry-run publishing):
+
+```bash
+# in social-publisher: create an API key owner, then mint a key (printed once)
+go run ./cmd/admin create-user -email pipeline@example.com -role creator < password.txt
+go run ./cmd/admin create-api-key -email pipeline@example.com -name data-to-video -scopes posts:create,posts:read
+# here:
+SOCIAL_PUBLISHER_URL=http://127.0.0.1:8081 SOCIAL_PUBLISHER_TOKEN=<key> \
+  .venv/bin/python scripts/publish.py output/royal-enfield/royal-enfield-classic-350-2024/ownership_cost/default/instagram-reels/en --send
+```
+
+Measured on fresh clones of both repos (IDs shortened); after an admin approved the post, social-publisher's worker logged one `would publish` line each for instagram, facebook, threads and youtube and the post reached `published`:
+
+```text
+  sent instagram,facebook,threads,youtube/en: post_id=b0bfaab5-… video_id=d2137099-… status=pending_review (new post)
+  sent instagram,facebook,threads,youtube/en: post_id=b0bfaab5-… video_id=d2137099-… status=published (replayed, no new post)
+```
+
+social-publisher's `scripts/e2e_data_to_video.sh` automates that whole run.
 
 ### Testing
 
 ```bash
-make test    # 64 offline tests, about 2 s
+make test    # 69 offline tests, 2 to 4 s
 make lint    # ruff + TypeScript type-check of slides and gallery
 make audit   # pip-audit, bandit, npm audit
 ```
 
 | File | Tests | Covers |
 |---|---|---|
-| `tests/test_pipeline.py` | 26 | Sample data completeness, every template renders for every vehicle in en and hi, curation respects the limit and story order, fan-out targets, registry ↔ component wiring |
+| `tests/test_pipeline.py` | 26 | Sample data completeness, every template renders for every vehicle in en and hi, curation respects the limit and story order, fan-out to one request with per-platform caption limits, registry ↔ component wiring |
 | `tests/test_guard.py` | 9 | Number extraction (Indian grouping, Devanagari, Telugu), the 2.51 → 2.69 case, URL detection, retry and refusal through a fake `claude`, CLI flags |
-| `tests/test_security.py` | 29 | Path traversal in slugs, vehicle files and image paths, output path validation, publisher URL rules, dry run sends nothing and prints no token |
+| `tests/test_security.py` | 34 | Path traversal in slugs, vehicle files and image paths, output path validation, publisher URL rules, dry run sends nothing and prints no token, the upload request (path, headers, metadata first, no redirects, timeouts), 409 and redirect handling, idempotency key, network → platform mapping |
 
 Rendering and ffmpeg assembly are covered by `make demo`, not by unit tests.
 
@@ -223,7 +254,7 @@ tests/
 - The prebaked sample narration predates the guard and contains "dot com" and banned phrases (see the warnings in the `make demo` log).
 - `--tts silent` sizes clips from word count. Use it for render tests, not for publishing.
 - The LLM step needs the Claude Code CLI. A direct API client with structured output would remove that dependency.
-- Publishing is a client for a separate service. This repo never calls social network APIs.
+- Publishing is a client for a separate service. This repo never calls social network APIs. social-publisher publishes ingested videos only in dry-run mode today; live delivery of an approved video post is that service's next step (see its Limitations).
 
 ## Licence
 

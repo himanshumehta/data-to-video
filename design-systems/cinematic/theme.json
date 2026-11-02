@@ -1,0 +1,455 @@
+{
+  "name": "cinematic",
+  "display_name": "BikeNCars Cinematic — Gold & Grey",
+  "schema_version": "2.0",
+  "version": "2.0",
+  "author": "bikencars",
+
+  "fonts": {
+    "display": "Bebas Neue",
+    "heading": "Space Grotesk",
+    "body": "Inter",
+    "mono": "SF Mono"
+  },
+
+  "colors": {
+    "surface": {
+      "1": "#0A0A0A",
+      "2": "#121212",
+      "3": "#1A1A1A",
+      "4": "#2A2A2A",
+      "5": "#3A3A3A"
+    },
+    "text": {
+      "1": "#F5F5F5",
+      "2": "#B0B0B0",
+      "3": "#808080",
+      "4": "#606060"
+    },
+    "brand": {
+      "primary": "#E8B800",
+      "secondary": "#8C8C8C",
+      "accent": "#E8B800",
+      "gold_light": "#FFD700",
+      "gold_dark": "#B8960C",
+      "gold_muted": "#8B7500",
+      "silver": "#C0C0C0",
+      "grey_light": "#D4D4D4",
+      "grey_dark": "#404040"
+    },
+    "semantic": {
+      "emerald": "#4ADE80",
+      "red": "#ef4444",
+      "blue": "#60A5FA",
+      "amber": "#FBBF24",
+      "violet": "#A78BFA",
+      "orange": "#FB923C"
+    }
+  },
+
+  "typography": {
+    "styles": {
+      "hero_title": {
+        "font_role": "display",
+        "weight": 400,
+        "size_pt": 108,
+        "line_height": 0.95,
+        "letter_spacing": 0.05,
+        "text_transform": "uppercase",
+        "color": "colors.brand.primary"
+      },
+      "title": {
+        "font_role": "display",
+        "weight": 400,
+        "size_pt": 80,
+        "line_height": 1.0,
+        "letter_spacing": 0.03,
+        "text_transform": "uppercase",
+        "color": "colors.text.1"
+      },
+      "subtitle": {
+        "font_role": "heading",
+        "weight": 500,
+        "size_pt": 44,
+        "line_height": 1.2,
+        "color": "colors.text.2"
+      },
+      "heading": {
+        "font_role": "heading",
+        "weight": 600,
+        "size_pt": 36,
+        "line_height": 1.3,
+        "color": "colors.text.1"
+      },
+      "body": {
+        "font_role": "body",
+        "weight": 400,
+        "size_pt": 28,
+        "line_height": 1.5,
+        "color": "colors.text.2"
+      },
+      "label": {
+        "font_role": "heading",
+        "weight": 500,
+        "size_pt": 22,
+        "line_height": 1.4,
+        "letter_spacing": 0.15,
+        "text_transform": "uppercase",
+        "color": "colors.brand.gold_muted"
+      },
+      "caption": {
+        "font_role": "body",
+        "weight": 400,
+        "size_pt": 18,
+        "line_height": 1.4,
+        "color": "colors.text.3"
+      },
+      "stat_value": {
+        "font_role": "display",
+        "weight": 400,
+        "size_pt": 64,
+        "line_height": 1.0,
+        "color": "colors.brand.primary"
+      },
+      "stat_label": {
+        "font_role": "heading",
+        "weight": 500,
+        "size_pt": 20,
+        "line_height": 1.3,
+        "letter_spacing": 0.12,
+        "text_transform": "uppercase",
+        "color": "colors.text.3"
+      }
+    }
+  },
+
+  "spacing": {
+    "1": 4,
+    "2": 8,
+    "3": 12,
+    "4": 16,
+    "5": 20,
+    "6": 24,
+    "7": 32,
+    "8": 40,
+    "9": 48,
+    "10": 64
+  },
+
+  "radius": {
+    "sm": 4,
+    "md": 8,
+    "lg": 12,
+    "xl": 16,
+    "full": 9999
+  },
+
+  "glass": {
+    "bg": "rgba(232,184,0,0.03)",
+    "border": "rgba(232,184,0,0.08)",
+    "bg_heavy": "rgba(232,184,0,0.06)",
+    "border_heavy": "rgba(232,184,0,0.12)"
+  },
+
+  "logo": {
+    "light": "assets/logos/bikencars-v2-light.svg",
+    "dark": "assets/logos/bikencars-v2-dark.svg",
+    "icon_only": "assets/logos/bikencars-icon.svg",
+    "default_variant": "light",
+    "placement": {
+      "anchor": "top-left",
+      "position": { "x": 0.04, "y": 0.03 },
+      "size": { "w": 0.15, "h": null }
+    },
+    "glow": {
+      "enabled": true,
+      "color": "rgba(232,184,0,0.20)",
+      "radius": 50
+    }
+  },
+
+  "cards": {
+    "glass": {
+      "background": "rgba(232,184,0,0.04)",
+      "border": "rgba(232,184,0,0.10)",
+      "border_radius": 12,
+      "padding": 20
+    },
+    "elevated": {
+      "background": "rgba(255,255,255,0.06)",
+      "border": "rgba(232,184,0,0.15)",
+      "border_radius": 12,
+      "padding": 24
+    },
+    "stat_pill": {
+      "background": "rgba(232,184,0,0.05)",
+      "border": "rgba(232,184,0,0.10)",
+      "border_radius": 50,
+      "padding": 16
+    }
+  },
+
+  "watermark": {
+    "text": "bikencars.com",
+    "opacity": 0.12,
+    "position": "bottom-right",
+    "font_size": 16,
+    "font_weight": 500,
+    "color": "rgba(232,184,0,0.25)",
+    "letter_spacing": 0.15
+  },
+
+  "slide_chrome": {
+    "slide_number": {
+      "position": "top-right",
+      "font_size": 28,
+      "font_weight": 500,
+      "current_color": "rgba(232,184,0,0.5)",
+      "total_color": "rgba(255,255,255,0.2)",
+      "format": "{current} / {total}"
+    },
+    "progress_dots": {
+      "position": "bottom-center",
+      "dot_size": 10,
+      "gap": 14,
+      "active_color": "#E8B800",
+      "inactive_color": "#2A2A2A",
+      "glow_enabled": true
+    }
+  },
+
+  "backgrounds": {
+    "default": {
+      "kind": "gradient",
+      "colors": ["#0A0A0A", "#111111"],
+      "angle_deg": 160
+    },
+    "hero": {
+      "kind": "gradient",
+      "colors": ["#0A0A0A", "#1A1508"],
+      "angle_deg": 145,
+      "glows": [
+        {
+          "color": "rgba(232,184,0,0.05)",
+          "position": "top-center",
+          "size": "80% 50%",
+          "opacity": 0.05
+        },
+        {
+          "color": "rgba(232,184,0,0.03)",
+          "position": "bottom-right",
+          "size": "50% 40%",
+          "opacity": 0.03
+        }
+      ]
+    },
+    "verdict": {
+      "kind": "gradient",
+      "colors": ["#0A0A0A", "#1A1508"],
+      "angle_deg": 180
+    },
+    "solid_surface": {
+      "kind": "solid",
+      "colors": ["#0A0A0A"]
+    }
+  },
+
+  "shadows": {
+    "vehicle": {
+      "offset_x": 0,
+      "offset_y": 0,
+      "blur": 50,
+      "color": "rgba(0,0,0,0.6)"
+    },
+    "element": {
+      "offset_x": 0,
+      "offset_y": 10,
+      "blur": 30,
+      "color": "rgba(0,0,0,0.5)"
+    },
+    "glow_text": {
+      "offset_x": 0,
+      "offset_y": 0,
+      "blur": 25,
+      "color": "rgba(232,184,0,0.3)"
+    },
+    "gold_glow": {
+      "offset_x": 0,
+      "offset_y": 0,
+      "blur": 40,
+      "color": "rgba(232,184,0,0.15)"
+    },
+    "cinematic": {
+      "offset_x": 0,
+      "offset_y": 12,
+      "blur": 60,
+      "color": "rgba(0,0,0,0.7)"
+    }
+  },
+
+  "text_effects": {
+    "gradient_fill": {
+      "hero_name": {
+        "colors": ["#FFD700", "#E8B800", "#B8960C"],
+        "angle_deg": 180
+      },
+      "gold_accent": {
+        "colors": ["#E8B800", "#FFD700"],
+        "angle_deg": 135
+      }
+    }
+  },
+
+  "glows": {
+    "gold_top": {
+      "color": "rgba(232,184,0,0.04)",
+      "position": "top-center",
+      "size": "80% 50%",
+      "opacity": 0.04
+    },
+    "gold_center": {
+      "color": "rgba(232,184,0,0.03)",
+      "position": "center",
+      "size": "60% 60%",
+      "opacity": 0.03
+    },
+    "gold_subtle": {
+      "color": "rgba(232,184,0,0.02)",
+      "position": "bottom-center",
+      "size": "50% 30%",
+      "opacity": 0.02
+    }
+  },
+
+  "safe_zones": {
+    "igReels": { "top": 0.12, "bottom": 0.08, "left": 0.04, "right": 0.04 },
+    "tiktok": { "top": 0.12, "bottom": 0.12, "left": 0.04, "right": 0.04 },
+    "ytShorts": { "top": 0.10, "bottom": 0.10, "left": 0.04, "right": 0.04 },
+    "fbReels": { "top": 0.10, "bottom": 0.08, "left": 0.04, "right": 0.04 },
+    "stories": { "top": 0.14, "bottom": 0.10, "left": 0.04, "right": 0.04 },
+    "ytLong": { "top": 0.02, "bottom": 0.02, "left": 0.04, "right": 0.04 },
+    "igCarousel": { "top": 0.02, "bottom": 0.04, "left": 0.04, "right": 0.04 }
+  },
+
+  "animations": {
+    "slide_enter": {
+      "type": "fade-in",
+      "duration_ms": 600,
+      "easing": "ease-out"
+    },
+    "slide_exit": {
+      "type": "fade-out",
+      "duration_ms": 400,
+      "easing": "ease-in"
+    },
+    "text_enter": {
+      "type": "slide-up",
+      "duration_ms": 600,
+      "easing": "ease-out"
+    },
+    "image_motion": {
+      "type": "ken-burns",
+      "duration_ms": 6000,
+      "easing": "linear",
+      "params": {
+        "scale_start": 1.0,
+        "scale_end": 1.08
+      }
+    }
+  },
+
+  "data_viz": {
+    "rating_ring": {
+      "ring_width": 10,
+      "gradient_colors": ["#E8B800", "#FFD700"],
+      "track_color": "rgba(232,184,0,0.08)",
+      "label_style": "stat_value",
+      "show_label": true
+    },
+    "comparison_bar": {
+      "bar_height": 20,
+      "bar_radius": 8,
+      "active_color": "#E8B800",
+      "rival_color": "#8C8C8C",
+      "track_color": "#1A1A1A"
+    },
+    "stat_counter": {
+      "value_style": "stat_value",
+      "label_style": "stat_label",
+      "animation_duration_ms": 1000
+    }
+  },
+
+  "components": {
+    "spec_box": {
+      "bg": "colors.surface.3",
+      "border": "colors.brand.gold_muted",
+      "radius": "radius.md",
+      "padding": "spacing.5"
+    },
+    "badge_tag": {
+      "bg": "rgba(232,184,0,0.12)",
+      "text_color": "colors.brand.primary",
+      "radius": "radius.full",
+      "padding_x": "spacing.4",
+      "padding_y": "spacing.2"
+    },
+    "bar_chart": {
+      "track_bg": "colors.surface.3",
+      "fill_color": "colors.brand.primary",
+      "height": "20",
+      "radius": "radius.sm"
+    },
+    "pro_con_item": {
+      "pro_color": "colors.semantic.emerald",
+      "con_color": "colors.semantic.red",
+      "border_width": "3"
+    },
+    "rating_circle": {
+      "size": "120",
+      "ring_width": "10",
+      "track_color": "colors.surface.4"
+    },
+    "vs_divider": {
+      "color": "colors.brand.gold_muted",
+      "width": "2",
+      "label_bg": "colors.surface.3"
+    },
+    "color_swatch": {
+      "size": "72",
+      "border_color": "colors.brand.gold_dark",
+      "border_width": "2"
+    },
+    "comparison_row": {
+      "height": "52",
+      "divider_color": "colors.surface.4"
+    },
+    "glass_card": {
+      "bg": "glass.bg",
+      "border": "glass.border",
+      "radius": "radius.lg",
+      "padding": "spacing.6"
+    }
+  },
+
+  "score_colors": {
+    "thresholds": [
+      { "min": 0, "max": 3.9, "color": "#ef4444" },
+      { "min": 4.0, "max": 5.9, "color": "#FBBF24" },
+      { "min": 6.0, "max": 7.4, "color": "#60A5FA" },
+      { "min": 7.5, "max": 8.9, "color": "#E8B800" },
+      { "min": 9.0, "max": 10.0, "color": "#FFD700" }
+    ]
+  },
+
+  "section_colors": {
+    "hero": "#0A0A0A",
+    "performance": "#121008",
+    "pros": "#0A1A0A",
+    "cons": "#1A0A0A",
+    "competition": "#0F0F1A",
+    "owners": "#1A1508",
+    "variants": "#0F0A1A",
+    "verdict": "#1A1508"
+  }
+}

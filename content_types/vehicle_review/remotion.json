@@ -1,0 +1,42 @@
+{
+  "contentType": "vehicle-review",
+
+  "portraitCompositions": {
+    "00-score-card":   { "component": "ReviewScoreCardPortrait",   "defaultDuration": 6.0, "animationFrames": 80 },
+    "01-performance":  { "component": "ReviewPerformancePortrait", "defaultDuration": 5.0, "animationFrames": 70 },
+    "02-safety":       { "component": "ReviewSafetyPortrait",      "defaultDuration": 5.0, "animationFrames": 65 },
+    "03-owner-voice":  { "component": "ReviewOwnerVoicePortrait",  "defaultDuration": 6.0, "animationFrames": 75 },
+    "04-cost-reality": { "component": "ReviewCostRealityPortrait", "defaultDuration": 5.0, "animationFrames": 70 },
+    "05-known-issues": { "component": "ReviewKnownIssuesPortrait", "defaultDuration": 4.0, "animationFrames": 60 },
+    "06-head-to-head": { "component": "ReviewHeadToHeadPortrait",  "defaultDuration": 5.0, "animationFrames": 75 },
+    "07-pros-cons":    { "component": "ReviewProsConsPortrait",    "defaultDuration": 5.0, "animationFrames": 65 },
+    "08-verdict":      { "component": "ReviewBuySkipPortrait",     "defaultDuration": 6.0, "animationFrames": 80 }
+  },
+
+  "reelsCompositions": {
+    "00-score-card":   { "component": "ReviewScoreCardReels",   "defaultDuration": 6.0, "animationFrames": 80 },
+    "01-performance":  { "component": "ReviewPerformanceReels", "defaultDuration": 5.0, "animationFrames": 70 },
+    "02-safety":       { "component": "ReviewSafetyReels",      "defaultDuration": 5.0, "animationFrames": 65 },
+    "03-owner-voice":  { "component": "ReviewOwnerVoiceReels",  "defaultDuration": 6.0, "animationFrames": 75 },
+    "04-cost-reality": { "component": "ReviewCostRealityReels", "defaultDuration": 5.0, "animationFrames": 70 },
+    "05-known-issues": { "component": "ReviewKnownIssuesReels", "defaultDuration": 4.0, "animationFrames": 60 },
+    "06-head-to-head": { "component": "ReviewHeadToHeadReels",  "defaultDuration": 5.0, "animationFrames": 75 },
+    "07-pros-cons":    { "component": "ReviewProsConsReels",    "defaultDuration": 5.0, "animationFrames": 65 },
+    "08-verdict":      { "component": "ReviewBuySkipReels",     "defaultDuration": 6.0, "animationFrames": 80 }
+  },
+
+  "formats": {
+    "portrait-4x5":  { "width": 1080, "height": 1350, "fps": 30, "compositionSet": "portraitCompositions" },
+    "portrait-9x16": { "width": 1080, "height": 1920, "fps": 30, "compositionSet": "reelsCompositions" }
+  },
+
+  "platforms": {
+    "instagram-posts": { "format": "portrait-4x5",  "maxDuration": null, "includeCTA": false },
+    "instagram-reels": { "format": "portrait-9x16", "maxDuration": 90,   "includeCTA": false },
+    "youtube-shorts":  { "format": "portrait-9x16", "maxDuration": 180,  "includeCTA": false },
+    "facebook-posts":  { "format": "portrait-4x5",  "maxDuration": null, "includeCTA": false },
+    "facebook-reels":  { "format": "portrait-9x16", "maxDuration": 90,   "includeCTA": false },
+    "threads-posts":   { "format": "portrait-4x5",  "maxDuration": null, "includeCTA": false },
+    "threads-reels":   { "format": "portrait-9x16", "maxDuration": 90,   "includeCTA": false }
+  }
+}

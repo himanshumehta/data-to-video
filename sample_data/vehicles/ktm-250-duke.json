@@ -1,0 +1,692 @@
+{
+  "slug": "ktm-250-duke",
+  "name": "250 Duke",
+  "short_name": "250 Duke",
+  "brand_name": "KTM",
+  "brand_slug": "ktm",
+  "manufacturer_slug": "ktm",
+  "type": "motorcycle",
+  "vehicle_type": "motorcycle",
+  "year": 2023,
+  "variant": "Standard",
+  "fuel_type": "petrol",
+  "engine_type": "1 Cylinder, Liquid Cooled, 4 Valves",
+  "engine_cc": 249,
+  "power_hp": 30.57,
+  "torque_nm": 25.0,
+  "weight_kg": 162.8,
+  "top_speed_kmph": 148.0,
+  "acceleration_0_100": null,
+  "mileage_mixed": 35.66,
+  "mileage_display": "N/A kmpl",
+  "is_turbo": false,
+  "power_to_weight": null,
+  "summary": "Gen-3 naked streetfighter with 31 PS power, quickshifter+, 5-inch TFT display, and premium features.",
+  "best_for": "Premium bike enthusiasts seeking the best value for money in the premium 249cc motorcycle segment",
+  "expert_rating": 7.5,
+  "expert_breakdown": {
+    "Value": 8.7,
+    "Design": 7.1,
+    "Quality": 7.3,
+    "Features": 6.9,
+    "Ownership": 7.9,
+    "Performance": 6.3
+  },
+  "rating_breakdown": [
+    {
+      "name": "Value",
+      "score": 8.7
+    },
+    {
+      "name": "Design",
+      "score": 7.1
+    },
+    {
+      "name": "Quality",
+      "score": 7.3
+    },
+    {
+      "name": "Features",
+      "score": 6.9
+    },
+    {
+      "name": "Ownership",
+      "score": 7.9
+    },
+    {
+      "name": "Performance",
+      "score": 6.3
+    }
+  ],
+  "rating_color": "#f59e0b",
+  "pros": [
+    "Gen-3 design looks significantly more expensive than it costs",
+    "Excellent build quality with solid fit and finish throughout the KTM 250 Duke",
+    "Cornering-sensitive LED headlamp sets the safety benchmark",
+    "Quickshifter+ and TFT display are genuine segment-firsts at this price",
+    "WP APEX suspension delivers real performance handling credentials",
+    "31 PS engine is refined and delivers strong mid-range pull"
+  ],
+  "cons": [
+    "High service costs and KTM-only synthetic oil requirement inflate ownership bills",
+    "No traction control at this price when competitors are adding electronic aids",
+    "Firm suspension and engine heat make bumper-to-bumper traffic genuinely uncomfortable",
+    "Pillion seat is practically unusable for anything beyond a 15-minute ride"
+  ],
+  "price_ex_showroom": 213970,
+  "price_display": "2,13,970",
+  "price_formatted": "₹ 2,13,970",
+  "price_max_variant": 213970,
+  "price_on_road": 257537,
+  "price_on_road_formatted": "₹ 2,57,537",
+  "onroad_road_tax": 24293,
+  "onroad_registration": 1000,
+  "onroad_insurance": 15274,
+  "total_cost_5yr": 335412,
+  "total_cost_5yr_display": "₹ 3,35,412",
+  "net_5yr": 521684,
+  "net_5yr_display": "₹ 5,21,684",
+  "multiplier": 2.44,
+  "total_cost_10yr": 736314,
+  "total_cost_10yr_display": "₹ 7,36,314",
+  "net_10yr": 950284,
+  "net_10yr_display": "₹ 9,50,284",
+  "total_cost_15yr": 1411795,
+  "net_15yr": 1625765,
+  "net_15yr_display": "₹ 16,25,765",
+  "total_cost_20yr": 2339591,
+  "net_20yr": 2553561,
+  "net_20yr_display": "₹ 25,53,561",
+  "cost_per_km": 6.32,
+  "cost_per_km_display": "₹ 6.32",
+  "cost_per_day": 173.18,
+  "cost_per_day_display": "₹ 173",
+  "monthly_cost": 5195,
+  "monthly_cost_display": "₹ 5,195",
+  "annual_fuel": 30286,
+  "annual_fuel_display": "₹ 30,286",
+  "annual_service": 10000,
+  "annual_service_display": "₹ 10,000",
+  "annual_insurance": 14204,
+  "annual_insurance_display": "₹ 14,204",
+  "annual_tyres": 0,
+  "annual_tyres_display": "₹ 0",
+  "annual_total": 54490,
+  "annual_total_display": "₹ 54,490",
+  "fuel_pct": 56,
+  "first_5_years": [
+    {
+      "fuel": 30286,
+      "year": 1,
+      "total": 54490,
+      "tyres": 0,
+      "service": 10000,
+      "insurance": 14204,
+      "overhauls": 0
+    },
+    {
+      "fuel": 32708,
+      "year": 2,
+      "total": 63070,
+      "tyres": 8025,
+      "service": 10700,
+      "insurance": 11637,
+      "overhauls": 0
+    },
+    {
+      "fuel": 35325,
+      "year": 3,
+      "total": 56485,
+      "tyres": 0,
+      "service": 11449,
+      "insurance": 9711,
+      "overhauls": 0
+    },
+    {
+      "fuel": 38151,
+      "year": 4,
+      "total": 71671,
+      "tyres": 9187,
+      "service": 12250,
+      "insurance": 8427,
+      "overhauls": 3656,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 41203,
+      "year": 5,
+      "total": 66932,
+      "tyres": 0,
+      "service": 13107,
+      "insurance": 7143,
+      "overhauls": 5479,
+      "overhaul_items": [
+        "clutch_plate"
+      ]
+    }
+  ],
+  "yearly_breakdown": [
+    {
+      "fuel": 30286,
+      "year": 1,
+      "total": 54490,
+      "tyres": 0,
+      "service": 10000,
+      "insurance": 14204,
+      "overhauls": 0
+    },
+    {
+      "fuel": 32708,
+      "year": 2,
+      "total": 63070,
+      "tyres": 8025,
+      "service": 10700,
+      "insurance": 11637,
+      "overhauls": 0
+    },
+    {
+      "fuel": 35325,
+      "year": 3,
+      "total": 56485,
+      "tyres": 0,
+      "service": 11449,
+      "insurance": 9711,
+      "overhauls": 0
+    },
+    {
+      "fuel": 38151,
+      "year": 4,
+      "total": 71671,
+      "tyres": 9187,
+      "service": 12250,
+      "insurance": 8427,
+      "overhauls": 3656,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 41203,
+      "year": 5,
+      "total": 66932,
+      "tyres": 0,
+      "service": 13107,
+      "insurance": 7143,
+      "overhauls": 5479,
+      "overhaul_items": [
+        "clutch_plate"
+      ]
+    },
+    {
+      "fuel": 44500,
+      "year": 6,
+      "total": 71111,
+      "tyres": 10519,
+      "service": 14726,
+      "insurance": 1366,
+      "overhauls": 0
+    },
+    {
+      "fuel": 48060,
+      "year": 7,
+      "total": 76688,
+      "tyres": 0,
+      "service": 16508,
+      "insurance": 1366,
+      "overhauls": 10754,
+      "overhaul_items": [
+        "suspension_rebuild"
+      ]
+    },
+    {
+      "fuel": 51904,
+      "year": 8,
+      "total": 88572,
+      "tyres": 12043,
+      "service": 18466,
+      "insurance": 1366,
+      "overhauls": 4793,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 56057,
+      "year": 9,
+      "total": 107342,
+      "tyres": 12886,
+      "service": 20618,
+      "insurance": 1366,
+      "overhauls": 16415,
+      "overhaul_items": [
+        "engine_top_overhaul"
+      ]
+    },
+    {
+      "fuel": 60541,
+      "year": 10,
+      "total": 84887,
+      "tyres": 0,
+      "service": 22980,
+      "insurance": 1366,
+      "overhauls": 0
+    },
+    {
+      "fuel": 65385,
+      "year": 11,
+      "total": 118821,
+      "tyres": 14753,
+      "service": 25572,
+      "insurance": 1366,
+      "overhauls": 11745,
+      "overhaul_items": [
+        "electrical_system"
+      ]
+    },
+    {
+      "fuel": 70616,
+      "year": 12,
+      "total": 106679,
+      "tyres": 0,
+      "service": 28415,
+      "insurance": 1366,
+      "overhauls": 6282,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 76265,
+      "year": 13,
+      "total": 174469,
+      "tyres": 16891,
+      "service": 31530,
+      "insurance": 1366,
+      "overhauls": 48417,
+      "overhaul_items": [
+        "engine_full_rebuild"
+      ]
+    },
+    {
+      "fuel": 82366,
+      "year": 14,
+      "total": 118674,
+      "tyres": 0,
+      "service": 34942,
+      "insurance": 1366,
+      "overhauls": 0
+    },
+    {
+      "fuel": 88955,
+      "year": 15,
+      "total": 156838,
+      "tyres": 19339,
+      "service": 38678,
+      "insurance": 1366,
+      "overhauls": 0,
+      "fitness_certificate": 500,
+      "rto_re_registration": 8000
+    },
+    {
+      "fuel": 96072,
+      "year": 16,
+      "total": 148937,
+      "tyres": 0,
+      "service": 42764,
+      "insurance": 1366,
+      "overhauls": 8235,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ],
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 103758,
+      "year": 17,
+      "total": 174999,
+      "tyres": 22141,
+      "service": 47234,
+      "insurance": 1366,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 112058,
+      "year": 18,
+      "total": 189735,
+      "tyres": 23691,
+      "service": 52120,
+      "insurance": 1366,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 121023,
+      "year": 19,
+      "total": 180347,
+      "tyres": 0,
+      "service": 57458,
+      "insurance": 1366,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 130705,
+      "year": 20,
+      "total": 233778,
+      "tyres": 27123,
+      "service": 63289,
+      "insurance": 1366,
+      "overhauls": 10795,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ],
+      "fitness_certificate": 500
+    }
+  ],
+  "overhauls": [
+    {
+      "cost": 4180,
+      "year": 5,
+      "component": "clutch_plate"
+    },
+    {
+      "cost": 2985,
+      "year": 4,
+      "component": "chain_sprocket_set",
+      "repeat_every": 4
+    },
+    {
+      "cost": 7166,
+      "year": 7,
+      "component": "suspension_rebuild"
+    },
+    {
+      "cost": 9554,
+      "year": 9,
+      "component": "engine_top_overhaul"
+    },
+    {
+      "cost": 5971,
+      "year": 11,
+      "component": "electrical_system"
+    },
+    {
+      "cost": 21498,
+      "year": 13,
+      "component": "engine_full_rebuild"
+    }
+  ],
+  "depreciation_curve": [
+    {
+      "age_years": 1,
+      "km_assumed": 10000,
+      "retention_pct": 84.5,
+      "estimated_price": 180804
+    },
+    {
+      "age_years": 2,
+      "km_assumed": 20000,
+      "retention_pct": 70.0,
+      "estimated_price": 149779
+    },
+    {
+      "age_years": 3,
+      "km_assumed": 30000,
+      "retention_pct": 59.7,
+      "estimated_price": 127740
+    },
+    {
+      "age_years": 5,
+      "km_assumed": 50000,
+      "retention_pct": 43.3,
+      "estimated_price": 92649
+    },
+    {
+      "age_years": 7,
+      "km_assumed": 70000,
+      "retention_pct": 30.9,
+      "estimated_price": 66116
+    },
+    {
+      "age_years": 10,
+      "km_assumed": 100000,
+      "retention_pct": 20.6,
+      "estimated_price": 44077
+    },
+    {
+      "age_years": 12,
+      "km_assumed": 120000,
+      "retention_pct": 14.4,
+      "estimated_price": 30811
+    },
+    {
+      "notes": "Registration renewal required; green tax applies",
+      "age_years": 15,
+      "km_assumed": 150000,
+      "rto_expired": true,
+      "retention_pct": 8.2,
+      "estimated_price": 17545,
+      "green_tax_applicable": true
+    }
+  ],
+  "resale_rating": "good",
+  "first_year_dep": 15.5,
+  "first_year_dep_amount": 33165,
+  "dep_milestones": [
+    {
+      "year": 1,
+      "value": 180804,
+      "value_display": "₹ 1,80,804",
+      "retention_pct": 84.5,
+      "loss_pct": 16
+    },
+    {
+      "year": 3,
+      "value": 127740,
+      "value_display": "₹ 1,27,740",
+      "retention_pct": 59.7,
+      "loss_pct": 40
+    },
+    {
+      "year": 5,
+      "value": 92649,
+      "value_display": "₹ 92,649",
+      "retention_pct": 43.3,
+      "loss_pct": 57
+    },
+    {
+      "year": 10,
+      "value": 44077,
+      "value_display": "₹ 44,077",
+      "retention_pct": 20.6,
+      "loss_pct": 79
+    },
+    {
+      "year": 15,
+      "value": 17545,
+      "value_display": "₹ 17,545",
+      "retention_pct": 8.2,
+      "loss_pct": 92
+    }
+  ],
+  "dep_per_day": 90,
+  "depreciation_1yr": 15.5,
+  "resale_value_5yr": 92649,
+  "resale_value_5yr_display": "₹ 92,649",
+  "service_components": [
+    {
+      "name": "Engine Oil + Filter",
+      "freq": "3-4×/yr",
+      "pct": 28,
+      "cost": 2800,
+      "cost_display": "₹ 2,800"
+    },
+    {
+      "name": "Air Filter",
+      "freq": "2×/yr",
+      "pct": 6,
+      "cost": 600,
+      "cost_display": "₹ 600"
+    },
+    {
+      "name": "Spark Plug",
+      "freq": "1×/yr",
+      "pct": 4,
+      "cost": 400,
+      "cost_display": "₹ 400"
+    },
+    {
+      "name": "Chain Cleaning & Lube",
+      "freq": "6×/yr",
+      "pct": 10,
+      "cost": 1000,
+      "cost_display": "₹ 1,000"
+    },
+    {
+      "name": "Brake Pads (F+R)",
+      "freq": "1×/yr",
+      "pct": 14,
+      "cost": 1400,
+      "cost_display": "₹ 1,400"
+    },
+    {
+      "name": "Coolant Service",
+      "freq": "1×/yr",
+      "pct": 5,
+      "cost": 500,
+      "cost_display": "₹ 500"
+    },
+    {
+      "name": "General Labor",
+      "freq": "3-4×/yr",
+      "pct": 25,
+      "cost": 2500,
+      "cost_display": "₹ 2,500"
+    },
+    {
+      "name": "Misc Consumables",
+      "freq": "as needed",
+      "pct": 8,
+      "cost": 800,
+      "cost_display": "₹ 800"
+    }
+  ],
+  "tyre_front_cost": 3000,
+  "tyre_rear_cost": 4500,
+  "tyre_life_km": 18000,
+  "assumed_annual_km": 10000,
+  "assumed_fuel_price": 108.0,
+  "mixed_mileage_kmpl": 31.0,
+  "inflation_rate": 6.0,
+  "competitors_ownership": [
+    {
+      "name": "Pulsar N250",
+      "slug": "bajaj-pulsar-n250",
+      "price_ex_showroom": 134758,
+      "total_cost_5yr": 205167,
+      "total_cost_10yr": 479810,
+      "cost_per_km": 3.86,
+      "cost_per_day": 105.66,
+      "net_ownership_5yr": 334896,
+      "image_nobg": null,
+      "price_formatted": "₹ 1,34,758",
+      "cost_5yr_display": "₹ 2,05,167",
+      "short_name": "Pulsar N250"
+    },
+    {
+      "name": "Gixxer 250",
+      "slug": "suzuki-gixxer-250",
+      "price_ex_showroom": 183994,
+      "total_cost_5yr": 299907,
+      "total_cost_10yr": 655278,
+      "cost_per_km": 5.6,
+      "cost_per_day": 153.41,
+      "net_ownership_5yr": 457572,
+      "image_nobg": null,
+      "price_formatted": "₹ 1,83,994",
+      "cost_5yr_display": "₹ 2,99,907",
+      "short_name": "Gixxer 250"
+    },
+    {
+      "name": "Xtreme 250R",
+      "slug": "hero-xtreme-250r",
+      "price_ex_showroom": 167351,
+      "total_cost_5yr": 306843,
+      "total_cost_10yr": 728392,
+      "cost_per_km": 5.65,
+      "cost_per_day": 154.92,
+      "net_ownership_5yr": 470331,
+      "image_nobg": null,
+      "price_formatted": "₹ 1,67,351",
+      "cost_5yr_display": "₹ 3,06,843",
+      "short_name": "Xtreme 250R"
+    },
+    {
+      "name": "Vitpilen 250",
+      "slug": "husqvarna-vitpilen-250",
+      "price_ex_showroom": 213173,
+      "total_cost_5yr": 302194,
+      "total_cost_10yr": 682972,
+      "cost_per_km": 5.71,
+      "cost_per_day": 156.31,
+      "net_ownership_5yr": 500816,
+      "image_nobg": null,
+      "price_formatted": "₹ 2,13,173",
+      "cost_5yr_display": "₹ 3,02,194",
+      "short_name": "Vitpilen 250"
+    },
+    {
+      "name": "CB300R",
+      "slug": "honda-cb300r-2024",
+      "price_ex_showroom": 221620,
+      "total_cost_5yr": 326441,
+      "total_cost_10yr": 758472,
+      "cost_per_km": 6.12,
+      "cost_per_day": 167.74,
+      "net_ownership_5yr": 539726,
+      "image_nobg": null,
+      "price_formatted": "₹ 2,21,620",
+      "cost_5yr_display": "₹ 3,26,441",
+      "short_name": "CB300R"
+    }
+  ],
+  "comparison_specs": [
+    {
+      "label": "Power",
+      "self_value": "31 hp",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Torque",
+      "self_value": "25 Nm",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Top Speed",
+      "self_value": "148 kmph",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Price",
+      "self_value": "₹2,13,970",
+      "rival_value": "₹2,00,791",
+      "winner": "rival"
+    }
+  ],
+  "cheapest_year": 1,
+  "cheapest_year_display": "54,490",
+  "costliest_year": 4,
+  "costliest_year_display": "71,671",
+  "first_overhaul_year": 4,
+  "first_overhaul_component": "chain sprocket set",
+  "launch_age_years": null,
+  "data_confidence": "verified",
+  "data_confidence_label": "Based on 5+ years of owner data",
+  "primary_nobg_url": "vehicles/ktm-250-duke.png"
+}

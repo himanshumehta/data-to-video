@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    body { width: {{ width }}px; height: {{ height }}px; font-family: 'Inter', sans-serif; transform-origin: top left; }
+
+    .slide {
+      width: {{ width }}px; height: {{ height }}px;
+      position: relative; overflow: hidden;
+      background: #08080a;
+      color: #f4f4f5;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0 300px;
+    }
+
+    /* Ambient glows */
+    .glow-1 { position: absolute; top: -8%; left: 25%; width: 4000px; height: 2400px; background: radial-gradient(ellipse, rgba(71,131,255,0.04) 0%, transparent 65%); pointer-events: none; z-index: 1; }
+    .glow-2 { position: absolute; bottom: -5%; right: 8%; width: 3000px; height: 2000px; background: radial-gradient(ellipse, rgba(245,158,11,0.025) 0%, transparent 60%); pointer-events: none; z-index: 1; }
+    .glow-3 { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 5000px; height: 3000px; background: radial-gradient(ellipse, rgba(255,255,255,0.008) 0%, transparent 50%); pointer-events: none; z-index: 1; }
+    .edge-light { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent 5%, rgba(71,131,255,0.15) 30%, rgba(71,131,255,0.25) 50%, rgba(71,131,255,0.15) 70%, transparent 95%); z-index: 20; }
+
+    /* Brand logo */
+    .brand-logo { position: absolute; top: 140px; right: 260px; z-index: 20; font-size: 160px; font-weight: 800; letter-spacing: -3px; }
+    .brand-logo .b { color: #4783ff; }
+    .brand-logo .n { color: #fff; display: inline-block; transform: rotate(-12deg); text-shadow: 0 0 50px rgba(255,255,255,0.4); font-style: italic; }
+    .brand-logo .c { color: #f43f5e; }
+
+    /* Ghost bike */
+    .bike-ghost {
+      position: absolute; right: -200px; top: 50%;
+      transform: translateY(-50%);
+      width: 45%; opacity: 0.12;
+      z-index: 1; pointer-events: none;
+    }
+
+    /* Section label */
+    .section-label {
+      position: relative; z-index: 10;
+      margin-bottom: 80px;
+    }
+    .section-label span {
+      display: inline-block;
+      padding: 40px 80px; border-radius: 100px;
+      background: rgba(239,68,68,0.08); border: 3px solid rgba(239,68,68,0.18);
+      font-size: 72px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.35em;
+      color: #ef4444;
+    }
+
+    /* Confrontation block */
+    .confrontation {
+      position: relative; z-index: 10;
+      display: flex; align-items: center;
+      width: 100%;
+      margin-bottom: 80px;
+    }
+
+    .vs-col {
+      flex: 1; text-align: center;
+      padding: 80px 60px;
+    }
+    .vs-label {
+      font-size: 64px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.18em;
+      color: #3f3f46; margin-bottom: 40px;
+    }
+    .vs-amount {
+      font-size: 280px; font-weight: 900;
+      line-height: 1; letter-spacing: -8px;
+    }
+    .vs-sub {
+      font-size: 64px; font-weight: 600;
+      color: #52525b; margin-top: 24px;
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+
+    .vs-col.sticker .vs-amount {
+      color: #f4f4f5;
+      text-decoration: line-through;
+      text-decoration-color: rgba(239,68,68,0.6);
+      text-decoration-thickness: 12px;
+    }
+    .vs-col.real .vs-amount {
+      color: #f59e0b;
+      text-shadow: 0 0 120px rgba(245,158,11,0.25), 0 4px 0 rgba(0,0,0,0.3);
+    }
+
+    /* VS divider */
+    .vs-divider {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 32px;
+      flex-shrink: 0;
+    }
+    .vs-divider .line {
+      width: 4px; height: 200px;
+      background: linear-gradient(180deg, transparent, rgba(255,255,255,0.12), transparent);
+    }
+    .vs-badge {
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 3px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 80px; font-weight: 900;
+      color: #a1a1aa;
+    }
+
+    /* Multiplier pill */
+    .multiplier-row {
+      position: relative; z-index: 10;
+      margin-bottom: 80px;
+    }
+    .multiplier-pill {
+      display: inline-block;
+      padding: 40px 100px; border-radius: 100px;
+      background: rgba(245,158,11,0.1); border: 3px solid rgba(245,158,11,0.25);
+      font-size: 96px; font-weight: 900;
+      color: #f59e0b;
+    }
+
+    /* Section divider */
+    .section-divider {
+      position: relative; z-index: 10;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(71,131,255,0.2) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.04) 60%, rgba(245,158,11,0.15) 100%);
+      margin-bottom: 80px;
+    }
+
+    /* Stat strip */
+    .stat-strip {
+      position: relative; z-index: 10;
+      display: flex; gap: 60px;
+      width: 100%;
+    }
+    .stat-card {
+      flex: 1;
+      text-align: center;
+      padding: 60px 40px;
+      background: rgba(255,255,255,0.04);
+      border: 3px solid rgba(255,255,255,0.08);
+      border-radius: 42px;
+    }
+    .stat-card .sc-label {
+      font-size: 52px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.18em;
+      color: #3f3f46; margin-bottom: 24px;
+    }
+    .stat-card .sc-value {
+      font-size: 120px; font-weight: 900;
+      line-height: 1;
+    }
+    .sc-value.emerald { color: #10B981; }
+    .sc-value.blue { color: #4783ff; }
+    .sc-value.amber { color: #f59e0b; }
+
+    /* Badges bar */
+    .badges-bar {
+      position: relative; z-index: 10;
+      margin-top: 80px;
+      display: flex; gap: 48px; justify-content: center;
+    }
+    .badge {
+      padding: 40px 80px; border-radius: 24px;
+      font-size: 80px; font-weight: 800;
+      white-space: nowrap; backdrop-filter: blur(20px);
+    }
+    .badge.red { background: rgba(239,68,68,0.08); border: 3px solid rgba(239,68,68,0.18); color: #ef4444; }
+    .badge.amber { background: rgba(245,158,11,0.08); border: 3px solid rgba(245,158,11,0.18); color: #f59e0b; }
+    .badge.blue { background: rgba(59,130,246,0.08); border: 3px solid rgba(59,130,246,0.18); color: #3b82f6; }
+
+    /* Watermark */
+    .watermark { position: absolute; bottom: 48px; right: 72px; font-size: 42px; color: rgba(255,255,255,0.15); font-weight: 600; letter-spacing: 0.1em; z-index: 10; }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div><div class="glow-3"></div><div class="edge-light"></div>
+  <div class="brand-logo"><span class="b">Bike</span><span class="n">N</span><span class="c">Cars</span></div>
+
+  {% if vehicle.primary_nobg_url %}
+  <img class="bike-ghost" src="{{ vehicle.primary_nobg_url }}" alt="">
+  {% endif %}
+
+  <div class="section-label"><span>Price Confrontation</span></div>
+
+  <div class="confrontation">
+    <div class="vs-col sticker">
+      <div class="vs-label">Sticker Price</div>
+      <div class="vs-amount">{{ vehicle.price_formatted }}</div>
+      <div class="vs-sub">ex-showroom</div>
+    </div>
+
+    <div class="vs-divider">
+      <div class="line"></div>
+      <div class="vs-badge">VS</div>
+      <div class="line"></div>
+    </div>
+
+    <div class="vs-col real">
+      <div class="vs-label">5-Year Real Cost</div>
+      <div class="vs-amount">{{ vehicle.net_5yr_display }}</div>
+      <div class="vs-sub">total ownership</div>
+    </div>
+  </div>
+
+  <div class="multiplier-row">
+    <span class="multiplier-pill">{{ vehicle.multiplier }}&times; your sticker price</span>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <div class="stat-strip">
+    <div class="stat-card">
+      <div class="sc-label">Per Day</div>
+      <div class="sc-value emerald">{{ vehicle.cost_per_day_display }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-label">Per KM</div>
+      <div class="sc-value blue">&#8377; {{ "%.2f" | format(vehicle.cost_per_km) }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-label">Monthly</div>
+      <div class="sc-value amber">{{ vehicle.monthly_cost_display }}</div>
+    </div>
+  </div>
+
+  <div class="watermark">bikencars.com</div>
+</div>
+</body>
+</html>

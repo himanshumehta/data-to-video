@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width={{ width }}, initial-scale=1.0">
+<title>{{ vehicle.brand_name }} {{ vehicle.short_name }} — Real World</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+<style>
+  html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+  .info-card {
+    margin-top: 16px;
+  }
+  .info-card .info-label {
+    font-size: 18px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+  .info-card .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .info-card .info-value {
+    font-size: 36px;
+    font-weight: 900;
+  }
+  .info-card .info-detail {
+    font-size: 22px;
+    color: var(--text-3);
+  }
+  .issues-text {
+    font-size: 26px;
+    color: var(--color-red);
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div class="slide" style="background: var(--surface-1);">
+  <div class="slide-bg"><div class="glow"></div></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span>
+      <span class="total">/ {{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="slide-content">
+    <div class="section-label" style="color: var(--color-violet);">Real World Data</div>
+
+    <div class="spec-grid">
+      {% if vehicle.mileage_city %}
+      <div class="spec-box">
+        <div class="spec-label">Mileage (City)</div>
+        <div class="spec-value">{{ vehicle.mileage_city }}<span class="spec-unit"> kmpl</span></div>
+      </div>
+      {% endif %}
+      {% if vehicle.mileage_mixed %}
+      <div class="spec-box">
+        <div class="spec-label">Mileage (Mixed)</div>
+        <div class="spec-value">{{ vehicle.mileage_mixed }}<span class="spec-unit"> kmpl</span></div>
+      </div>
+      {% endif %}
+      {% if vehicle.waiting_period %}
+      <div class="spec-box">
+        <div class="spec-label">Waiting Period</div>
+        <div class="spec-value" style="font-size: 28px;">{{ vehicle.waiting_period }}</div>
+      </div>
+      {% endif %}
+      {% if vehicle.service_centers %}
+      <div class="spec-box">
+        <div class="spec-label">Service Centers</div>
+        <div class="spec-value">{{ vehicle.service_centers }}<span class="spec-unit"> cities</span></div>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if vehicle.depreciation_1yr %}
+    <div class="glass-card info-card">
+      <div class="info-label">Resale Value (5 Year)</div>
+      <div class="info-row">
+        <div class="info-value" style="color: var(--color-emerald);">
+          {% if vehicle.depreciation_1yr < 25 %}Excellent{% elif vehicle.depreciation_1yr < 35 %}Good{% else %}Average{% endif %}
+        </div>
+        <div class="info-detail">{{ vehicle.depreciation_1yr }}% first-year dep.</div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if vehicle.known_issues %}
+    <div class="glass-card info-card">
+      <div class="info-label">Known Issues</div>
+      <div class="issues-text">{{ vehicle.known_issues_count | default(vehicle.known_issues | length) }} reported — {{ vehicle.known_issues[:3] | join(', ') }}</div>
+    </div>
+    {% endif %}
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

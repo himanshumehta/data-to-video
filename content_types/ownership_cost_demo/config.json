@@ -1,0 +1,27 @@
+{
+  "kind": "ownership-cost-demo",
+  "description": "Live-UI reels that screen-record the ownership cost calculator at bikencars.com with narration on top. Each step's timing is driven by its narration WAV duration — scenario steps start when their narration does.",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "capture": {
+    "device_scale_factor": 2,
+    "base_url_default": "https://bikencars.com",
+    "base_url_local":   "http://127.0.0.1:8081",
+    "url_template": "{base}/ownership-cost/{slug}?capture=1",
+    "cursor_size_px": 56,
+    "pointer_move_steps": 60,
+    "htmx_settle_ms": 600,
+    "capture_note": "We screen-record the LIVE bikencars.com so viewers see the actual product. Local dev (127.0.0.1:8081) is for iterating on UI changes before they ship."
+  },
+  "narration": {
+    "voice": "Algenib",
+    "speed": 1.2,
+    "intro_pad_sec": 0.6,
+    "inter_step_gap_sec": 0.4,
+    "outro_pad_sec": 1.2
+  },
+  "bgm_gain": 0.18
+}

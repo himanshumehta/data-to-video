@@ -1,0 +1,315 @@
+/* Review slides — default design system
+   Imports theme.css via relative path from actual disk location */
+@import url('../../../design-systems/default/theme.css');
+
+/* ── Reset ──────────────────────────────────────────────────── */
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Slide frame ────────────────────────────────────────────── */
+.slide {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-body);
+  color: var(--text-1);
+  background: var(--surface-1);
+}
+
+.slide-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.slide-bg .glow {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 60%;
+  background: radial-gradient(ellipse, rgba(150,155,175,0.04) 0%, transparent 70%);
+}
+
+.slide-bg .glow-accent {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 50%;
+  background: radial-gradient(ellipse, rgba(16,185,129,0.03) 0%, transparent 70%);
+}
+
+/* ── Slide header (logo + counter) ──────────────────────────── */
+.slide-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 50px 58px 0;
+}
+
+.brand-logo {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.brand-logo .b { color: var(--brand-primary); }
+.brand-logo .n {
+  color: #fff;
+  display: inline-block;
+  transform: rotate(-12deg);
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  font-style: italic;
+}
+.brand-logo .c { color: var(--brand-secondary); }
+
+.slide-counter {
+  font-size: var(--slide-num-size);
+  font-weight: var(--slide-num-weight);
+}
+.slide-counter .current { color: var(--slide-num-current); }
+.slide-counter .total { color: var(--slide-num-total); }
+
+/* ── Slide content ──────────────────────────────────────────── */
+.slide-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 58px 20px;
+}
+
+/* ── Section label ──────────────────────────────────────────── */
+.section-label {
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 28px;
+}
+
+/* ── Vehicle info ───────────────────────────────────────────── */
+.vehicle-brand {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+
+.vehicle-title {
+  font-family: var(--font-display);
+  font-size: 72px;
+  font-weight: 900;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.vehicle-price {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--color-orange);
+  margin-bottom: 24px;
+}
+
+/* ── Rating circle ──────────────────────────────────────────── */
+.rating-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: var(--ring-width) solid var(--bar-active);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 900;
+}
+.rating-circle.sm {
+  width: 72px;
+  height: 72px;
+  font-size: 28px;
+  border-width: 4px;
+}
+.rating-label {
+  font-size: 20px;
+  color: var(--text-3);
+  margin-top: 8px;
+}
+
+/* ── Badge tags ─────────────────────────────────────────────── */
+.badge-tag {
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Glass card ─────────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--card-glass-padding);
+}
+.glass-card-heavy {
+  background: var(--glass-bg-heavy);
+  border: 1px solid var(--glass-border-heavy);
+  border-radius: var(--radius-lg);
+  padding: var(--card-glass-padding);
+}
+
+/* ── Spec grid ──────────────────────────────────────────────── */
+.spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.spec-box {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-5);
+}
+.spec-label {
+  font-size: 18px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.spec-value {
+  font-size: 36px;
+  font-weight: 800;
+}
+.spec-unit {
+  font-size: 20px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+/* ── Pros/Cons ──────────────────────────────────────────────── */
+.pro-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.pro-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 10px;
+  flex-shrink: 0;
+}
+.pro-dot.green { background: var(--color-emerald); }
+.pro-dot.red { background: var(--color-red); }
+.pro-text {
+  font-size: 28px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+.pro-text strong {
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+/* ── Bar chart ──────────────────────────────────────────────── */
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.bar-label {
+  font-size: 22px;
+  color: var(--text-2);
+  width: 180px;
+  flex-shrink: 0;
+}
+.bar-track {
+  flex: 1;
+  height: var(--bar-height);
+  background: var(--bar-track);
+  border-radius: var(--bar-radius);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: var(--bar-radius);
+}
+.bar-value {
+  font-size: 24px;
+  font-weight: 700;
+  width: 60px;
+  text-align: right;
+}
+
+/* ── Progress dots ──────────────────────────────────────────── */
+.progress-dots {
+  display: flex;
+  gap: var(--dot-gap);
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  z-index: 2;
+}
+.dot {
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  background: var(--dot-inactive);
+}
+.dot.active {
+  background: var(--dot-active);
+  box-shadow: 0 0 8px var(--dot-active);
+}
+
+/* ── Watermark ──────────────────────────────────────────────── */
+.watermark {
+  position: absolute;
+  bottom: 16px;
+  right: 24px;
+  font-size: var(--watermark-size);
+  color: var(--watermark-color);
+  font-weight: var(--watermark-weight);
+  letter-spacing: var(--watermark-spacing);
+  z-index: 3;
+}
+
+/* ── VS divider ─────────────────────────────────────────────── */
+.vs-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 24px 0;
+}
+.vs-divider .line {
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+.vs-divider .vs {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--brand-secondary);
+}

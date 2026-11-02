@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+    .overhaul-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+      padding-left: 72px;
+    }
+    .overhaul-chip {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 14px;
+      font-weight: 700;
+      background: rgba(249,115,22,0.12);
+      color: var(--color-orange);
+    }
+    .overhaul-list {
+      margin-top: 20px;
+      padding: 20px 24px;
+    }
+    .overhaul-list-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-orange);
+      margin-bottom: 12px;
+    }
+    .overhaul-compact {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .overhaul-compact:last-child { border-bottom: none; }
+    .overhaul-compact .oc-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-2);
+    }
+    .overhaul-compact .oc-year {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-3);
+    }
+    .overhaul-compact .oc-cost {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--color-orange);
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="slide-bg"><div class="glow"></div></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="slide-content">
+    <div class="section-label" style="color: var(--color-amber);">5-YEAR COST TIMELINE</div>
+
+    {% set max_total = vehicle.first_5_years | map(attribute='total') | max %}
+
+    <div class="year-bars">
+      {% for yr in vehicle.first_5_years %}
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div class="year-row">
+          <div class="year-label">YR {{ yr.year }}</div>
+          <div class="year-bar-track">
+            {% set base_cost = yr.total - (yr.overhauls | default(0)) %}
+            {% set base_pct = ((base_cost / max_total) * 100) | round(1) %}
+            {% set overhaul_pct = (((yr.overhauls | default(0)) / max_total) * 100) | round(1) %}
+            <div class="year-bar-base" style="width: {{ base_pct }}%;"></div>
+            {% if yr.overhauls is defined and yr.overhauls > 0 %}
+            <div class="year-bar-overhaul" style="width: {{ overhaul_pct }}%;"></div>
+            {% endif %}
+          </div>
+          <div class="year-amount" style="color: var(--text-1);">{{ yr.total | int | filesizeformat if yr.total is number else yr.total }}</div>
+        </div>
+        {% if yr.overhaul_items is defined and yr.overhaul_items %}
+        <div class="overhaul-tags">
+          {% for item in yr.overhaul_items %}
+          <span class="overhaul-chip">{{ item | replace('_', ' ') | title }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    {# Condensed overhaul list for years 6+ #}
+    {% set future_overhauls = vehicle.overhauls | selectattr('year', 'greaterthan', 5) | list %}
+    {% if future_overhauls %}
+    <div class="overhaul-list glass-card">
+      <div class="overhaul-list-title">Upcoming Overhauls (Year 6+)</div>
+      {% for item in future_overhauls %}
+      <div class="overhaul-compact">
+        <div class="oc-name">{{ item.component | replace('_', ' ') | title }}</div>
+        <div class="oc-year">Year {{ item.year }}</div>
+        <div class="oc-cost">{{ item.cost }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

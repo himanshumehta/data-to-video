@@ -1,0 +1,11 @@
+export { ReviewScoreCardPortrait } from "./ReviewScoreCardPortrait";
+export { ReviewPerformancePortrait } from "./ReviewPerformancePortrait";
+export { ReviewSafetyPortrait } from "./ReviewSafetyPortrait";
+export { ReviewOwnerVoicePortrait } from "./ReviewOwnerVoicePortrait";
+export { ReviewCostRealityPortrait } from "./ReviewCostRealityPortrait";
+export { ReviewKnownIssuesPortrait } from "./ReviewKnownIssuesPortrait";
+export { ReviewHeadToHeadPortrait } from "./ReviewHeadToHeadPortrait";
+export { ReviewProsConsPortrait } from "./ReviewProsConsPortrait";
+export { ReviewBuySkipPortrait } from "./ReviewBuySkipPortrait";
+export { ReviewComfortPortrait } from "./ReviewComfortPortrait";
+export { ReviewPotentialMapPortrait } from "./ReviewPotentialMapPortrait";

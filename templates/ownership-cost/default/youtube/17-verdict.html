@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    body { width: {{ width }}px; height: {{ height }}px; font-family: 'Inter', sans-serif; transform-origin: top left; }
+
+    .slide {
+      width: {{ width }}px; height: {{ height }}px;
+      position: relative; overflow: hidden;
+      background: #08080a; color: #f4f4f5;
+      display: flex; flex-direction: row;
+    }
+
+    .glow-1 { position: absolute; top: -8%; left: 25%; width: 4000px; height: 2400px; background: radial-gradient(ellipse, rgba(71,131,255,0.04) 0%, transparent 65%); pointer-events: none; z-index: 1; }
+    .glow-2 { position: absolute; bottom: -5%; right: 8%; width: 3000px; height: 2000px; background: radial-gradient(ellipse, rgba(245,158,11,0.025) 0%, transparent 60%); pointer-events: none; z-index: 1; }
+    .glow-3 { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 5000px; height: 3000px; background: radial-gradient(ellipse, rgba(255,255,255,0.008) 0%, transparent 50%); pointer-events: none; z-index: 1; }
+    .edge-light { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent 5%, rgba(71,131,255,0.15) 30%, rgba(71,131,255,0.25) 50%, rgba(71,131,255,0.15) 70%, transparent 95%); z-index: 20; }
+
+    .brand-logo { position: absolute; top: 140px; right: 260px; z-index: 20; font-size: 160px; font-weight: 800; letter-spacing: -3px; }
+    .brand-logo .b { color: #4783ff; }
+    .brand-logo .n { color: #fff; display: inline-block; transform: rotate(-12deg); text-shadow: 0 0 50px rgba(255,255,255,0.4); font-style: italic; }
+    .brand-logo .c { color: #f43f5e; }
+
+    /* Left panel -- 50% */
+    .left-panel {
+      width: 50%; height: 100%;
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 200px 80px 200px 300px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      padding: 40px 80px;
+      border-radius: 100px;
+      background: rgba(16,185,129,0.08);
+      border: 3px solid rgba(16,185,129,0.18);
+      font-size: 56px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.3em;
+      color: #10B981;
+      width: fit-content;
+      margin-bottom: 48px;
+    }
+
+    .vehicle-name {
+      font-size: 148px; font-weight: 900;
+      line-height: 1.08; letter-spacing: -2px;
+      color: #f4f4f5;
+      margin-bottom: 80px;
+    }
+
+    /* Giant cost hero */
+    .hero-cost { margin-bottom: 24px; }
+    .hero-cost .cost-label {
+      font-size: 64px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.2em;
+      color: #52525b;
+    }
+    .hero-cost .cost-amount {
+      font-size: 300px; font-weight: 900;
+      color: #f59e0b;
+      letter-spacing: -8px; line-height: 1;
+      margin-top: 24px;
+      text-shadow: 0 0 200px rgba(245,158,11,0.15), 0 4px 0 rgba(0,0,0,0.3);
+    }
+    .hero-cost .multiplier {
+      font-size: 96px; font-weight: 700;
+      color: #71717a; margin-top: 40px;
+    }
+    .hero-cost .multiplier strong {
+      color: #f4f4f5; font-weight: 900;
+    }
+
+    .divider {
+      margin: 80px 0;
+      height: 2px; width: 100%;
+      background: linear-gradient(90deg, rgba(16,185,129,0.2), transparent 80%);
+    }
+
+    /* Stat cards row */
+    .stat-row {
+      display: flex; gap: 60px;
+    }
+    .stat-card {
+      flex: 1; text-align: center;
+      padding: 60px 40px;
+      background: rgba(255,255,255,0.04);
+      border: 3px solid rgba(255,255,255,0.08);
+      border-radius: 42px;
+    }
+    .stat-card .sc-value {
+      font-size: 120px; font-weight: 900;
+      margin-bottom: 24px; line-height: 1;
+    }
+    .stat-card .sc-label {
+      font-size: 52px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: #52525b;
+    }
+    .sc-value.white { color: #f4f4f5; }
+    .sc-value.orange { color: #f97316; }
+    .sc-value.blue { color: #3b82f6; }
+
+    /* Right panel -- 50% bike image */
+    .right-panel {
+      width: 50%; height: 100%;
+      position: relative; z-index: 5;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .right-panel .bike-glow {
+      position: absolute; width: 100%; height: 85%;
+      background: radial-gradient(ellipse, rgba(16,185,129,0.04) 0%, transparent 60%);
+      z-index: 1;
+    }
+    .right-panel .bike-img {
+      position: relative; z-index: 2;
+      width: 92%; max-height: 65%;
+      object-fit: contain;
+      filter: drop-shadow(0 80px 200px rgba(0,0,0,0.6)) drop-shadow(0 0 120px rgba(16,185,129,0.06));
+    }
+
+    .watermark { position: absolute; bottom: 48px; right: 72px; font-size: 42px; color: rgba(255,255,255,0.15); font-weight: 600; letter-spacing: 0.1em; z-index: 10; }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div><div class="glow-3"></div><div class="edge-light"></div>
+  <div class="brand-logo"><span class="b">Bike</span><span class="n">N</span><span class="c">Cars</span></div>
+
+  <div class="left-panel">
+    <div class="section-tag">The Verdict</div>
+    <div class="vehicle-name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+
+    <div class="hero-cost">
+      <div class="cost-label">5-Year Ownership Cost</div>
+      <div class="cost-amount">{{ vehicle.net_5yr_display }}</div>
+      <div class="multiplier"><strong>{{ vehicle.multiplier }}&times;</strong> the purchase price — after you buy it</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="sc-value white">{{ vehicle.cost_per_day_display }}</div>
+        <div class="sc-label">Per Day</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-value orange">₹ {{ "%.2f" | format(vehicle.cost_per_km) }}</div>
+        <div class="sc-label">Per KM</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-value blue">{{ vehicle.monthly_cost_display }}</div>
+        <div class="sc-label">Per Month</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="bike-glow"></div>
+    {% if vehicle.primary_nobg_url %}
+    <img class="bike-img" src="{{ vehicle.primary_nobg_url }}" alt="{{ vehicle.brand_name }} {{ vehicle.short_name }}">
+    {% endif %}
+  </div>
+
+  <div class="watermark">bikencars.com</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+    .bg-glow-top {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 400px;
+      background: radial-gradient(ellipse, rgba(71,131,255,0.05) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+    .bg-glow-bottom {
+      position: absolute; bottom: 8%; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(59,130,246,0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+
+    .section-tag {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 32px;
+    }
+    .section-tag span {
+      display: inline-block;
+      padding: 12px 30px;
+      border-radius: 50px;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.2);
+      font-size: 18px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.25em;
+      color: var(--color-blue);
+    }
+
+    .bike-area {
+      position: relative; z-index: 5;
+      display: flex; justify-content: center;
+      margin-top: 20px;
+      height: 260px;
+    }
+    .bike-img {
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 25px 60px rgba(0,0,0,0.7)) drop-shadow(0 0 40px rgba(71,131,255,0.08));
+    }
+
+    .vehicle-info {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 6px;
+    }
+    .vehicle-info .name { font-size: 34px; font-weight: 900; }
+    .vehicle-info .sub { font-size: 17px; font-weight: 500; color: var(--text-4); margin-top: 2px; }
+
+    .divider {
+      position: relative; z-index: 10;
+      margin: 24px 120px 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.15), transparent);
+    }
+
+    .ranking-label {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 24px;
+      font-size: 16px; font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-4);
+    }
+
+    .receipt-table {
+      position: relative; z-index: 10;
+      margin: 16px 58px 0;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .table-head {
+      display: flex; align-items: center;
+      padding: 16px 28px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .table-head .th {
+      font-size: 13px; font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-4);
+    }
+    .th-rank { width: 50px; }
+    .th-bike { flex: 1; padding-right: 12px; }
+    .th-cost { width: 170px; text-align: right; padding-right: 16px; }
+    .th-km { width: 120px; text-align: right; }
+
+    .table-row {
+      display: flex; align-items: center;
+      padding: 18px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .table-row:last-child { border-bottom: none; }
+
+    .table-row .rank {
+      width: 50px;
+      font-size: 22px; font-weight: 900;
+      color: var(--text-4);
+    }
+    .table-row .bike-name {
+      flex: 1;
+      font-size: 26px; font-weight: 700;
+      color: var(--text-3);
+      padding-right: 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .projected-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 6px;
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .projected-tag.amber {
+      background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); color: var(--color-amber);
+    }
+    .projected-tag.red {
+      background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); color: var(--color-red);
+    }
+    .projected-tag .tag-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .projected-tag.amber .tag-dot { background: var(--color-amber); }
+    .projected-tag.red .tag-dot { background: var(--color-red); }
+    .table-row .cost-5yr {
+      width: 170px;
+      font-size: 24px; font-weight: 800;
+      color: var(--text-3);
+      text-align: right;
+      padding-right: 16px;
+    }
+    .table-row .cost-km {
+      width: 120px;
+      font-size: 24px; font-weight: 900;
+      text-align: right;
+      color: var(--color-blue);
+    }
+
+    /* Highlighted row (current vehicle) */
+    .table-row.highlight {
+      background: rgba(249,115,22,0.06);
+      border-bottom: 1px solid rgba(249,115,22,0.12);
+      border-top: 1px solid rgba(249,115,22,0.12);
+    }
+    .table-row.highlight .rank {
+      color: var(--color-orange);
+      font-size: 24px;
+    }
+    .table-row.highlight .bike-name {
+      color: var(--color-orange);
+      font-weight: 900;
+      font-size: 28px;
+    }
+    .table-row.highlight .cost-5yr {
+      color: var(--color-orange);
+      font-weight: 900;
+      font-size: 26px;
+    }
+    .table-row.highlight .cost-km {
+      color: var(--color-orange);
+      font-weight: 900;
+      font-size: 26px;
+    }
+
+    .insight-card {
+      position: relative; z-index: 10;
+      margin: 24px 58px 0;
+      padding: 22px 28px;
+      text-align: center;
+      background: rgba(59,130,246,0.06);
+      border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 16px;
+    }
+    .insight-card .insight-text {
+      font-size: 22px; font-weight: 700;
+      color: var(--text-2);
+      line-height: 1.4;
+    }
+    .insight-card .insight-text strong {
+      color: var(--color-orange); font-weight: 900;
+    }
+    .insight-card .insight-text .blue {
+      color: var(--color-blue); font-weight: 900;
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-glow-top"></div>
+  <div class="bg-glow-bottom"></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="section-tag"><span>V/S The Segment</span></div>
+
+  <div class="bike-area">
+    {% if vehicle.primary_nobg_url %}
+    <img class="bike-img" src="{{ vehicle.primary_nobg_url }}" alt="{{ vehicle.brand_name }} {{ vehicle.short_name }}">
+    {% endif %}
+  </div>
+
+  <div class="vehicle-info">
+    <div class="name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+    <div class="sub">Segment Cost Ranking · per km</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="ranking-label">Segment Cost Ranking</div>
+
+  {# Build sorted ranking: combine competitors + self, sort by cost_per_km #}
+  {% set self_entry = [{'short_name': vehicle.short_name, 'cost_5yr_display': vehicle.total_cost_5yr_display, 'cost_per_km': vehicle.cost_per_km, 'is_self': true}] %}
+  {% set all_bikes = (vehicle.competitors_ownership + self_entry) | sort(attribute='cost_per_km') %}
+
+  {# Find vehicle rank #}
+  {% set ns = namespace(vehicle_rank=0) %}
+  {% for bike in all_bikes %}
+    {% if bike.is_self | default(false) %}
+      {% set ns.vehicle_rank = loop.index %}
+    {% endif %}
+  {% endfor %}
+
+  <div class="receipt-table">
+    <div class="table-head">
+      <div class="th th-rank">#</div>
+      <div class="th th-bike">Bike</div>
+      <div class="th th-cost">5yr Cost</div>
+      <div class="th th-km">/km</div>
+    </div>
+
+    {% for bike in all_bikes %}
+    <div class="table-row{% if bike.is_self | default(false) %} highlight{% endif %}">
+      <div class="rank">{% if bike.is_self | default(false) %}★{% else %}{{ loop.index }}{% endif %}</div>
+      <div class="bike-name">
+        {{ bike.short_name }}
+        {% if bike.is_projected | default(false) %}
+          <span class="projected-tag {{ bike.projected_color | default('amber') }}"><span class="tag-dot"></span>Projected</span>
+        {% endif %}
+      </div>
+      <div class="cost-5yr">{{ bike.cost_5yr_display }}</div>
+      <div class="cost-km">₹ {{ "%.2f" | format(bike.cost_per_km) }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-text">
+      <strong>{{ vehicle.short_name }}</strong> ranks
+      <span class="blue">#{{ ns.vehicle_rank }} of {{ all_bikes | length }}</span>
+      {% if ns.vehicle_rank == all_bikes | length %}
+        — the most expensive to own in its segment
+      {% elif ns.vehicle_rank == 1 %}
+        — the cheapest to own in its segment
+      {% else %}
+        — {{ all_bikes | length - ns.vehicle_rank }} bike{{ 's' if (all_bikes | length - ns.vehicle_rank) > 1 }} cost{{ '' if (all_bikes | length - ns.vehicle_rank) > 1 else 's' }} more to own
+      {% endif %}
+    </div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    body { width: {{ width }}px; height: {{ height }}px; font-family: 'Inter', sans-serif; transform-origin: top left; }
+
+    .slide {
+      width: {{ width }}px; height: {{ height }}px;
+      position: relative; overflow: hidden;
+      background: #08080a; color: #f4f4f5;
+    }
+
+    .glow-1 { position: absolute; top: -10%; left: 15%; width: 5000px; height: 3000px; background: radial-gradient(ellipse, rgba(245,158,11,0.06) 0%, transparent 55%); pointer-events: none; z-index: 1; }
+    .glow-2 { position: absolute; bottom: -8%; right: 5%; width: 4000px; height: 2500px; background: radial-gradient(ellipse, rgba(71,131,255,0.04) 0%, transparent 55%); pointer-events: none; z-index: 1; }
+    .edge-light { position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, transparent 5%, rgba(245,158,11,0.2) 30%, rgba(245,158,11,0.35) 50%, rgba(245,158,11,0.2) 70%, transparent 95%); z-index: 20; }
+
+    .brand-logo { position: absolute; top: 140px; right: 260px; z-index: 20; font-size: 160px; font-weight: 800; letter-spacing: -3px; }
+    .brand-logo .b { color: #4783ff; }
+    .brand-logo .n { color: #fff; display: inline-block; transform: rotate(-12deg); text-shadow: 0 0 50px rgba(255,255,255,0.4); font-style: italic; }
+    .brand-logo .c { color: #f43f5e; }
+
+    /* ── TOP ZONE: Title left, Bike + Rating right ── */
+    .top-zone {
+      position: absolute; top: 0; left: 0; right: 0; height: 2000px;
+      z-index: 10;
+      display: flex; align-items: center;
+      padding: 200px 300px 0;
+    }
+
+    .tz-left { flex: 1; }
+    .accent-strip {
+      display: inline-block;
+      background: rgba(245,158,11,0.12);
+      padding: 20px 56px 20px 0;
+      margin-bottom: 56px;
+      border-left: 12px solid #f59e0b;
+      padding-left: 48px; width: fit-content;
+    }
+    .accent-strip .label { font-size: 72px; font-weight: 800; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.2em; }
+    .vehicle-name { font-size: 220px; font-weight: 900; letter-spacing: -8px; line-height: 0.95; margin-bottom: 48px; }
+    .verdict-text { font-size: 80px; font-weight: 600; color: #a1a1aa; line-height: 1.4; max-width: 2600px; }
+
+    /* Rating — centered in top zone */
+    .rating-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      z-index: 12;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .rating-circle {
+      width: 640px; height: 640px; border-radius: 50%;
+      border: 18px solid {{ vehicle.rating_color }};
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: rgba(8,8,10,0.95);
+      box-shadow: 0 0 200px rgba(245,158,11,0.15);
+    }
+    .rating-num { font-size: 300px; font-weight: 900; color: {{ vehicle.rating_color }}; line-height: 0.88; }
+    .rating-of { font-size: 80px; font-weight: 700; color: #52525b; }
+    .rating-sub { font-size: 56px; font-weight: 800; color: #71717a; text-transform: uppercase; letter-spacing: 0.2em; text-align: center; margin-top: 24px; }
+
+    /* Bike — centered ghost bg */
+    .bike-behind {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: 4400px; z-index: 2; opacity: 0.15;
+    }
+    .bike-behind img { width: 100%; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      position: absolute; top: 2000px; left: 300px; right: 300px;
+      height: 4px; z-index: 10;
+      background: linear-gradient(90deg, rgba(245,158,11,0.2), rgba(71,131,255,0.1), transparent);
+    }
+
+    /* ── BOTTOM ZONE: 4-column grid ── */
+    .bottom-zone {
+      position: absolute; top: 2080px; left: 300px; right: 300px; bottom: 500px;
+      z-index: 10;
+      display: flex; gap: 80px;
+    }
+
+    /* Pros */
+    .bz-col { flex: 1; display: flex; flex-direction: column; }
+    .bz-header {
+      font-size: 64px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.2em; margin-bottom: 40px; padding-bottom: 24px;
+      border-bottom: 4px solid rgba(255,255,255,0.06);
+    }
+    .bz-header.pro { color: #10B981; }
+    .bz-header.con { color: #ef4444; }
+    .bz-header.cat { color: #4783ff; }
+    .bz-header.cta { color: #f59e0b; }
+
+    .bz-item {
+      font-size: 64px; font-weight: 600; color: #a1a1aa;
+      padding: 32px 0; line-height: 1.35;
+      border-bottom: 2px solid rgba(255,255,255,0.03);
+      display: flex; align-items: flex-start; gap: 24px;
+    }
+    .bz-icon { font-size: 56px; flex-shrink: 0; }
+    .bz-icon.pro { color: #10B981; }
+    .bz-icon.con { color: #ef4444; }
+
+    /* Category bars */
+    .cat-item { margin-bottom: 32px; }
+    .cat-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+    .cat-name { font-size: 60px; font-weight: 700; color: #71717a; }
+    .cat-score { font-size: 64px; font-weight: 900; }
+    .cat-track { width: 100%; height: 32px; background: #18181b; border-radius: 16px; overflow: hidden; }
+    .cat-fill { height: 100%; border-radius: 16px; }
+
+    /* CTA column — tags only, no button */
+    .cta-col {
+      display: flex; flex-direction: column;
+    }
+    .review-tags { display: flex; flex-wrap: wrap; gap: 20px; }
+    .rv-tag {
+      font-size: 48px; font-weight: 700;
+      padding: 20px 40px; border-radius: 20px;
+      background: rgba(71,131,255,0.06);
+      border: 2px solid rgba(71,131,255,0.15);
+      color: #4783ff;
+    }
+
+    /* CTA — centered at bottom */
+    .cta-center {
+      position: absolute; bottom: 160px; left: 50%; transform: translateX(-50%);
+      z-index: 15;
+    }
+    .cta-btn {
+      padding: 64px 160px; border-radius: 40px;
+      background: linear-gradient(135deg, #4783ff 0%, #2563eb 100%);
+      text-align: center;
+      box-shadow: 0 30px 120px rgba(71,131,255,0.3);
+    }
+    .cta-btn .main { font-size: 96px; font-weight: 900; color: #fff; margin-bottom: 12px; white-space: nowrap; }
+    .cta-btn .sub { font-size: 60px; font-weight: 700; color: rgba(255,255,255,0.7); }
+
+    .watermark { position: absolute; bottom: 48px; right: 72px; font-size: 42px; color: rgba(255,255,255,0.15); font-weight: 600; letter-spacing: 0.1em; z-index: 10; }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div><div class="edge-light"></div>
+  <div class="brand-logo"><span class="b">Bike</span><span class="n">N</span><span class="c">Cars</span></div>
+
+  <!-- TOP ZONE -->
+  <div class="top-zone">
+    <div class="tz-left">
+      <div class="accent-strip"><div class="label">Full Ownership Review</div></div>
+      <div class="vehicle-name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+      <div class="verdict-text">{{ vehicle.expert_verdict[:150] }}{% if vehicle.expert_verdict | length > 150 %}…{% endif %}</div>
+    </div>
+    {% if vehicle.primary_nobg_url %}
+    <div class="bike-behind">
+      <img src="{{ vehicle.primary_nobg_url }}" alt="{{ vehicle.brand_name }} {{ vehicle.short_name }}">
+    </div>
+    {% endif %}
+    <div class="rating-center">
+      <div class="rating-circle">
+        <div class="rating-num">{{ vehicle.expert_rating }}</div>
+        <div class="rating-of">/ 10</div>
+      </div>
+      <div class="rating-sub">Expert Rating</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- BOTTOM ZONE — 4 columns -->
+  <div class="bottom-zone">
+    <!-- Col 1: Strengths -->
+    <div class="bz-col">
+      <div class="bz-header pro">Strengths</div>
+      {% for p in vehicle.pros[:3] %}
+      <div class="bz-item"><span class="bz-icon pro">+</span> {{ p }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Col 2: Watch Out -->
+    <div class="bz-col">
+      <div class="bz-header con">Watch Out</div>
+      {% for c in vehicle.cons[:3] %}
+      <div class="bz-item"><span class="bz-icon con">−</span> {{ c }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Col 3: Ratings -->
+    <div class="bz-col">
+      <div class="bz-header cat">Ratings</div>
+      {% for cat_name, cat_score in vehicle.expert_breakdown.items() %}
+      {% set pct = (cat_score / 10 * 100) | int %}
+      {% set bar_color = "#10B981" if cat_score >= 7.5 else "#3b82f6" if cat_score >= 6.0 else "#f59e0b" if cat_score >= 4.0 else "#ef4444" %}
+      <div class="cat-item">
+        <div class="cat-top"><span class="cat-name">{{ cat_name }}</span><span class="cat-score" style="color:{{ bar_color }}">{{ cat_score }}</span></div>
+        <div class="cat-track"><div class="cat-fill" style="width:{{ pct }}%;background:{{ bar_color }};"></div></div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Col 4: CTA -->
+    <div class="bz-col cta-col">
+      <div>
+        <div class="bz-header cta">In The Full Review</div>
+        <div class="review-tags">
+          <div class="rv-tag">Cost Breakdown</div>
+          <div class="rv-tag">Depreciation</div>
+          <div class="rv-tag">Insurance</div>
+          <div class="rv-tag">Fuel Deep Dive</div>
+          <div class="rv-tag">Service Costs</div>
+          <div class="rv-tag">Segment Comparison</div>
+          <div class="rv-tag">Resale Value</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-center">
+    <div class="cta-btn">
+      <div class="main">Read Full Review →</div>
+      <div class="sub">bikencars.com/reviews/{{ vehicle.slug }}-review</div>
+    </div>
+  </div>
+
+  <div class="watermark">bikencars.com</div>
+</div>
+<script>
+(function() {
+  var w = {{ width }}, h = {{ height }};
+  function fit() {
+    var sx = window.innerWidth / w, sy = window.innerHeight / h, s = Math.min(sx, sy);
+    var body = document.body;
+    body.style.transform = 'scale(' + s + ')'; body.style.transformOrigin = 'top left';
+    body.style.width = w + 'px'; body.style.height = h + 'px';
+    body.style.marginLeft = ((window.innerWidth - w * s) / 2) + 'px';
+    body.style.marginTop = ((window.innerHeight - h * s) / 2) + 'px';
+    document.documentElement.style.overflow = 'hidden'; document.documentElement.style.background = '#000';
+  }
+  fit(); window.addEventListener('resize', fit);
+})();
+</script>
+</body>
+</html>

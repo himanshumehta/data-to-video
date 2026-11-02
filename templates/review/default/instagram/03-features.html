@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width={{ width }}, initial-scale=1.0">
+<title>{{ vehicle.brand_name }} {{ vehicle.short_name }} — Features</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+<style>
+  html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+  .features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+  .feature-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+  }
+  .feature-name {
+    font-size: 28px;
+    color: var(--text-1);
+  }
+  .feature-category {
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 16px;
+    border-radius: var(--radius-sm);
+  }
+</style>
+</head>
+<body>
+<div class="slide" style="background: var(--surface-1);">
+  <div class="slide-bg"><div class="glow"></div></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span>
+      <span class="total">/ {{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="slide-content">
+    <div class="section-label" style="color: var(--color-blue);">Key Features</div>
+
+    <div class="features-list">
+      {% for feature in vehicle.key_features[:6] %}
+      <div class="glass-card feature-row">
+        <span class="feature-name">{{ feature.name }}</span>
+        {% if feature.category %}
+        <span class="feature-category badge-tag"
+              style="background: rgba(16,185,129,0.15); color: var(--color-emerald);">
+          {{ feature.category }}
+        </span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

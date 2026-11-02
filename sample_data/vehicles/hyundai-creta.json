@@ -1,0 +1,663 @@
+{
+  "slug": "hyundai-creta",
+  "name": "Creta",
+  "short_name": "Creta",
+  "brand_name": "Hyundai",
+  "brand_slug": "hyundai",
+  "manufacturer_slug": "hyundai",
+  "type": "car",
+  "vehicle_type": "car",
+  "year": 2025,
+  "variant": "SX (O) 1.5 Petrol",
+  "fuel_type": "petrol",
+  "engine_type": "1.5l MPi",
+  "engine_cc": 1497,
+  "power_hp": 113.0,
+  "torque_nm": 143.8,
+  "weight_kg": 1300.0,
+  "top_speed_kmph": 180.0,
+  "acceleration_0_100": 11.5,
+  "mileage_mixed": 17.0,
+  "mileage_display": "N/A kmpl",
+  "is_turbo": false,
+  "power_to_weight": null,
+  "summary": "Feature-packed compact SUV dominating the Indian market",
+  "best_for": "Comfort-seeking buyers seeking the best value for money in the premium car segment",
+  "expert_rating": 7.7,
+  "expert_breakdown": {
+    "Value": 9.2,
+    "Design": 7.5,
+    "Quality": 7.4,
+    "Features": 8.5,
+    "Ownership": 7.4,
+    "Performance": 6.2
+  },
+  "rating_breakdown": [
+    {
+      "name": "Value",
+      "score": 9.2
+    },
+    {
+      "name": "Design",
+      "score": 7.5
+    },
+    {
+      "name": "Quality",
+      "score": 7.4
+    },
+    {
+      "name": "Features",
+      "score": 8.5
+    },
+    {
+      "name": "Ownership",
+      "score": 7.4
+    },
+    {
+      "name": "Performance",
+      "score": 6.2
+    }
+  ],
+  "rating_color": "#f59e0b",
+  "pros": [
+    "Excellent resale value backed by Hyundai's service network (150+ centers across 20 cities)",
+    "Three engine options covering different use cases - commute (NA), performance (Turbo), efficiency (Diesel)",
+    "5-star Global NCAP safety with 6 airbags standard across all variants",
+    "Level 2 ADAS (adaptive cruise, lane keep, collision avoidance) on SX(O)",
+    "Backed by Hyundai's extensive service network with thousands of authorized centers across India",
+    "Feature-rich cabin with 10.25-inch dual screens, ventilated seats, Bose audio, 64-color ambient lighting",
+    "190mm ground clearance handles Indian road conditions well",
+    "Strong connected car technology with BlueLink (60+ remote features)"
+  ],
+  "cons": [
+    "No AWD or 4WD option limits genuine off-road capability",
+    "Lakh · Creta EX And S Variants Offer Poor Value For Money",
+    "NVH levels increase noticeably above 120 kmph",
+    "Top SX(O) Turbo DCT pricing exceeds Rs 20 lakh, entering premium territory",
+    "Rear torsion beam suspension can feel unsettled over sharp bumps at speed",
+    "Some owners report DCT gearbox issues (jerks, software glitches) in turbo variant",
+    "ADAS restricted to top SX(O) variant only - should be available on SX"
+  ],
+  "price_ex_showroom": 1079000,
+  "price_display": "10,79,000",
+  "price_formatted": "₹ 10,79,000",
+  "price_max_variant": 2020000,
+  "price_on_road": 1262910,
+  "price_on_road_formatted": "₹ 12,62,910",
+  "onroad_road_tax": 135429,
+  "onroad_registration": 2300,
+  "onroad_insurance": 41181,
+  "total_cost_5yr": 708368,
+  "total_cost_5yr_display": "₹ 7,08,368",
+  "net_5yr": 1728838,
+  "net_5yr_display": "₹ 17,28,838",
+  "multiplier": 1.6,
+  "total_cost_10yr": 1618221,
+  "total_cost_10yr_display": "₹ 16,18,221",
+  "net_10yr": 2697221,
+  "net_10yr_display": "₹ 26,97,221",
+  "total_cost_15yr": 2948378,
+  "net_15yr": 4027378,
+  "net_15yr_display": "₹ 40,27,378",
+  "total_cost_20yr": 4718490,
+  "net_20yr": 5797490,
+  "net_20yr_display": "₹ 57,97,490",
+  "cost_per_km": 13.66,
+  "cost_per_km_display": "₹ 13.66",
+  "cost_per_day": 374.14,
+  "cost_per_day_display": "₹ 374",
+  "monthly_cost": 11224,
+  "monthly_cost_display": "₹ 11,224",
+  "annual_fuel": 80597,
+  "annual_fuel_display": "₹ 80,597",
+  "annual_service": 7000,
+  "annual_service_display": "₹ 7,000",
+  "annual_insurance": 52465,
+  "annual_insurance_display": "₹ 52,465",
+  "annual_tyres": 0,
+  "annual_tyres_display": "₹ 0",
+  "annual_total": 140062,
+  "annual_total_display": "₹ 1,40,062",
+  "fuel_pct": 58,
+  "first_5_years": [
+    {
+      "fuel": 80597,
+      "year": 1,
+      "total": 140062,
+      "tyres": 0,
+      "service": 7000,
+      "insurance": 52465,
+      "overhauls": 0
+    },
+    {
+      "fuel": 87044,
+      "year": 2,
+      "total": 137226,
+      "tyres": 0,
+      "service": 7490,
+      "insurance": 42692,
+      "overhauls": 0
+    },
+    {
+      "fuel": 94008,
+      "year": 3,
+      "total": 137349,
+      "tyres": 0,
+      "service": 8014,
+      "insurance": 35327,
+      "overhauls": 0
+    },
+    {
+      "fuel": 101529,
+      "year": 4,
+      "total": 150869,
+      "tyres": 12802,
+      "service": 8575,
+      "insurance": 27963,
+      "overhauls": 0
+    },
+    {
+      "fuel": 109651,
+      "year": 5,
+      "total": 142862,
+      "tyres": 0,
+      "service": 9175,
+      "insurance": 24036,
+      "overhauls": 0
+    }
+  ],
+  "yearly_breakdown": [
+    {
+      "fuel": 80597,
+      "year": 1,
+      "total": 140062,
+      "tyres": 0,
+      "service": 7000,
+      "insurance": 52465,
+      "overhauls": 0
+    },
+    {
+      "fuel": 87044,
+      "year": 2,
+      "total": 137226,
+      "tyres": 0,
+      "service": 7490,
+      "insurance": 42692,
+      "overhauls": 0
+    },
+    {
+      "fuel": 94008,
+      "year": 3,
+      "total": 137349,
+      "tyres": 0,
+      "service": 8014,
+      "insurance": 35327,
+      "overhauls": 0
+    },
+    {
+      "fuel": 101529,
+      "year": 4,
+      "total": 150869,
+      "tyres": 12802,
+      "service": 8575,
+      "insurance": 27963,
+      "overhauls": 0
+    },
+    {
+      "fuel": 109651,
+      "year": 5,
+      "total": 142862,
+      "tyres": 0,
+      "service": 9175,
+      "insurance": 24036,
+      "overhauls": 0
+    },
+    {
+      "fuel": 118423,
+      "year": 6,
+      "total": 162891,
+      "tyres": 0,
+      "service": 10308,
+      "insurance": 14615,
+      "overhauls": 19545,
+      "overhaul_items": [
+        "clutch_plate"
+      ]
+    },
+    {
+      "fuel": 127897,
+      "year": 7,
+      "total": 187980,
+      "tyres": 0,
+      "service": 11555,
+      "insurance": 13671,
+      "overhauls": 34857,
+      "overhaul_items": [
+        "suspension_rebuild"
+      ]
+    },
+    {
+      "fuel": 138129,
+      "year": 8,
+      "total": 207522,
+      "tyres": 16782,
+      "service": 12926,
+      "insurance": 6118,
+      "overhauls": 33567,
+      "overhaul_items": [
+        "ac_compressor"
+      ]
+    },
+    {
+      "fuel": 149179,
+      "year": 9,
+      "total": 169729,
+      "tyres": 0,
+      "service": 14432,
+      "insurance": 6118,
+      "overhauls": 0
+    },
+    {
+      "fuel": 161113,
+      "year": 10,
+      "total": 253771,
+      "tyres": 0,
+      "service": 16086,
+      "insurance": 6118,
+      "overhauls": 70454,
+      "overhaul_items": [
+        "engine_top_overhaul",
+        "alternator"
+      ]
+    },
+    {
+      "fuel": 174002,
+      "year": 11,
+      "total": 198021,
+      "tyres": 0,
+      "service": 17901,
+      "insurance": 6118,
+      "overhauls": 0
+    },
+    {
+      "fuel": 187923,
+      "year": 12,
+      "total": 260371,
+      "tyres": 21997,
+      "service": 19890,
+      "insurance": 6118,
+      "overhauls": 24443,
+      "overhaul_items": [
+        "electrical_system"
+      ]
+    },
+    {
+      "fuel": 202956,
+      "year": 13,
+      "total": 231145,
+      "tyres": 0,
+      "service": 22071,
+      "insurance": 6118,
+      "overhauls": 0
+    },
+    {
+      "fuel": 219193,
+      "year": 14,
+      "total": 375710,
+      "tyres": 0,
+      "service": 24459,
+      "insurance": 6118,
+      "overhauls": 125940,
+      "overhaul_items": [
+        "engine_full_rebuild"
+      ]
+    },
+    {
+      "fuel": 236728,
+      "year": 15,
+      "total": 269920,
+      "tyres": 0,
+      "service": 27074,
+      "insurance": 6118,
+      "overhauls": 0,
+      "fitness_certificate": 500,
+      "rto_re_registration": 8000
+    },
+    {
+      "fuel": 255667,
+      "year": 16,
+      "total": 320554,
+      "tyres": 28834,
+      "service": 29935,
+      "insurance": 6118,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 276120,
+      "year": 17,
+      "total": 315302,
+      "tyres": 0,
+      "service": 33064,
+      "insurance": 6118,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 298210,
+      "year": 18,
+      "total": 340812,
+      "tyres": 0,
+      "service": 36484,
+      "insurance": 6118,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 322067,
+      "year": 19,
+      "total": 368406,
+      "tyres": 0,
+      "service": 40221,
+      "insurance": 6118,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 347832,
+      "year": 20,
+      "total": 436048,
+      "tyres": 37796,
+      "service": 44302,
+      "insurance": 6118,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    }
+  ],
+  "overhauls": [
+    {
+      "cost": 13936,
+      "year": 6,
+      "component": "clutch_plate"
+    },
+    {
+      "cost": 23227,
+      "year": 7,
+      "component": "suspension_rebuild"
+    },
+    {
+      "cost": 20904,
+      "year": 8,
+      "component": "ac_compressor"
+    },
+    {
+      "cost": 29033,
+      "year": 10,
+      "component": "engine_top_overhaul"
+    },
+    {
+      "cost": 9290,
+      "year": 10,
+      "component": "alternator"
+    },
+    {
+      "cost": 11613,
+      "year": 12,
+      "component": "electrical_system"
+    },
+    {
+      "cost": 52261,
+      "year": 14,
+      "component": "engine_full_rebuild"
+    }
+  ],
+  "depreciation_curve": [
+    {
+      "year": 1,
+      "value": 911755,
+      "loss_pct": 15.5,
+      "retention_pct": 84.5
+    },
+    {
+      "year": 3,
+      "value": 777959,
+      "loss_pct": 27.9,
+      "retention_pct": 72.1
+    },
+    {
+      "year": 5,
+      "value": 666822,
+      "loss_pct": 38.2,
+      "retention_pct": 61.8
+    },
+    {
+      "year": 10,
+      "value": 500656,
+      "loss_pct": 53.6,
+      "retention_pct": 46.4
+    },
+    {
+      "year": 15,
+      "value": 356070,
+      "loss_pct": 67.0,
+      "retention_pct": 33.0
+    }
+  ],
+  "resale_rating": "good",
+  "first_year_dep": 15.5,
+  "first_year_dep_amount": 167245,
+  "dep_milestones": [
+    {
+      "year": 1,
+      "value": 911755,
+      "value_display": "₹ 9,11,755",
+      "retention_pct": 84.5,
+      "loss_pct": 16
+    },
+    {
+      "year": 3,
+      "value": 777959,
+      "value_display": "₹ 7,77,959",
+      "retention_pct": 72.1,
+      "loss_pct": 28
+    },
+    {
+      "year": 5,
+      "value": 666822,
+      "value_display": "₹ 6,66,822",
+      "retention_pct": 61.8,
+      "loss_pct": 38
+    },
+    {
+      "year": 10,
+      "value": 500656,
+      "value_display": "₹ 5,00,656",
+      "retention_pct": 46.4,
+      "loss_pct": 54
+    },
+    {
+      "year": 15,
+      "value": 356070,
+      "value_display": "₹ 3,56,070",
+      "retention_pct": 33.0,
+      "loss_pct": 67
+    }
+  ],
+  "dep_per_day": 458,
+  "depreciation_1yr": 15.5,
+  "resale_value_5yr": 666822,
+  "resale_value_5yr_display": "₹ 6,66,822",
+  "service_components": [
+    {
+      "name": "Engine Oil + Filter",
+      "freq": "3-4×/yr",
+      "pct": 28,
+      "cost": 1960,
+      "cost_display": "₹ 1,960"
+    },
+    {
+      "name": "Air Filter",
+      "freq": "2×/yr",
+      "pct": 6,
+      "cost": 420,
+      "cost_display": "₹ 420"
+    },
+    {
+      "name": "Spark Plug",
+      "freq": "1×/yr",
+      "pct": 4,
+      "cost": 280,
+      "cost_display": "₹ 280"
+    },
+    {
+      "name": "Chain Cleaning & Lube",
+      "freq": "6×/yr",
+      "pct": 10,
+      "cost": 700,
+      "cost_display": "₹ 700"
+    },
+    {
+      "name": "Brake Pads (F+R)",
+      "freq": "1×/yr",
+      "pct": 14,
+      "cost": 980,
+      "cost_display": "₹ 980"
+    },
+    {
+      "name": "Coolant Service",
+      "freq": "1×/yr",
+      "pct": 5,
+      "cost": 350,
+      "cost_display": "₹ 350"
+    },
+    {
+      "name": "General Labor",
+      "freq": "3-4×/yr",
+      "pct": 25,
+      "cost": 1750,
+      "cost_display": "₹ 1,750"
+    },
+    {
+      "name": "Misc Consumables",
+      "freq": "as needed",
+      "pct": 8,
+      "cost": 560,
+      "cost_display": "₹ 560"
+    }
+  ],
+  "tyre_front_cost": 4645,
+  "tyre_rear_cost": 5806,
+  "tyre_life_km": 40000,
+  "assumed_annual_km": 10000,
+  "assumed_fuel_price": 108.0,
+  "mixed_mileage_kmpl": 14.5,
+  "inflation_rate": 6.0,
+  "competitors_ownership": [
+    {
+      "name": "Kushaq",
+      "slug": "skoda-kushaq",
+      "price_ex_showroom": 1066000,
+      "total_cost_5yr": 665850,
+      "total_cost_10yr": 1522660,
+      "cost_per_km": 13.54,
+      "cost_per_day": 370.87,
+      "net_ownership_5yr": 1673980,
+      "image_nobg": null,
+      "price_formatted": "₹ 10,66,000",
+      "cost_5yr_display": "₹ 6,65,850",
+      "short_name": "Kushaq"
+    },
+    {
+      "name": "Kicks",
+      "slug": "nissan-kicks",
+      "price_ex_showroom": 949990,
+      "total_cost_5yr": 703597,
+      "total_cost_10yr": 1638026,
+      "cost_per_km": 13.95,
+      "cost_per_day": 382.19,
+      "net_ownership_5yr": 1602014,
+      "image_nobg": null,
+      "price_formatted": "₹ 9,49,990",
+      "cost_5yr_display": "₹ 7,03,597",
+      "short_name": "Kicks"
+    },
+    {
+      "name": "Sierra",
+      "slug": "tata-sierra",
+      "price_ex_showroom": 1149000,
+      "total_cost_5yr": 686264,
+      "total_cost_10yr": 1557032,
+      "cost_per_km": 14.05,
+      "cost_per_day": 384.86,
+      "net_ownership_5yr": 1772887,
+      "image_nobg": null,
+      "price_formatted": "₹ 11,49,000",
+      "cost_5yr_display": "₹ 6,86,264",
+      "short_name": "Sierra"
+    },
+    {
+      "name": "Taigun",
+      "slug": "volkswagen-taigun",
+      "price_ex_showroom": 1141920,
+      "total_cost_5yr": 794452,
+      "total_cost_10yr": 1825563,
+      "cost_per_km": 15.88,
+      "cost_per_day": 435.0,
+      "net_ownership_5yr": 1874381,
+      "image_nobg": null,
+      "price_formatted": "₹ 11,41,920",
+      "cost_5yr_display": "₹ 7,94,452",
+      "short_name": "Taigun"
+    },
+    {
+      "name": "Astor",
+      "slug": "mg-astor",
+      "price_ex_showroom": 979091,
+      "total_cost_5yr": 1008204,
+      "total_cost_10yr": 2408803,
+      "cost_per_km": 19.25,
+      "cost_per_day": 527.47,
+      "net_ownership_5yr": 1934142,
+      "image_nobg": null,
+      "price_formatted": "₹ 9,79,091",
+      "cost_5yr_display": "₹ 10,08,204",
+      "short_name": "Astor"
+    }
+  ],
+  "comparison_specs": [
+    {
+      "label": "Power",
+      "self_value": "113 hp",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Torque",
+      "self_value": "143 Nm",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Top Speed",
+      "self_value": "180 kmph",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Price",
+      "self_value": "₹10,79,000",
+      "rival_value": "₹9,99,000",
+      "winner": "rival"
+    }
+  ],
+  "cheapest_year": 2,
+  "cheapest_year_display": "1,37,226",
+  "costliest_year": 4,
+  "costliest_year_display": "1,50,869",
+  "first_overhaul_year": null,
+  "first_overhaul_component": null,
+  "launch_age_years": null,
+  "data_confidence": "verified",
+  "data_confidence_label": "Based on 5+ years of owner data",
+  "primary_nobg_url": "vehicles/hyundai-creta.png"
+}

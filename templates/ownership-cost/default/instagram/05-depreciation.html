@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+    .bg-glow-top {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 400px;
+      background: radial-gradient(ellipse, rgba(71,131,255,0.05) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+    .bg-glow-bottom {
+      position: absolute; bottom: 8%; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(239,68,68,0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+
+    .section-tag {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 32px;
+    }
+    .section-tag span {
+      display: inline-block;
+      padding: 12px 30px;
+      border-radius: 50px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      font-size: 18px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.25em;
+      color: var(--color-red);
+    }
+
+    .bike-area {
+      position: relative; z-index: 5;
+      display: flex; justify-content: center;
+      margin-top: 20px;
+      height: 285px;
+    }
+    .bike-img {
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 25px 60px rgba(0,0,0,0.7)) drop-shadow(0 0 40px rgba(71,131,255,0.08));
+    }
+
+    .vehicle-info {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 6px;
+    }
+    .vehicle-info .name { font-size: 34px; font-weight: 900; }
+    .vehicle-info .sub { font-size: 17px; font-weight: 500; color: var(--text-4); margin-top: 2px; }
+
+    .divider {
+      position: relative; z-index: 10;
+      margin: 20px 120px 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(239,68,68,0.15), transparent);
+    }
+
+    .dep-chart {
+      position: relative; z-index: 10;
+      margin: 22px 58px 0;
+      display: flex; flex-direction: column;
+      gap: 12px;
+    }
+
+    .dep-row {
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .dep-meta {
+      width: 70px; flex-shrink: 0;
+      text-align: right;
+    }
+    .dep-year {
+      font-size: 20px; font-weight: 800;
+      color: var(--text-3);
+    }
+    .dep-loss {
+      font-size: 15px; font-weight: 800;
+    }
+
+    .dep-bar-track {
+      flex: 1;
+      height: 38px;
+      background: var(--surface-3);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .dep-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+    }
+
+    .dep-value {
+      font-size: 24px; font-weight: 900;
+      color: var(--text-1);
+      width: 155px; flex-shrink: 0;
+      text-align: right;
+    }
+
+    .dep-row.new .dep-year { color: var(--color-emerald); }
+    .dep-row.new .dep-value { color: var(--color-emerald); }
+
+    .insight-card {
+      position: relative; z-index: 10;
+      margin: 24px 58px 0;
+      padding: 22px 28px;
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: 16px;
+    }
+    .insight-line {
+      font-size: 21px; font-weight: 600;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .insight-line + .insight-line { margin-top: 6px; }
+    .insight-value {
+      font-weight: 900; color: var(--color-red);
+    }
+
+    .info-grid {
+      position: relative; z-index: 10;
+      display: flex;
+      margin: 24px 58px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .info-cell {
+      flex: 1;
+      text-align: center;
+      padding: 24px 16px;
+      background: rgba(255,255,255,0.03);
+    }
+    .info-cell:not(:last-child) {
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .info-cell .ic-val {
+      font-size: 26px; font-weight: 900; color: var(--text-1);
+    }
+    .info-cell .ic-val.red { color: var(--color-red); }
+    .info-cell .ic-val.green { color: var(--color-emerald); }
+    .info-cell .ic-val.amber { color: var(--color-amber); }
+    .info-cell .ic-lbl {
+      font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--text-4); margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-glow-top"></div>
+  <div class="bg-glow-bottom"></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="section-tag"><span>Depreciation Over Time</span></div>
+
+  <div class="bike-area">
+    {% if vehicle.primary_nobg_url %}
+    <img class="bike-img" src="{{ vehicle.primary_nobg_url }}" alt="{{ vehicle.brand_name }} {{ vehicle.short_name }}">
+    {% endif %}
+  </div>
+
+  <div class="vehicle-info">
+    <div class="name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+    <div class="sub">Resale Value Over Time</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="dep-chart">
+    {# New — full price #}
+    <div class="dep-row new">
+      <div class="dep-meta">
+        <div class="dep-year">New</div>
+        <div class="dep-loss" style="color: var(--color-emerald);">100%</div>
+      </div>
+      <div class="dep-bar-track">
+        <div class="dep-bar-fill" style="width: 90%; background: var(--color-emerald);"></div>
+      </div>
+      <div class="dep-value">{{ vehicle.price_formatted }}</div>
+    </div>
+
+    {# Milestones #}
+    {% for m in vehicle.dep_milestones %}
+      {% if m.retention_pct >= 60 %}
+        {% set bar_color = 'var(--color-blue)' %}
+      {% elif m.retention_pct >= 40 %}
+        {% set bar_color = 'var(--color-amber)' %}
+      {% elif m.retention_pct >= 20 %}
+        {% set bar_color = 'var(--color-orange)' %}
+      {% else %}
+        {% set bar_color = 'var(--color-red)' %}
+      {% endif %}
+    <div class="dep-row">
+      <div class="dep-meta">
+        <div class="dep-year">Year {{ m.year }}</div>
+        <div class="dep-loss" style="color: {{ bar_color }};">-{{ m.loss_pct }}%</div>
+      </div>
+      <div class="dep-bar-track">
+        <div class="dep-bar-fill" style="width: {{ m.retention_pct }}%; background: {{ bar_color }};"></div>
+      </div>
+      <div class="dep-value">{{ m.value_display }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-line">First-year depreciation: <span class="insight-value">₹ {{ "{:,}".format(vehicle.first_year_dep_amount | int) }}</span></div>
+    <div class="insight-line">That's <span class="insight-value">₹ {{ "{:,}".format(vehicle.dep_per_day | int) }}/day</span> lost in value alone</div>
+  </div>
+
+  {% set last_m = vehicle.dep_milestones[-1] if vehicle.dep_milestones else {} %}
+  <div class="info-grid">
+    <div class="info-cell">
+      <div class="ic-val green">{{ vehicle.price_formatted }}</div>
+      <div class="ic-lbl">New Price</div>
+    </div>
+    <div class="info-cell">
+      <div class="ic-val red">{{ last_m.value_display if last_m else 'N/A' }}</div>
+      <div class="ic-lbl">After {{ last_m.year if last_m else '15' }} Yrs</div>
+    </div>
+    <div class="info-cell">
+      <div class="ic-val amber">-{{ last_m.loss_pct if last_m else '0' }}%</div>
+      <div class="ic-lbl">Total Loss</div>
+    </div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+    .slide { background: var(--section-verdict); }
+    .verdict-text {
+      padding: 28px 24px;
+      margin: 20px 0;
+    }
+    .verdict-text .vt-heading {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 12px;
+    }
+    .verdict-text .vt-body {
+      font-size: 22px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .tip-cards {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .tip-card {
+      flex: 1;
+      padding: 18px 14px;
+      text-align: center;
+    }
+    .tip-card .tip-num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--color-emerald);
+      margin-bottom: 6px;
+    }
+    .tip-card .tip-text {
+      font-size: 17px;
+      color: var(--text-2);
+      line-height: 1.35;
+      font-weight: 600;
+    }
+    .cta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+      padding: 20px 24px;
+    }
+    .cta-bar .cta-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-2);
+    }
+    .cta-bar .cta-button {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: var(--radius-full);
+      background: var(--color-emerald);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="slide-bg"><div class="glow"></div></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="slide-content">
+    <div class="section-label" style="color: var(--color-emerald);">THE VERDICT</div>
+
+    <div class="stat-pills">
+      <div class="stat-pill glass-card-heavy">
+        <div class="pill-value" style="color: var(--text-1);">{{ vehicle.price_formatted }}</div>
+        <div class="pill-label">Purchase Price</div>
+      </div>
+      <div class="stat-pill glass-card-heavy">
+        <div class="pill-value" style="color: var(--color-amber);">{{ vehicle.net_5yr_display }}</div>
+        <div class="pill-label">5-Year Total</div>
+      </div>
+      <div class="stat-pill glass-card-heavy">
+        <div class="pill-value" style="color: var(--color-orange);">{{ vehicle.cost_per_day_display }}</div>
+        <div class="pill-label">Per Day</div>
+      </div>
+    </div>
+
+    <div class="verdict-text glass-card">
+      <div class="vt-heading">What This Means For You</div>
+      <div class="vt-body">
+        The {{ vehicle.brand_name }} {{ vehicle.short_name }} at {{ vehicle.price_formatted }} will cost you
+        {{ vehicle.net_5yr_display }} over 5 years -- that is {{ vehicle.multiplier }}x the showroom price.
+        At {{ vehicle.cost_per_km }}/km, every ride adds up. Budget for the hidden overhauls
+        and you will not be caught off guard.
+      </div>
+    </div>
+
+    <div class="tip-cards">
+      <div class="tip-card glass-card">
+        <div class="tip-num">1</div>
+        <div class="tip-text">Budget {{ vehicle.monthly_cost_display }}/month for running costs</div>
+      </div>
+      <div class="tip-card glass-card">
+        <div class="tip-num">2</div>
+        <div class="tip-text">Set aside a repair fund for year 4+ overhauls</div>
+      </div>
+      <div class="tip-card glass-card">
+        <div class="tip-num">3</div>
+        <div class="tip-text">{{ vehicle.resale_rating | title }} resale -- sell before year 10 for best value</div>
+      </div>
+    </div>
+
+    <div class="cta-bar glass-card-heavy">
+      <div class="cta-text">More ownership reports on</div>
+      <div class="cta-button">Follow BikeNCars</div>
+    </div>
+  </div>
+
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

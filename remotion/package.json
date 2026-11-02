@@ -1,0 +1,31 @@
+{
+  "name": "data-to-video-remotion",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "studio": "npx remotion studio",
+    "render": "npx remotion render",
+    "gallery": "vite dev --config src/gallery/vite.config.ts"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.237",
+    "@remotion/cli": "4.0.237",
+    "@remotion/google-fonts": "4.0.237",
+    "@remotion/player": "^4.0.237",
+    "@remotion/renderer": "^4.0.237",
+    "p-limit": "^5.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "remotion": "4.0.237"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^5.0.0",
+    "vite": "^8.0.1"
+  },
+  "overrides": {
+    "yauzl": "3.4.0"
+  }
+}

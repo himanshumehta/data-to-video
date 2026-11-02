@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+    .bg-glow-top {
+      position: absolute; top: 8%; left: 50%; transform: translateX(-50%);
+      width: 650px; height: 400px;
+      background: radial-gradient(ellipse, rgba(71,131,255,0.05) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+    .bg-glow-bottom {
+      position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 320px;
+      background: radial-gradient(ellipse, rgba(245,158,11,0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+
+    .section-tag {
+      position: relative; z-index: 10;
+      text-align: center; margin-top: 22px;
+    }
+    .section-tag span {
+      display: inline-block; padding: 10px 28px; border-radius: 50px;
+      background: rgba(71,131,255,0.1); border: 1px solid rgba(71,131,255,0.25);
+      font-size: 18px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.25em;
+      color: var(--brand-primary);
+    }
+
+    .vehicle-info {
+      position: relative; z-index: 10;
+      text-align: center; margin-top: 18px;
+    }
+    .vehicle-info .name { font-size: 34px; font-weight: 900; }
+
+    /* Rating bars */
+    .ratings-section {
+      position: relative; z-index: 10;
+      margin: 22px auto 0;
+      width: 75%;
+    }
+    .cat-item { margin-bottom: 12px; }
+    .cat-top {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .cat-name { font-size: 18px; font-weight: 700; color: var(--text-3); }
+    .cat-score { font-size: 20px; font-weight: 900; }
+    .cat-track {
+      width: 100%; height: 10px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 5px; overflow: hidden;
+    }
+    .cat-fill { height: 100%; border-radius: 5px; }
+
+    /* Divider */
+    .divider {
+      position: relative; z-index: 10;
+      margin: 22px auto 0; width: 750px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(71,131,255,0.15), transparent);
+    }
+
+    /* CTA tags */
+    .cta-section {
+      position: relative; z-index: 10;
+      margin: 20px 32px 0;
+      text-align: center;
+    }
+    .cta-label {
+      font-size: 16px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.2em;
+      color: var(--color-amber); margin-bottom: 14px;
+    }
+    .review-tags {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center;
+    }
+    .rv-tag {
+      font-size: 16px; font-weight: 700;
+      padding: 8px 18px; border-radius: 12px;
+      background: rgba(71,131,255,0.06);
+      border: 1px solid rgba(71,131,255,0.15);
+      color: var(--brand-primary);
+    }
+
+    /* CTA button */
+    .cta-btn-wrap {
+      position: relative; z-index: 10;
+      text-align: center; margin-top: 20px;
+    }
+    .cta-btn {
+      display: inline-block;
+      padding: 16px 44px; border-radius: 14px;
+      background: linear-gradient(135deg, #4783ff 0%, #2563eb 100%);
+      box-shadow: 0 10px 32px rgba(71,131,255,0.25);
+    }
+    .cta-btn .main {
+      font-size: 22px; font-weight: 900; color: #fff;
+    }
+    .cta-btn .sub {
+      font-size: 15px; font-weight: 600;
+      color: rgba(255,255,255,0.6); margin-top: 3px;
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-glow-top"></div>
+  <div class="bg-glow-bottom"></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="section-tag"><span>Expert Ratings</span></div>
+
+  <div class="vehicle-info">
+    <div class="name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+  </div>
+
+  <div class="ratings-section">
+    {% for cat_name, cat_score in vehicle.expert_breakdown.items() %}
+    {% set pct = (cat_score / 10 * 100) | int %}
+    {% set bar_color = "#10B981" if cat_score >= 7.5 else "#3b82f6" if cat_score >= 6.0 else "#f59e0b" if cat_score >= 4.0 else "#ef4444" %}
+    <div class="cat-item">
+      <div class="cat-top">
+        <span class="cat-name">{{ cat_name }}</span>
+        <span class="cat-score" style="color:{{ bar_color }}">{{ cat_score }}</span>
+      </div>
+      <div class="cat-track"><div class="cat-fill" style="width:{{ pct }}%;background:{{ bar_color }};"></div></div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="cta-section">
+    <div class="cta-label">In The Full Review</div>
+    <div class="review-tags">
+      <div class="rv-tag">Cost Breakdown</div>
+      <div class="rv-tag">Depreciation</div>
+      <div class="rv-tag">Insurance</div>
+      <div class="rv-tag">Fuel Deep Dive</div>
+      <div class="rv-tag">Service Costs</div>
+      <div class="rv-tag">Segment Comparison</div>
+      <div class="rv-tag">Resale Value</div>
+    </div>
+  </div>
+
+  <div class="cta-btn-wrap">
+    <div class="cta-btn">
+      <div class="main">Read Full Review →</div>
+      <div class="sub">bikencars.com</div>
+    </div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

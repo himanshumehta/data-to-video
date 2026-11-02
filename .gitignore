@@ -1,0 +1,45 @@
+# Dependencies / environments
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secrets — only .env.example is tracked
+.env
+.env.*
+!.env.example
+
+# Generated output (videos, audio, render queues, staged runtime files)
+output/
+remotion/output/
+preview/
+remotion/public/current-*.json
+remotion/public/gallery-config*.json
+remotion/public/narration/
+remotion/public/vehicles/
+remotion/public/bikes/
+
+# Media you bring yourself (music, intros, CTA clips) — not distributed
+assets/
+
+# Video / large binaries anywhere except the README demo assets
+*.mp4
+*.mov
+*.wav
+!docs/demo/**
+!remotion/public/click.wav
+
+# Model files
+*.onnx
+*.pt
+*.pth
+*.safetensors
+*.bin
+*.gguf
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

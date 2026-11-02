@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width={{ width }}, initial-scale=1.0">
+<title>{{ vehicle.brand_name }} {{ vehicle.short_name }} — Ownership</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+<style>
+  html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+  .total-cost-card {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .total-cost-label {
+    font-size: 18px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .total-cost-value {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--color-amber);
+    margin: 8px 0;
+  }
+  .cost-per-km {
+    font-size: 22px;
+    color: var(--text-3);
+  }
+
+  .cost-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .cost-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 24px;
+    font-size: 24px;
+  }
+  .cost-row .cost-label {
+    color: var(--text-2);
+  }
+  .cost-row .cost-value {
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div class="slide" style="background: var(--surface-1);">
+  <div class="slide-bg"><div class="glow"></div></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span>
+      <span class="total">/ {{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="slide-content">
+    <div class="section-label" style="color: var(--color-amber);">Cost of Ownership</div>
+
+    <div class="glass-card-heavy total-cost-card">
+      <div class="total-cost-label">5-Year Total Cost</div>
+      <div class="total-cost-value">₹ {{ vehicle.total_cost_5yr_display | default('N/A') }}</div>
+      {% if vehicle.cost_per_km %}
+      <div class="cost-per-km">₹ {{ vehicle.cost_per_km }}/km</div>
+      {% endif %}
+    </div>
+
+    <div class="cost-rows">
+      {% if vehicle.fuel_cost_yearly %}
+      <div class="glass-card cost-row">
+        <span class="cost-label">Fuel / year</span>
+        <span class="cost-value">₹ {{ vehicle.fuel_cost_yearly_display }}</span>
+      </div>
+      {% endif %}
+      {% if vehicle.service_cost_yearly %}
+      <div class="glass-card cost-row">
+        <span class="cost-label">Service / year</span>
+        <span class="cost-value">₹ {{ vehicle.service_cost_yearly_display }}</span>
+      </div>
+      {% endif %}
+      {% if vehicle.insurance_yearly %}
+      <div class="glass-card cost-row">
+        <span class="cost-label">Insurance / year</span>
+        <span class="cost-value">₹ {{ vehicle.insurance_yearly_display }}</span>
+      </div>
+      {% endif %}
+      {% if vehicle.resale_value_5yr %}
+      <div class="glass-card cost-row">
+        <span class="cost-label">Resale (5yr)</span>
+        <span class="cost-value" style="color: var(--color-emerald);">₹ {{ vehicle.resale_value_5yr_display }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

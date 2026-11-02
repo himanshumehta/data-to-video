@@ -1,0 +1,20 @@
+{
+  "cta": {
+    "youtube": {
+      "video": "assets/slides/calculator-cta-youtube.mp4",
+      "narration": {
+        "en": "assets/slides/calculator-cta-narration.wav",
+        "hi": "assets/slides/calculator-cta-narration-hi.wav",
+        "mr": null,
+        "te": null
+      }
+    },
+    "instagram": {
+      "video": "assets/slides/calculator-cta-instagram.mp4",
+      "narration": {
+        "en": "assets/slides/calculator-cta-narration.wav"
+      }
+    }
+  },
+  "bgm_gain": 0.25
+}

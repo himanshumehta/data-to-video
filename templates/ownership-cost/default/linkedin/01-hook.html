@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+    .bg-glow {
+      position: absolute; top: 10%; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(71,131,255,0.07) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+
+    .section-tag {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 28px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.3em;
+      color: var(--brand-primary);
+      text-shadow: 0 0 20px rgba(71,131,255,0.2);
+    }
+
+    .bike-area {
+      position: relative; z-index: 5;
+      display: flex; justify-content: center;
+      margin-top: 12px;
+      height: 200px;
+    }
+    .bike-img {
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 30px rgba(71,131,255,0.12));
+    }
+
+    .vehicle-info {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 4px;
+    }
+    .vehicle-info .name {
+      font-size: 30px; font-weight: 900;
+      letter-spacing: -0.01em;
+    }
+    .vehicle-info .sub {
+      font-size: 15px; font-weight: 500;
+      color: var(--text-3); margin-top: 2px;
+    }
+
+    .headline-area {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 18px;
+    }
+    .shock-text {
+      font-size: 18px; font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+    .big-price {
+      font-size: 68px; font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: var(--brand-primary);
+      text-shadow: 0 0 50px rgba(71,131,255,0.3);
+    }
+    .big-price-sub {
+      font-size: 17px; font-weight: 600;
+      color: var(--text-3); margin-top: 6px;
+    }
+    .big-price-sub strong {
+      color: var(--text-2); font-weight: 800;
+    }
+
+    .receipt-card {
+      position: relative; z-index: 10;
+      margin: 18px 40px 0;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+    .receipt-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 22px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px dashed rgba(255,255,255,0.1);
+    }
+    .receipt-header .vehicle { font-size: 20px; font-weight: 900; }
+    .receipt-header .badge {
+      padding: 6px 14px; border-radius: 8px;
+      background: rgba(71,131,255,0.12);
+      border: 1px solid rgba(71,131,255,0.25);
+      color: var(--brand-primary);
+      font-size: 11px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+
+    .receipt-rows { padding: 2px 0; }
+    .receipt-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 11px 22px;
+    }
+    .receipt-row:not(:last-child) {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .receipt-row .r-label {
+      font-size: 17px; font-weight: 600; color: var(--text-2);
+    }
+    .receipt-row .r-value {
+      font-size: 17px; font-weight: 800; color: var(--text-1);
+    }
+    .receipt-row.sticker .r-value {
+      color: var(--text-3);
+      text-decoration: line-through;
+      text-decoration-color: rgba(239,68,68,0.4);
+    }
+
+    .receipt-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 22px;
+      background: rgba(71,131,255,0.06);
+      border-top: 2px solid rgba(71,131,255,0.2);
+    }
+    .receipt-footer .total-label {
+      font-size: 15px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--brand-primary);
+    }
+    .receipt-footer .total-val {
+      font-size: 28px; font-weight: 900;
+      color: var(--brand-primary);
+      text-shadow: 0 0 20px rgba(71,131,255,0.3);
+    }
+
+    .multiplier-row {
+      position: relative; z-index: 10;
+      display: flex; justify-content: center; gap: 14px;
+      margin-top: 16px;
+    }
+    .mult-badge {
+      padding: 10px 22px; border-radius: 50px;
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.25);
+      font-size: 18px; font-weight: 900; color: var(--color-amber);
+    }
+    .daily-badge {
+      padding: 10px 22px; border-radius: 50px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.2);
+      font-size: 18px; font-weight: 900; color: var(--color-emerald);
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-glow"></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="bike-area">
+    {% if vehicle.primary_nobg_url %}
+    <img class="bike-img" src="{{ vehicle.primary_nobg_url }}" alt="{{ vehicle.brand_name }} {{ vehicle.short_name }}">
+    {% endif %}
+  </div>
+
+  <div class="vehicle-info">
+    <div class="name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+    <div class="sub">ex-showroom · 5 Year Analysis</div>
+  </div>
+
+  <div class="headline-area">
+    <div class="shock-text">Ownership Cost Breakdown</div>
+    <div class="big-price">{{ vehicle.net_5yr_display }}</div>
+    <div class="big-price-sub">Not <strong>{{ vehicle.price_formatted }}</strong> — here's why</div>
+  </div>
+
+  <div class="receipt-card">
+    <div class="receipt-header">
+      <div class="vehicle">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+      <div class="badge">5-Year Cost</div>
+    </div>
+    <div class="receipt-rows">
+      <div class="receipt-row sticker">
+        <div class="r-label">Sticker Price (ex-showroom)</div>
+        <div class="r-value">{{ vehicle.price_formatted }}</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Assumed Usage</div>
+        <div class="r-value">{{ "{:,}".format(vehicle.assumed_annual_km | int | default(10000)) }} km / year</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Daily Ownership Cost</div>
+        <div class="r-value">{{ vehicle.cost_per_day_display }} / day</div>
+      </div>
+    </div>
+    <div class="receipt-footer">
+      <div class="total-label">5-Year Real Cost</div>
+      <div class="total-val">{{ vehicle.net_5yr_display }}</div>
+    </div>
+  </div>
+
+  <div class="multiplier-row">
+    <div class="mult-badge">{{ vehicle.multiplier }}× Sticker Price</div>
+    <div class="daily-badge">{{ vehicle.cost_per_day_display }} / day</div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

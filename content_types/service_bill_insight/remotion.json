@@ -1,0 +1,21 @@
+{
+  "contentType": "service-bill-insight",
+
+  "portraitCompositions": {
+    "00-thumbnail":     { "component": "BillThumbnailReels",  "defaultDuration": 5, "animationFrames": 1 },
+    "01-bill-overview": { "component": "BillHookReels",       "defaultDuration": 5, "animationFrames": 90 },
+    "02-essential":     { "component": "BillEssentialReels",  "defaultDuration": 5, "animationFrames": 90 },
+    "03-optional":      { "component": "BillOptionalReels",   "defaultDuration": 5, "animationFrames": 80 },
+    "04-labor":         { "component": "BillLaborReels",      "defaultDuration": 4, "animationFrames": 70 },
+    "05-takeaway":      { "component": "BillTakeawayReels",   "defaultDuration": 5, "animationFrames": 75 },
+    "06-rating":        { "component": "BillRatingReels",     "defaultDuration": 4, "animationFrames": 70 }
+  },
+
+  "formats": {
+    "portrait-9x16": { "width": 1080, "height": 1920, "fps": 30, "compositionSet": "portraitCompositions" }
+  },
+
+  "platforms": {
+    "instagram-reels": { "format": "portrait-9x16", "maxDuration": 90, "includeCTA": false }
+  }
+}

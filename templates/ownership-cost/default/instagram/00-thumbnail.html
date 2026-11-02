@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+    .bg-glow-top {
+      position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 500px;
+      background: radial-gradient(ellipse, rgba(245,158,11,0.06) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+    .bg-glow-bottom {
+      position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(71,131,255,0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+
+    .hook-text {
+      position: relative; z-index: 10;
+      text-align: center; margin-top: 28px;
+      font-size: 20px; font-weight: 700;
+      color: var(--text-3); line-height: 1.4;
+    }
+    .hook-text .em { color: var(--color-amber); font-weight: 900; }
+
+    .bike-area {
+      position: relative; z-index: 5;
+      display: flex; justify-content: center;
+      margin-top: 16px; height: 260px;
+    }
+    .bike-img {
+      height: 100%; object-fit: contain;
+      filter: drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 30px rgba(245,158,11,0.10));
+    }
+
+    .vehicle-info {
+      position: relative; z-index: 10;
+      text-align: center; margin-top: 4px;
+    }
+    .vehicle-info .name {
+      font-size: 38px; font-weight: 900; letter-spacing: -0.01em;
+    }
+    .vehicle-info .sub {
+      font-size: 30px; font-weight: 900;
+      color: var(--text-3); margin-top: 6px;
+      text-transform: uppercase; letter-spacing: 0.15em;
+    }
+
+    .receipt-card {
+      position: relative; z-index: 10;
+      margin: 20px 48px 0;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+    .receipt-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 24px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px dashed rgba(255,255,255,0.1);
+    }
+    .receipt-header .vehicle { font-size: 22px; font-weight: 900; }
+    .receipt-header .badge {
+      padding: 6px 14px; border-radius: 8px;
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.25);
+      color: var(--color-amber);
+      font-size: 12px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+
+    .receipt-rows { padding: 2px 0; }
+    .receipt-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 24px;
+    }
+    .receipt-row:not(:last-child) {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .receipt-row .r-label { font-size: 17px; font-weight: 600; color: var(--text-3); }
+    .receipt-row .r-value { font-size: 17px; font-weight: 800; color: var(--text-2); }
+    .receipt-row.sticker .r-value {
+      color: var(--text-4);
+      text-decoration: line-through;
+      text-decoration-color: rgba(239,68,68,0.4);
+    }
+
+    .receipt-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 24px;
+      background: rgba(245,158,11,0.06);
+      border-top: 2px solid rgba(245,158,11,0.2);
+    }
+    .receipt-footer .total-label {
+      font-size: 16px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--color-amber);
+    }
+    .receipt-footer .total-val {
+      font-size: 34px; font-weight: 900;
+      color: var(--color-amber);
+      text-shadow: 0 0 20px rgba(245,158,11,0.25);
+    }
+
+    .badges-row {
+      position: relative; z-index: 10;
+      display: flex; justify-content: center; gap: 12px;
+      margin-top: 20px;
+    }
+    .badge-pill {
+      padding: 10px 22px; border-radius: 50px;
+      font-size: 20px; font-weight: 900;
+    }
+    .badge-pill.red {
+      background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25);
+      color: #ef4444;
+    }
+    .badge-pill.orange {
+      background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.25);
+      color: var(--color-orange);
+    }
+    .badge-pill.blue {
+      background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25);
+      color: var(--color-blue);
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-glow-top"></div>
+  <div class="bg-glow-bottom"></div>
+
+  {# Compute 5yr category totals from yearly breakdown #}
+  {% set fuel_5yr = vehicle.first_5_years | map(attribute='fuel') | map('int') | sum %}
+  {% set service_5yr = vehicle.first_5_years | map(attribute='service') | map('int') | sum %}
+  {% set insurance_5yr = vehicle.first_5_years | map(attribute='insurance') | map('int') | sum %}
+  {% set dep_5yr = (vehicle.net_5yr - vehicle.total_cost_5yr) | int %}
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="hook-text">Know the <span class="em">REAL COST</span> before you buy</div>
+
+  <div class="bike-area">
+    {% if vehicle.primary_nobg_url %}
+    <img class="bike-img" src="{{ vehicle.primary_nobg_url }}" alt="{{ vehicle.brand_name }} {{ vehicle.short_name }}">
+    {% endif %}
+  </div>
+
+  <div class="vehicle-info">
+    <div class="name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+    <div class="sub">Ownership Cost Breakdown</div>
+  </div>
+
+  <div class="receipt-card">
+    <div class="receipt-header">
+      <div class="vehicle">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+      <div class="badge">5-Year Cost</div>
+    </div>
+    <div class="receipt-rows">
+      <div class="receipt-row sticker">
+        <div class="r-label">Sticker Price (ex-showroom)</div>
+        <div class="r-value">{{ vehicle.price_formatted }}</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Fuel ({{ "{:,}".format(vehicle.assumed_annual_km | int | default(10000)) }} km/yr)</div>
+        <div class="r-value">₹ {{ "{:,}".format(fuel_5yr) }}</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Service & Parts</div>
+        <div class="r-value">₹ {{ "{:,}".format(service_5yr) }}</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Insurance (5yr)</div>
+        <div class="r-value">₹ {{ "{:,}".format(insurance_5yr) }}</div>
+      </div>
+      <div class="receipt-row">
+        <div class="r-label">Depreciation</div>
+        <div class="r-value">- ₹ {{ "{:,}".format(dep_5yr | abs) }}</div>
+      </div>
+    </div>
+    <div class="receipt-footer">
+      <div class="total-label">5yr Ownership Cost</div>
+      <div class="total-val">{{ vehicle.net_5yr_display }}</div>
+    </div>
+  </div>
+
+  <div class="badges-row">
+    <div class="badge-pill red">{{ vehicle.multiplier }}× Price</div>
+    <div class="badge-pill orange">{{ vehicle.cost_per_day_display }}/day</div>
+    <div class="badge-pill blue">₹ {{ "%.2f" | format(vehicle.cost_per_km) }}/km</div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

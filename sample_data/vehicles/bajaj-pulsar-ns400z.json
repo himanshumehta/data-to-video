@@ -1,0 +1,701 @@
+{
+  "slug": "bajaj-pulsar-ns400z",
+  "name": "Pulsar NS 400",
+  "short_name": "Pulsar NS 400",
+  "brand_name": "Bajaj",
+  "brand_slug": "bajaj",
+  "manufacturer_slug": "bajaj",
+  "type": "motorcycle",
+  "vehicle_type": "motorcycle",
+  "year": 2024,
+  "variant": "Standard",
+  "fuel_type": "petrol",
+  "engine_type": "1 Cylinder, Liquid Cooled, 4 Valves",
+  "engine_cc": 373,
+  "power_hp": 42.41,
+  "torque_nm": 35.0,
+  "weight_kg": 174.0,
+  "top_speed_kmph": 157.0,
+  "acceleration_0_100": 6.5,
+  "mileage_mixed": 39.0,
+  "mileage_display": "N/A kmpl",
+  "is_turbo": false,
+  "power_to_weight": null,
+  "summary": "The Bajaj Pulsar NS400Z is a street-naked motorcycle powered by a 373cc liquid-cooled engine producing 42.4 bhp. Features include a bidirectional quickshifter, dual-channel ABS, Apollo Alpha H1 tyres with radial front and 150-section rear, and a 12-litre fuel tank.",
+  "best_for": "Premium bike enthusiasts who want a feature-rich premium 373cc motorcycle with good value for money",
+  "expert_rating": 7.8,
+  "expert_breakdown": {
+    "Value": 8.7,
+    "Design": 6.5,
+    "Quality": 7.2,
+    "Features": 9.0,
+    "Ownership": 7.7,
+    "Performance": 6.8
+  },
+  "rating_breakdown": [
+    {
+      "name": "Value",
+      "score": 8.7
+    },
+    {
+      "name": "Design",
+      "score": 6.5
+    },
+    {
+      "name": "Quality",
+      "score": 7.2
+    },
+    {
+      "name": "Features",
+      "score": 9.0
+    },
+    {
+      "name": "Ownership",
+      "score": 7.7
+    },
+    {
+      "name": "Performance",
+      "score": 6.8
+    }
+  ],
+  "rating_color": "#f59e0b",
+  "pros": [
+    "2025 update fixed tyre and braking complaints",
+    "Strong 373cc engine: 6.4s 0-100, 157 kmph top speed",
+    "Low ownership cost — fraction of KTM 390 maintenance",
+    "Bidirectional quickshifter and 4 riding modes under ₹2 lakh",
+    "Strong owner rating of 4.4/5 reflects high real-world satisfaction with the Bajaj Pulsar NS 400",
+    "Best price-to-performance ratio in 300-400cc segment"
+  ],
+  "cons": [
+    "12-litre fuel tank limits range to 330-360 km",
+    "Jerky throttle at low city speeds",
+    "LCD cluster hard to read in sunlight",
+    "Looks too similar to smaller Pulsars",
+    "Build quality gap vs European rivals"
+  ],
+  "price_ex_showroom": 194061,
+  "price_display": "1,94,061",
+  "price_formatted": "₹ 1,94,061",
+  "price_max_variant": 194061,
+  "price_on_road": 234509,
+  "price_on_road_formatted": "₹ 2,34,509",
+  "onroad_road_tax": 20590,
+  "onroad_registration": 1000,
+  "onroad_insurance": 17358,
+  "total_cost_5yr": 338641,
+  "total_cost_5yr_display": "₹ 3,38,641",
+  "net_5yr": 524716,
+  "net_5yr_display": "₹ 5,24,716",
+  "multiplier": 2.7,
+  "total_cost_10yr": 789688,
+  "total_cost_10yr_display": "₹ 7,89,688",
+  "net_10yr": 983749,
+  "net_10yr_display": "₹ 9,83,749",
+  "total_cost_15yr": 1494559,
+  "net_15yr": 1688620,
+  "net_15yr_display": "₹ 16,88,620",
+  "total_cost_20yr": 2451388,
+  "net_20yr": 2645449,
+  "net_20yr_display": "₹ 26,45,449",
+  "cost_per_km": 6.29,
+  "cost_per_km_display": "₹ 6.29",
+  "cost_per_day": 172.29,
+  "cost_per_day_display": "₹ 172",
+  "monthly_cost": 5168,
+  "monthly_cost_display": "₹ 5,168",
+  "annual_fuel": 38571,
+  "annual_fuel_display": "₹ 38,571",
+  "annual_service": 5000,
+  "annual_service_display": "₹ 5,000",
+  "annual_insurance": 14448,
+  "annual_insurance_display": "₹ 14,448",
+  "annual_tyres": 0,
+  "annual_tyres_display": "₹ 0",
+  "annual_total": 58019,
+  "annual_total_display": "₹ 58,019",
+  "fuel_pct": 66,
+  "first_5_years": [
+    {
+      "fuel": 38571,
+      "year": 1,
+      "total": 58019,
+      "tyres": 0,
+      "service": 5000,
+      "insurance": 14448,
+      "overhauls": 0
+    },
+    {
+      "fuel": 41656,
+      "year": 2,
+      "total": 67150,
+      "tyres": 8025,
+      "service": 5350,
+      "insurance": 12119,
+      "overhauls": 0
+    },
+    {
+      "fuel": 44989,
+      "year": 3,
+      "total": 61085,
+      "tyres": 0,
+      "service": 5724,
+      "insurance": 10372,
+      "overhauls": 0
+    },
+    {
+      "fuel": 48588,
+      "year": 4,
+      "total": 76590,
+      "tyres": 9187,
+      "service": 6125,
+      "insurance": 9208,
+      "overhauls": 3482,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 52475,
+      "year": 5,
+      "total": 72288,
+      "tyres": 0,
+      "service": 6553,
+      "insurance": 8044,
+      "overhauls": 5216,
+      "overhaul_items": [
+        "clutch_plate"
+      ]
+    }
+  ],
+  "yearly_breakdown": [
+    {
+      "fuel": 38571,
+      "year": 1,
+      "total": 58019,
+      "tyres": 0,
+      "service": 5000,
+      "insurance": 14448,
+      "overhauls": 0
+    },
+    {
+      "fuel": 41656,
+      "year": 2,
+      "total": 67150,
+      "tyres": 8025,
+      "service": 5350,
+      "insurance": 12119,
+      "overhauls": 0
+    },
+    {
+      "fuel": 44989,
+      "year": 3,
+      "total": 61085,
+      "tyres": 0,
+      "service": 5724,
+      "insurance": 10372,
+      "overhauls": 0
+    },
+    {
+      "fuel": 48588,
+      "year": 4,
+      "total": 76590,
+      "tyres": 9187,
+      "service": 6125,
+      "insurance": 9208,
+      "overhauls": 3482,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 52475,
+      "year": 5,
+      "total": 72288,
+      "tyres": 0,
+      "service": 6553,
+      "insurance": 8044,
+      "overhauls": 5216,
+      "overhaul_items": [
+        "clutch_plate"
+      ]
+    },
+    {
+      "fuel": 56673,
+      "year": 6,
+      "total": 77359,
+      "tyres": 10519,
+      "service": 7363,
+      "insurance": 2804,
+      "overhauls": 0
+    },
+    {
+      "fuel": 61207,
+      "year": 7,
+      "total": 82505,
+      "tyres": 0,
+      "service": 8254,
+      "insurance": 2804,
+      "overhauls": 10240,
+      "overhaul_items": [
+        "suspension_rebuild"
+      ]
+    },
+    {
+      "fuel": 66103,
+      "year": 8,
+      "total": 94748,
+      "tyres": 12043,
+      "service": 9233,
+      "insurance": 2804,
+      "overhauls": 4565,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 71392,
+      "year": 9,
+      "total": 113024,
+      "tyres": 12886,
+      "service": 10309,
+      "insurance": 2804,
+      "overhauls": 15633,
+      "overhaul_items": [
+        "engine_top_overhaul"
+      ]
+    },
+    {
+      "fuel": 77103,
+      "year": 10,
+      "total": 91397,
+      "tyres": 0,
+      "service": 11490,
+      "insurance": 2804,
+      "overhauls": 0
+    },
+    {
+      "fuel": 83271,
+      "year": 11,
+      "total": 124801,
+      "tyres": 14753,
+      "service": 12786,
+      "insurance": 2804,
+      "overhauls": 11187,
+      "overhaul_items": [
+        "electrical_system"
+      ]
+    },
+    {
+      "fuel": 89933,
+      "year": 12,
+      "total": 112928,
+      "tyres": 0,
+      "service": 14207,
+      "insurance": 2804,
+      "overhauls": 5984,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 97128,
+      "year": 13,
+      "total": 178697,
+      "tyres": 16891,
+      "service": 15765,
+      "insurance": 2804,
+      "overhauls": 46109,
+      "overhaul_items": [
+        "engine_full_rebuild"
+      ]
+    },
+    {
+      "fuel": 104898,
+      "year": 14,
+      "total": 125173,
+      "tyres": 0,
+      "service": 17471,
+      "insurance": 2804,
+      "overhauls": 0
+    },
+    {
+      "fuel": 113290,
+      "year": 15,
+      "total": 163272,
+      "tyres": 19339,
+      "service": 19339,
+      "insurance": 2804,
+      "overhauls": 0,
+      "fitness_certificate": 500,
+      "rto_re_registration": 8000
+    },
+    {
+      "fuel": 122353,
+      "year": 16,
+      "total": 154882,
+      "tyres": 0,
+      "service": 21382,
+      "insurance": 2804,
+      "overhauls": 7843,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ],
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 132142,
+      "year": 17,
+      "total": 181204,
+      "tyres": 22141,
+      "service": 23617,
+      "insurance": 2804,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 142713,
+      "year": 18,
+      "total": 195768,
+      "tyres": 23691,
+      "service": 26060,
+      "insurance": 2804,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 154130,
+      "year": 19,
+      "total": 186163,
+      "tyres": 0,
+      "service": 28729,
+      "insurance": 2804,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 166460,
+      "year": 20,
+      "total": 238812,
+      "tyres": 27123,
+      "service": 31644,
+      "insurance": 2804,
+      "overhauls": 10281,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ],
+      "fitness_certificate": 500
+    }
+  ],
+  "overhauls": [
+    {
+      "cost": 3980,
+      "year": 5,
+      "component": "clutch_plate"
+    },
+    {
+      "cost": 2843,
+      "year": 4,
+      "component": "chain_sprocket_set",
+      "repeat_every": 4
+    },
+    {
+      "cost": 6824,
+      "year": 7,
+      "component": "suspension_rebuild"
+    },
+    {
+      "cost": 9099,
+      "year": 9,
+      "component": "engine_top_overhaul"
+    },
+    {
+      "cost": 5687,
+      "year": 11,
+      "component": "electrical_system"
+    },
+    {
+      "cost": 20473,
+      "year": 13,
+      "component": "engine_full_rebuild"
+    }
+  ],
+  "depreciation_curve": [
+    {
+      "age_years": 1,
+      "km_assumed": 10000,
+      "retention_pct": 85,
+      "estimated_price": 164952,
+      "market_adjusted": true
+    },
+    {
+      "age_years": 2,
+      "km_assumed": 20000,
+      "retention_pct": 75,
+      "estimated_price": 145546,
+      "market_adjusted": true
+    },
+    {
+      "age_years": 3,
+      "km_assumed": 30000,
+      "retention_pct": 65,
+      "estimated_price": 126140,
+      "market_adjusted": true
+    },
+    {
+      "age_years": 5,
+      "km_assumed": 50000,
+      "retention_pct": 48,
+      "estimated_price": 93149,
+      "market_adjusted": true
+    },
+    {
+      "age_years": 7,
+      "km_assumed": 70000,
+      "retention_pct": 35,
+      "estimated_price": 67921,
+      "market_adjusted": true
+    },
+    {
+      "age_years": 10,
+      "km_assumed": 100000,
+      "retention_pct": 22,
+      "estimated_price": 42693,
+      "market_adjusted": true
+    },
+    {
+      "age_years": 12,
+      "km_assumed": 120000,
+      "retention_pct": 14,
+      "estimated_price": 27169,
+      "market_adjusted": true
+    },
+    {
+      "notes": "Registration renewal required; green tax applies",
+      "age_years": 15,
+      "km_assumed": 150000,
+      "rto_expired": true,
+      "retention_pct": 7,
+      "estimated_price": 13584,
+      "market_adjusted": true,
+      "green_tax_applicable": true
+    }
+  ],
+  "resale_rating": "average",
+  "first_year_dep": 15.0,
+  "first_year_dep_amount": 29109,
+  "dep_milestones": [
+    {
+      "year": 1,
+      "value": 164952,
+      "value_display": "₹ 1,64,952",
+      "retention_pct": 85.0,
+      "loss_pct": 15
+    },
+    {
+      "year": 3,
+      "value": 126140,
+      "value_display": "₹ 1,26,140",
+      "retention_pct": 65.0,
+      "loss_pct": 35
+    },
+    {
+      "year": 5,
+      "value": 93149,
+      "value_display": "₹ 93,149",
+      "retention_pct": 48.0,
+      "loss_pct": 52
+    },
+    {
+      "year": 10,
+      "value": 42693,
+      "value_display": "₹ 42,693",
+      "retention_pct": 22.0,
+      "loss_pct": 78
+    },
+    {
+      "year": 15,
+      "value": 13584,
+      "value_display": "₹ 13,584",
+      "retention_pct": 7.0,
+      "loss_pct": 93
+    }
+  ],
+  "dep_per_day": 79,
+  "depreciation_1yr": 15.0,
+  "resale_value_5yr": 93149,
+  "resale_value_5yr_display": "₹ 93,149",
+  "service_components": [
+    {
+      "name": "Engine Oil + Filter",
+      "freq": "3-4×/yr",
+      "pct": 28,
+      "cost": 1120,
+      "cost_display": "₹ 1,120"
+    },
+    {
+      "name": "Air Filter",
+      "freq": "2×/yr",
+      "pct": 6,
+      "cost": 240,
+      "cost_display": "₹ 240"
+    },
+    {
+      "name": "Spark Plug",
+      "freq": "1×/yr",
+      "pct": 4,
+      "cost": 160,
+      "cost_display": "₹ 160"
+    },
+    {
+      "name": "Chain Cleaning & Lube",
+      "freq": "6×/yr",
+      "pct": 10,
+      "cost": 400,
+      "cost_display": "₹ 400"
+    },
+    {
+      "name": "Brake Pads (F+R)",
+      "freq": "1×/yr",
+      "pct": 14,
+      "cost": 560,
+      "cost_display": "₹ 560"
+    },
+    {
+      "name": "Coolant Service",
+      "freq": "1×/yr",
+      "pct": 5,
+      "cost": 200,
+      "cost_display": "₹ 200"
+    },
+    {
+      "name": "General Labor",
+      "freq": "3-4×/yr",
+      "pct": 25,
+      "cost": 1000,
+      "cost_display": "₹ 1,000"
+    },
+    {
+      "name": "Misc Consumables",
+      "freq": "as needed",
+      "pct": 8,
+      "cost": 320,
+      "cost_display": "₹ 320"
+    }
+  ],
+  "tyre_front_cost": 3000,
+  "tyre_rear_cost": 4500,
+  "tyre_life_km": 18000,
+  "assumed_annual_km": 10000,
+  "assumed_fuel_price": 108.0,
+  "mixed_mileage_kmpl": 27.5,
+  "inflation_rate": 6.0,
+  "competitors_ownership": [
+    {
+      "name": "Apache RTR 310",
+      "slug": "tvs-apache-rtr-310",
+      "price_ex_showroom": 222740,
+      "total_cost_5yr": 372532,
+      "total_cost_10yr": 760193,
+      "cost_per_km": 7.04,
+      "cost_per_day": 192.87,
+      "net_ownership_5yr": 542181,
+      "image_nobg": null,
+      "price_formatted": "₹ 2,22,740",
+      "cost_5yr_display": "₹ 3,72,532",
+      "short_name": "Apache RTR 310"
+    },
+    {
+      "name": "Dominar 400",
+      "slug": "bajaj-dominar-400",
+      "price_ex_showroom": 238873,
+      "total_cost_5yr": 364951,
+      "total_cost_10yr": 778980,
+      "cost_per_km": 6.85,
+      "cost_per_day": 187.59,
+      "net_ownership_5yr": 574380,
+      "image_nobg": null,
+      "price_formatted": "₹ 2,38,873",
+      "cost_5yr_display": "₹ 3,64,951",
+      "short_name": "Dominar 400"
+    },
+    {
+      "name": "Svartpilen 401",
+      "slug": "husqvarna-svartpilen-401",
+      "price_ex_showroom": 295807,
+      "total_cost_5yr": 422100,
+      "total_cost_10yr": 918917,
+      "cost_per_km": 7.96,
+      "cost_per_day": 218.06,
+      "net_ownership_5yr": 692577,
+      "image_nobg": null,
+      "price_formatted": "₹ 2,95,807",
+      "cost_5yr_display": "₹ 4,22,100",
+      "short_name": "Svartpilen 401"
+    },
+    {
+      "name": "390 Duke",
+      "slug": "ktm-390-duke",
+      "price_ex_showroom": 299888,
+      "total_cost_5yr": 503288,
+      "total_cost_10yr": 1165900,
+      "cost_per_km": 9.31,
+      "cost_per_day": 255.03,
+      "net_ownership_5yr": 795965,
+      "image_nobg": null,
+      "price_formatted": "₹ 2,99,888",
+      "cost_5yr_display": "₹ 5,03,288",
+      "short_name": "390 Duke"
+    },
+    {
+      "name": "Himalayan 450",
+      "slug": "royal-enfield-himalayan-450",
+      "price_ex_showroom": 305722,
+      "total_cost_5yr": 425058,
+      "total_cost_10yr": 957614,
+      "cost_per_km": 7.99,
+      "cost_per_day": 218.87,
+      "net_ownership_5yr": 723219,
+      "image_nobg": null,
+      "price_formatted": "₹ 3,05,722",
+      "cost_5yr_display": "₹ 4,25,058",
+      "short_name": "Himalayan 450"
+    }
+  ],
+  "comparison_specs": [
+    {
+      "label": "Power",
+      "self_value": "42 hp",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Torque",
+      "self_value": "35 Nm",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Top Speed",
+      "self_value": "157 kmph",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Price",
+      "self_value": "₹1,94,061",
+      "rival_value": "₹1,82,100",
+      "winner": "rival"
+    }
+  ],
+  "cheapest_year": 1,
+  "cheapest_year_display": "58,019",
+  "costliest_year": 4,
+  "costliest_year_display": "76,590",
+  "first_overhaul_year": 4,
+  "first_overhaul_component": "chain sprocket set",
+  "launch_age_years": 1.9,
+  "data_confidence": "projected",
+  "data_confidence_label": "Projected from early owner data + platform analysis",
+  "primary_nobg_url": "vehicles/bajaj-pulsar-ns400z.png"
+}

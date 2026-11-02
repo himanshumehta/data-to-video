@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+    .bg-glow-top {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 400px;
+      background: radial-gradient(ellipse, rgba(71,131,255,0.05) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+    .bg-glow-bottom {
+      position: absolute; bottom: 8%; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+
+    .section-tag {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .section-tag span {
+      display: inline-block;
+      padding: 10px 26px;
+      border-radius: 50px;
+      background: rgba(249,115,22,0.1);
+      border: 1px solid rgba(249,115,22,0.2);
+      font-size: 15px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.25em;
+      color: var(--color-orange);
+    }
+
+    .vehicle-info {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 16px;
+    }
+    .vehicle-info .name { font-size: 30px; font-weight: 900; }
+    .vehicle-info .sub { font-size: 15px; font-weight: 500; color: var(--text-4); margin-top: 2px; }
+
+    .divider {
+      position: relative; z-index: 10;
+      margin: 16px 100px 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(249,115,22,0.15), transparent);
+    }
+
+    .legend {
+      position: relative; z-index: 10;
+      display: flex; gap: 28px; justify-content: center;
+      margin-top: 16px;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 600; color: var(--text-3);
+    }
+    .legend-swatch {
+      width: 14px; height: 14px; border-radius: 4px;
+    }
+
+    .year-bars {
+      position: relative; z-index: 10;
+      margin: 16px 40px 0;
+      display: flex; flex-direction: column;
+      gap: 10px;
+    }
+
+    .year-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .year-label {
+      font-size: 18px; font-weight: 800;
+      color: var(--text-3);
+      width: 52px; flex-shrink: 0;
+    }
+
+    .year-bar-track {
+      flex: 1;
+      height: 32px;
+      background: var(--surface-3);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+    }
+    .year-bar-base {
+      height: 100%;
+      background: var(--color-emerald);
+      border-radius: 10px 0 0 10px;
+    }
+    .year-bar-overhaul {
+      height: 100%;
+      background: var(--color-orange);
+    }
+
+    .year-amount {
+      font-size: 20px; font-weight: 900;
+      color: var(--text-1);
+      width: 130px; flex-shrink: 0;
+      text-align: right;
+    }
+
+    .year-row.overhaul .year-label { color: var(--color-orange); }
+    .year-row.overhaul .year-amount { color: var(--color-orange); }
+
+    .insight-card {
+      position: relative; z-index: 10;
+      margin: 16px 40px 0;
+      padding: 16px 24px;
+      background: rgba(249,115,22,0.06);
+      border: 1px solid rgba(249,115,22,0.15);
+      border-radius: 14px;
+    }
+    .insight-line {
+      font-size: 17px; font-weight: 600;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .insight-line + .insight-line { margin-top: 4px; }
+    .insight-highlight {
+      color: var(--color-orange); font-weight: 800;
+    }
+
+    .info-grid {
+      position: relative; z-index: 10;
+      display: flex;
+      margin: 16px 40px 0;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .info-cell {
+      flex: 1;
+      text-align: center;
+      padding: 18px 12px;
+      background: rgba(255,255,255,0.03);
+    }
+    .info-cell:not(:last-child) {
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .info-cell .ic-val {
+      font-size: 22px; font-weight: 900; color: var(--text-1);
+    }
+    .info-cell .ic-val.orange { color: var(--color-orange); }
+    .info-cell .ic-val.green { color: var(--color-emerald); }
+    .info-cell .ic-lbl {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--text-4); margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-glow-top"></div>
+  <div class="bg-glow-bottom"></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="section-tag"><span>How Costs Change</span></div>
+
+  <div class="vehicle-info">
+    <div class="name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+    <div class="sub">Year-by-Year Cost Progression</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: var(--color-emerald);"></div>
+      Base running cost
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: var(--color-orange);"></div>
+      Overhauls
+    </div>
+  </div>
+
+  {% set ns = namespace(max_total=0) %}
+  {% for yr in vehicle.first_5_years %}
+    {% if yr.total > ns.max_total %}
+      {% set ns.max_total = yr.total %}
+    {% endif %}
+  {% endfor %}
+
+  <div class="year-bars">
+    {% for yr in vehicle.first_5_years %}
+      {% set base = yr.fuel + yr.service + yr.insurance + yr.get('tyres', 0) %}
+      {% set overhaul = yr.get('overhauls', 0) %}
+      {% set base_pct = ((base / ns.max_total) * 100) | round(1) %}
+      {% set overhaul_pct = ((overhaul / ns.max_total) * 100) | round(1) %}
+    <div class="year-row{% if overhaul > 0 %} overhaul{% endif %}">
+      <div class="year-label">Yr {{ yr.year }}</div>
+      <div class="year-bar-track">
+        <div class="year-bar-base" style="width: {{ base_pct }}%;"></div>
+        {% if overhaul > 0 %}
+        <div class="year-bar-overhaul" style="width: {{ overhaul_pct }}%;"></div>
+        {% endif %}
+      </div>
+      <div class="year-amount">₹ {{ "{:,}".format(yr.total | int) }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-line">Costs grow <span class="insight-highlight">~{{ vehicle.inflation_rate }}%/year</span> (inflation)</div>
+    <div class="insight-line"><span class="insight-highlight">Overhaul years spike significantly</span> — budget ahead</div>
+  </div>
+
+  {% set yr1 = vehicle.first_5_years[0] if vehicle.first_5_years else {} %}
+  {% set yr5 = vehicle.first_5_years[-1] if vehicle.first_5_years | length >= 5 else {} %}
+  <div class="info-grid">
+    <div class="info-cell">
+      <div class="ic-val green">₹ {{ "{:,}".format(yr1.get('total', 0) | int) }}</div>
+      <div class="ic-lbl">Year 1</div>
+    </div>
+    <div class="info-cell">
+      <div class="ic-val orange">₹ {{ "{:,}".format(yr5.get('total', 0) | int) }}</div>
+      <div class="ic-lbl">Year 5</div>
+    </div>
+    <div class="info-cell">
+      <div class="ic-val">~{{ vehicle.inflation_rate }}%/yr</div>
+      <div class="ic-lbl">Growth Rate</div>
+    </div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

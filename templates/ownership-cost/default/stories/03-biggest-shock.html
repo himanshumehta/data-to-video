@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+    .slide { background: linear-gradient(180deg, #1a0808 0%, var(--surface-1) 100%); }
+    .shock-card {
+      padding: 28px 24px;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--color-red);
+    }
+    .shock-card .sc-year {
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--color-red);
+      margin-bottom: 8px;
+    }
+    .shock-card .sc-event {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+    .shock-card .sc-cost {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--color-red);
+    }
+    .shock-card .sc-note {
+      font-size: 18px;
+      color: var(--text-3);
+      font-weight: 500;
+      margin-top: 8px;
+    }
+    .total-15yr {
+      text-align: center;
+      padding: 28px 24px;
+      margin-top: auto;
+    }
+    .total-15yr .t15-label {
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-3);
+      margin-bottom: 8px;
+    }
+    .total-15yr .t15-amount {
+      font-size: 64px;
+      font-weight: 900;
+      color: var(--color-red);
+      line-height: 1;
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="slide-bg"><div class="glow-red"></div></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="slide-content">
+    <div class="section-label" style="color: var(--color-red); text-align: center; font-size: 28px;">BIGGEST SHOCK</div>
+
+    {# Find engine rebuild overhaul (typically around year 13) #}
+    {% set engine_rebuild = vehicle.overhauls | selectattr('component', 'equalto', 'engine_full_rebuild') | first %}
+    {% if engine_rebuild is defined %}
+    <div class="shock-card glass-card-heavy">
+      <div class="sc-year">Year {{ engine_rebuild.year }}</div>
+      <div class="sc-event">Engine Full Rebuild</div>
+      <div class="sc-cost">{{ engine_rebuild.cost }}</div>
+      <div class="sc-note">The single most expensive overhaul in the bike's lifetime</div>
+    </div>
+    {% endif %}
+
+    {# RTO re-registration (typically year 15) #}
+    {% set rto_item = vehicle.depreciation_curve | selectattr('rto_expired', 'equalto', true) | first %}
+    {% if rto_item is defined %}
+    <div class="shock-card glass-card-heavy" style="border-left-color: var(--color-orange);">
+      <div class="sc-year" style="color: var(--color-orange);">Year {{ rto_item.age_years }}</div>
+      <div class="sc-event">RTO Re-Registration</div>
+      <div class="sc-cost" style="color: var(--color-orange);">Required</div>
+      <div class="sc-note">Registration expires -- re-register or the bike becomes legally unusable</div>
+    </div>
+    {% endif %}
+
+    {# Other major overhauls #}
+    {% for item in vehicle.overhauls if item.component != 'engine_full_rebuild' and item.year >= 7 %}
+    {% if loop.index <= 2 %}
+    <div class="shock-card glass-card">
+      <div class="sc-year" style="color: var(--color-orange);">Year {{ item.year }}</div>
+      <div class="sc-event">{{ item.component | replace('_', ' ') | title }}</div>
+      <div class="sc-cost" style="color: var(--color-orange);">{{ item.cost }}</div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <div class="total-15yr glass-card-heavy">
+      <div class="t15-label">15-Year Total Cost</div>
+      <div class="t15-amount">{{ vehicle.net_15yr_display }}</div>
+    </div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

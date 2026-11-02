@@ -1,0 +1,703 @@
+{
+  "slug": "royal-enfield-classic-350-2024",
+  "name": "Classic 350",
+  "short_name": "Classic 350",
+  "brand_name": "Royal Enfield",
+  "brand_slug": "royal-enfield",
+  "manufacturer_slug": "royal-enfield",
+  "type": "motorcycle",
+  "vehicle_type": "motorcycle",
+  "year": 2024,
+  "variant": "Redditch",
+  "fuel_type": "petrol",
+  "engine_type": "1 Cylinder, Air/Oil Cooled, 2 Valves",
+  "engine_cc": 349,
+  "power_hp": "20.20",
+  "torque_nm": "27.00",
+  "weight_kg": "195.00",
+  "top_speed_kmph": "115.00",
+  "acceleration_0_100": null,
+  "mileage_mixed": "41.55",
+  "mileage_display": "N/A kmpl",
+  "is_turbo": false,
+  "power_to_weight": null,
+  "summary": "Timeless retro motorcycle with modern reliability",
+  "best_for": "Premium bike enthusiasts seeking the best value for money in the premium 349cc motorcycle segment",
+  "expert_rating": "7.1",
+  "expert_breakdown": {
+    "Value": 8.9,
+    "Design": 7.9,
+    "Quality": 7.3,
+    "Features": 5.7,
+    "Ownership": 7.5,
+    "Performance": 5.5
+  },
+  "rating_breakdown": [
+    {
+      "name": "Value",
+      "score": 8.9
+    },
+    {
+      "name": "Design",
+      "score": 7.9
+    },
+    {
+      "name": "Quality",
+      "score": 7.3
+    },
+    {
+      "name": "Features",
+      "score": 5.7
+    },
+    {
+      "name": "Ownership",
+      "score": 7.5
+    },
+    {
+      "name": "Performance",
+      "score": 5.5
+    }
+  ],
+  "rating_color": "#f59e0b",
+  "pros": [
+    "Tripper navigation and LED lighting (2025 update)",
+    "3 free services and affordable maintenance",
+    "Strong resale value and massive aftermarket ecosystem",
+    "Refined J-series engine with excellent low-end torque",
+    "Timeless retro design that never goes out of style"
+  ],
+  "cons": [
+    "No Bluetooth, ride modes, or traction control",
+    "195 kg weight challenging in heavy traffic",
+    "Stock CEAT tyres lack wet-weather confidence",
+    "Vibrations above 4500 rpm on pegs and bars"
+  ],
+  "price_ex_showroom": 182667,
+  "price_display": "1,82,667",
+  "price_formatted": "₹ 1,82,667",
+  "price_max_variant": 217596,
+  "price_on_road": 217874,
+  "price_on_road_formatted": "₹ 2,17,874",
+  "onroad_road_tax": 19468,
+  "onroad_registration": 1000,
+  "onroad_insurance": 13239,
+  "total_cost_5yr": 296611,
+  "total_cost_5yr_display": "₹ 2,96,611",
+  "net_5yr": 428321,
+  "net_5yr_display": "₹ 4,28,321",
+  "multiplier": 2.34,
+  "total_cost_10yr": 583146,
+  "total_cost_10yr_display": "₹ 5,83,146",
+  "net_10yr": 765813,
+  "net_10yr_display": "₹ 7,65,813",
+  "total_cost_15yr": 1105816,
+  "net_15yr": 1288483,
+  "net_15yr_display": "₹ 12,88,483",
+  "total_cost_20yr": 1792059,
+  "net_20yr": 1974726,
+  "net_20yr_display": "₹ 19,74,726",
+  "cost_per_km": 5.65,
+  "cost_per_km_display": "₹ 5.65",
+  "cost_per_day": 154.77,
+  "cost_per_day_display": "₹ 154",
+  "monthly_cost": 4643,
+  "monthly_cost_display": "₹ 4,643",
+  "annual_fuel": 28571,
+  "annual_fuel_display": "₹ 28,571",
+  "annual_service": 2080,
+  "annual_service_display": "₹ 2,080",
+  "annual_insurance": 12326,
+  "annual_insurance_display": "₹ 12,326",
+  "annual_tyres": 0,
+  "annual_tyres_display": "₹ 0",
+  "annual_total": 42977,
+  "annual_total_display": "₹ 42,977",
+  "fuel_pct": 66,
+  "first_5_years": [
+    {
+      "fuel": 28571,
+      "year": 1,
+      "total": 42977,
+      "tyres": 0,
+      "service": 2080,
+      "insurance": 12326,
+      "overhauls": 0
+    },
+    {
+      "fuel": 30856,
+      "year": 2,
+      "total": 51240,
+      "tyres": 8025,
+      "service": 2225,
+      "insurance": 10134,
+      "overhauls": 0
+    },
+    {
+      "fuel": 33325,
+      "year": 3,
+      "total": 44196,
+      "tyres": 0,
+      "service": 2381,
+      "insurance": 8490,
+      "overhauls": 0
+    },
+    {
+      "fuel": 35991,
+      "year": 4,
+      "total": 58498,
+      "tyres": 9187,
+      "service": 2548,
+      "insurance": 7394,
+      "overhauls": 3378,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 38870,
+      "year": 5,
+      "total": 52956,
+      "tyres": 0,
+      "service": 2726,
+      "insurance": 6298,
+      "overhauls": 5062,
+      "overhaul_items": [
+        "clutch_plate"
+      ]
+    }
+  ],
+  "yearly_breakdown": [
+    {
+      "fuel": 28571,
+      "year": 1,
+      "total": 42977,
+      "tyres": 0,
+      "service": 2080,
+      "insurance": 12326,
+      "overhauls": 0
+    },
+    {
+      "fuel": 30856,
+      "year": 2,
+      "total": 51240,
+      "tyres": 8025,
+      "service": 2225,
+      "insurance": 10134,
+      "overhauls": 0
+    },
+    {
+      "fuel": 33325,
+      "year": 3,
+      "total": 44196,
+      "tyres": 0,
+      "service": 2381,
+      "insurance": 8490,
+      "overhauls": 0
+    },
+    {
+      "fuel": 35991,
+      "year": 4,
+      "total": 58498,
+      "tyres": 9187,
+      "service": 2548,
+      "insurance": 7394,
+      "overhauls": 3378,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 38870,
+      "year": 5,
+      "total": 52956,
+      "tyres": 0,
+      "service": 2726,
+      "insurance": 6298,
+      "overhauls": 5062,
+      "overhaul_items": [
+        "clutch_plate"
+      ]
+    },
+    {
+      "fuel": 41980,
+      "year": 6,
+      "total": 56928,
+      "tyres": 10519,
+      "service": 3063,
+      "insurance": 1366,
+      "overhauls": 0
+    },
+    {
+      "fuel": 45338,
+      "year": 7,
+      "total": 60073,
+      "tyres": 0,
+      "service": 3433,
+      "insurance": 1366,
+      "overhauls": 9936,
+      "overhaul_items": [
+        "suspension_rebuild"
+      ]
+    },
+    {
+      "fuel": 48965,
+      "year": 8,
+      "total": 70643,
+      "tyres": 12043,
+      "service": 3841,
+      "insurance": 1366,
+      "overhauls": 4428,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 52882,
+      "year": 9,
+      "total": 86590,
+      "tyres": 12886,
+      "service": 4288,
+      "insurance": 1366,
+      "overhauls": 15168,
+      "overhaul_items": [
+        "engine_top_overhaul"
+      ]
+    },
+    {
+      "fuel": 57113,
+      "year": 10,
+      "total": 63258,
+      "tyres": 0,
+      "service": 4779,
+      "insurance": 1366,
+      "overhauls": 0
+    },
+    {
+      "fuel": 61682,
+      "year": 11,
+      "total": 93972,
+      "tyres": 14753,
+      "service": 5319,
+      "insurance": 1366,
+      "overhauls": 10852,
+      "overhaul_items": [
+        "electrical_system"
+      ]
+    },
+    {
+      "fuel": 66617,
+      "year": 12,
+      "total": 79698,
+      "tyres": 0,
+      "service": 5910,
+      "insurance": 1366,
+      "overhauls": 5805,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ]
+    },
+    {
+      "fuel": 71946,
+      "year": 13,
+      "total": 141496,
+      "tyres": 16891,
+      "service": 6558,
+      "insurance": 1366,
+      "overhauls": 44735,
+      "overhaul_items": [
+        "engine_full_rebuild"
+      ]
+    },
+    {
+      "fuel": 77702,
+      "year": 14,
+      "total": 86336,
+      "tyres": 0,
+      "service": 7268,
+      "insurance": 1366,
+      "overhauls": 0
+    },
+    {
+      "fuel": 83918,
+      "year": 15,
+      "total": 121168,
+      "tyres": 19339,
+      "service": 8045,
+      "insurance": 1366,
+      "overhauls": 0,
+      "fitness_certificate": 500,
+      "rto_re_registration": 8000
+    },
+    {
+      "fuel": 90632,
+      "year": 16,
+      "total": 109002,
+      "tyres": 0,
+      "service": 8895,
+      "insurance": 1366,
+      "overhauls": 7609,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ],
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 97882,
+      "year": 17,
+      "total": 131713,
+      "tyres": 22141,
+      "service": 9824,
+      "insurance": 1366,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 105713,
+      "year": 18,
+      "total": 142111,
+      "tyres": 23691,
+      "service": 10841,
+      "insurance": 1366,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 114170,
+      "year": 19,
+      "total": 127987,
+      "tyres": 0,
+      "service": 11951,
+      "insurance": 1366,
+      "overhauls": 0,
+      "fitness_certificate": 500
+    },
+    {
+      "fuel": 123303,
+      "year": 20,
+      "total": 175430,
+      "tyres": 27123,
+      "service": 13164,
+      "insurance": 1366,
+      "overhauls": 9974,
+      "overhaul_items": [
+        "chain_sprocket_set"
+      ],
+      "fitness_certificate": 500
+    }
+  ],
+  "overhauls": [
+    {
+      "cost": 3862,
+      "year": 5,
+      "component": "clutch_plate"
+    },
+    {
+      "cost": 2758,
+      "year": 4,
+      "component": "chain_sprocket_set",
+      "repeat_every": 4
+    },
+    {
+      "cost": 6621,
+      "year": 7,
+      "component": "suspension_rebuild"
+    },
+    {
+      "cost": 8828,
+      "year": 9,
+      "component": "engine_top_overhaul"
+    },
+    {
+      "cost": 5517,
+      "year": 11,
+      "component": "electrical_system"
+    },
+    {
+      "cost": 19863,
+      "year": 13,
+      "component": "engine_full_rebuild"
+    }
+  ],
+  "depreciation_curve": [
+    {
+      "age_years": 1,
+      "km_assumed": 10000,
+      "retention_pct": 80,
+      "estimated_price": 146134,
+      "market_adjusted": false
+    },
+    {
+      "age_years": 2,
+      "km_assumed": 20000,
+      "retention_pct": 65,
+      "estimated_price": 118734,
+      "market_adjusted": false
+    },
+    {
+      "age_years": 3,
+      "km_assumed": 30000,
+      "retention_pct": 55,
+      "estimated_price": 100467,
+      "market_adjusted": false
+    },
+    {
+      "age_years": 5,
+      "km_assumed": 50000,
+      "retention_pct": 38,
+      "estimated_price": 69413,
+      "market_adjusted": false
+    },
+    {
+      "age_years": 7,
+      "km_assumed": 70000,
+      "retention_pct": 25,
+      "estimated_price": 45667,
+      "market_adjusted": false
+    },
+    {
+      "age_years": 10,
+      "km_assumed": 100000,
+      "retention_pct": 15,
+      "estimated_price": 27400,
+      "market_adjusted": false
+    },
+    {
+      "age_years": 12,
+      "km_assumed": 120000,
+      "retention_pct": 10,
+      "estimated_price": 18267,
+      "market_adjusted": false
+    },
+    {
+      "notes": "Registration renewal required; green tax applies",
+      "age_years": 15,
+      "km_assumed": 150000,
+      "rto_expired": true,
+      "retention_pct": 5,
+      "estimated_price": 9133,
+      "market_adjusted": false,
+      "green_tax_applicable": true
+    }
+  ],
+  "resale_rating": "average",
+  "first_year_dep": 20.0,
+  "first_year_dep_amount": 36533,
+  "dep_milestones": [
+    {
+      "year": 1,
+      "value": 146134,
+      "value_display": "₹ 1,46,134",
+      "retention_pct": 80.0,
+      "loss_pct": 20
+    },
+    {
+      "year": 3,
+      "value": 100467,
+      "value_display": "₹ 1,00,467",
+      "retention_pct": 55.0,
+      "loss_pct": 45
+    },
+    {
+      "year": 5,
+      "value": 69413,
+      "value_display": "₹ 69,413",
+      "retention_pct": 38.0,
+      "loss_pct": 62
+    },
+    {
+      "year": 10,
+      "value": 27400,
+      "value_display": "₹ 27,400",
+      "retention_pct": 15.0,
+      "loss_pct": 85
+    },
+    {
+      "year": 15,
+      "value": 9133,
+      "value_display": "₹ 9,133",
+      "retention_pct": 5.0,
+      "loss_pct": 95
+    }
+  ],
+  "dep_per_day": 100,
+  "depreciation_1yr": 20.0,
+  "depreciation_1yr_pct": 20,
+  "resale_value_5yr": 69413,
+  "resale_value_5yr_display": "₹ 69,413",
+  "service_components": [
+    {
+      "name": "Engine Oil + Filter",
+      "freq": "3-4×/yr",
+      "pct": 28,
+      "cost": 1120,
+      "cost_display": "₹ 1,120"
+    },
+    {
+      "name": "Air Filter",
+      "freq": "2×/yr",
+      "pct": 6,
+      "cost": 240,
+      "cost_display": "₹ 240"
+    },
+    {
+      "name": "Spark Plug",
+      "freq": "1×/yr",
+      "pct": 4,
+      "cost": 160,
+      "cost_display": "₹ 160"
+    },
+    {
+      "name": "Chain Cleaning & Lube",
+      "freq": "6×/yr",
+      "pct": 10,
+      "cost": 400,
+      "cost_display": "₹ 400"
+    },
+    {
+      "name": "Brake Pads (F+R)",
+      "freq": "1×/yr",
+      "pct": 14,
+      "cost": 560,
+      "cost_display": "₹ 560"
+    },
+    {
+      "name": "Coolant Service",
+      "freq": "1×/yr",
+      "pct": 5,
+      "cost": 200,
+      "cost_display": "₹ 200"
+    },
+    {
+      "name": "General Labor",
+      "freq": "3-4×/yr",
+      "pct": 25,
+      "cost": 1000,
+      "cost_display": "₹ 1,000"
+    },
+    {
+      "name": "Misc Consumables",
+      "freq": "as needed",
+      "pct": 8,
+      "cost": 320,
+      "cost_display": "₹ 320"
+    }
+  ],
+  "tyre_front_cost": 3000,
+  "tyre_rear_cost": 4500,
+  "tyre_life_km": 18000,
+  "assumed_annual_km": 10000,
+  "assumed_fuel_price": 108.0,
+  "mixed_mileage_kmpl": 30.0,
+  "inflation_rate": 6.0,
+  "competitors_ownership": [
+    {
+      "name": "Hunter 350",
+      "slug": "royal-enfield-hunter-350",
+      "price_ex_showroom": 137648,
+      "total_cost_5yr": 285282,
+      "total_cost_10yr": 671198,
+      "cost_per_km": 5.25,
+      "cost_per_day": 143.89,
+      "net_ownership_5yr": 413551,
+      "image_nobg": null,
+      "price_formatted": "₹ 1,37,648",
+      "cost_5yr_display": "₹ 2,85,282",
+      "short_name": "Hunter 350"
+    },
+    {
+      "name": "Bullet 350",
+      "slug": "royal-enfield-bullet-350",
+      "price_ex_showroom": 163503,
+      "total_cost_5yr": 305664,
+      "total_cost_10yr": 729115,
+      "cost_per_km": 5.63,
+      "cost_per_day": 154.36,
+      "net_ownership_5yr": 393372,
+      "image_nobg": null,
+      "price_formatted": "₹ 1,63,503",
+      "cost_5yr_display": "₹ 3,05,664",
+      "short_name": "Bullet 350"
+    },
+    {
+      "name": "Hness CB350",
+      "slug": "honda-cb350-hness",
+      "price_ex_showroom": 194326,
+      "total_cost_5yr": 330077,
+      "total_cost_10yr": 724104,
+      "cost_per_km": 6.17,
+      "cost_per_day": 169.13,
+      "net_ownership_5yr": 497793,
+      "image_nobg": null,
+      "price_formatted": "₹ 1,94,326",
+      "cost_5yr_display": "₹ 3,30,077",
+      "short_name": "Hness CB350"
+    },
+    {
+      "name": "42",
+      "slug": "jawa-42",
+      "price_ex_showroom": 161265,
+      "total_cost_5yr": 341247,
+      "total_cost_10yr": 877107,
+      "cost_per_km": 6.7,
+      "cost_per_day": 183.45,
+      "net_ownership_5yr": 520183,
+      "image_nobg": null,
+      "price_formatted": "₹ 1,61,265",
+      "cost_5yr_display": "₹ 3,41,247",
+      "short_name": "42"
+    },
+    {
+      "name": "X440",
+      "slug": "harley-davidson-x440",
+      "price_ex_showroom": 234516,
+      "total_cost_5yr": 401965,
+      "total_cost_10yr": 961589,
+      "cost_per_km": 7.41,
+      "cost_per_day": 202.95,
+      "net_ownership_5yr": 643868,
+      "image_nobg": null,
+      "price_formatted": "₹ 2,34,516",
+      "cost_5yr_display": "₹ 4,01,965",
+      "short_name": "X440"
+    }
+  ],
+  "comparison_specs": [
+    {
+      "label": "Power",
+      "self_value": "20 hp",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Torque",
+      "self_value": "27 Nm",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Top Speed",
+      "self_value": "115 kmph",
+      "rival_value": "—",
+      "winner": "self"
+    },
+    {
+      "label": "Price",
+      "self_value": "₹1,82,667",
+      "rival_value": "₹2,00,791",
+      "winner": "self"
+    }
+  ],
+  "cheapest_year": 1,
+  "cheapest_year_display": "42,977",
+  "costliest_year": 4,
+  "costliest_year_display": "58,498",
+  "first_overhaul_year": 4,
+  "first_overhaul_component": "chain sprocket set",
+  "launch_age_years": null,
+  "data_confidence": "verified",
+  "data_confidence_label": "Based on 5+ years of owner data",
+  "safety_score": 0,
+  "safety_features": [],
+  "traction_control": false,
+  "primary_nobg_url": "vehicles/royal-enfield-classic-350-2024.png"
+}

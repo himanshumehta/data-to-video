@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+    .bg-glow-top {
+      position: absolute; top: 5%; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 400px;
+      background: radial-gradient(ellipse, rgba(71,131,255,0.05) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+    .bg-glow-bottom {
+      position: absolute; bottom: 8%; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(59,130,246,0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+
+    .section-tag {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 28px;
+    }
+    .section-tag span {
+      display: inline-block;
+      padding: 10px 28px;
+      border-radius: 50px;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.2);
+      font-size: 15px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.25em;
+      color: var(--color-blue);
+    }
+
+    .bike-area {
+      position: relative; z-index: 5;
+      display: flex; justify-content: center;
+      margin-top: 16px;
+      height: 240px;
+    }
+    .bike-img {
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 25px 60px rgba(0,0,0,0.7)) drop-shadow(0 0 40px rgba(59,130,246,0.08));
+    }
+
+    .vehicle-info {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 2px;
+    }
+    .vehicle-info .name { font-size: 32px; font-weight: 900; }
+    .vehicle-info .sub { font-size: 16px; font-weight: 500; color: var(--text-4); margin-top: 2px; }
+
+    .total-hero {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .total-hero .total-amount {
+      font-size: 78px; font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      color: var(--color-blue);
+      text-shadow: 0 0 50px rgba(59,130,246,0.2),
+                   0 4px 20px rgba(0,0,0,0.5);
+    }
+    .total-hero .total-sub {
+      font-size: 16px; font-weight: 600;
+      color: var(--text-3);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .divider {
+      position: relative; z-index: 10;
+      margin: 20px 120px 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.15), transparent);
+    }
+
+    .component-list {
+      position: relative; z-index: 10;
+      margin: 16px 58px 0;
+      display: flex; flex-direction: column;
+      gap: 6px;
+    }
+
+    .comp-row {
+      display: flex; align-items: center;
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      gap: 14px;
+    }
+
+    .comp-row .comp-info { flex: 1; }
+    .comp-row .comp-name {
+      font-size: 20px; font-weight: 700; color: var(--text-1);
+    }
+    .comp-row .comp-freq {
+      font-size: 14px; font-weight: 600; color: var(--text-4);
+      margin-left: 8px;
+    }
+    .comp-row .comp-bar-track {
+      height: 6px;
+      background: var(--surface-3);
+      border-radius: 3px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .comp-row .comp-bar-fill {
+      height: 100%; border-radius: 3px;
+      background: var(--color-blue);
+    }
+    .comp-row .comp-amount {
+      font-size: 22px; font-weight: 900;
+      color: var(--color-blue);
+      text-align: right;
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    .engagement-card {
+      position: relative; z-index: 10;
+      text-align: center;
+      margin: 16px 58px 0;
+      padding: 20px 24px;
+      background: rgba(59,130,246,0.06);
+      border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 16px;
+    }
+    .engagement-card .eng-question {
+      font-size: 24px; font-weight: 800; color: var(--text-1);
+      margin-bottom: 4px;
+    }
+    .engagement-card .eng-cta {
+      font-size: 18px; font-weight: 600; color: var(--color-blue);
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-glow-top"></div>
+  <div class="bg-glow-bottom"></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="section-tag"><span>Where Your Service Money Goes</span></div>
+
+  <div class="bike-area">
+    {% if vehicle.primary_nobg_url %}
+    <img class="bike-img" src="{{ vehicle.primary_nobg_url }}" alt="{{ vehicle.brand_name }} {{ vehicle.short_name }}">
+    {% endif %}
+  </div>
+
+  <div class="vehicle-info">
+    <div class="name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+    <div class="sub">Service Cost Per Year</div>
+  </div>
+
+  <div class="total-hero">
+    <div class="total-amount">{{ vehicle.annual_service_display }}</div>
+    <div class="total-sub">Total Service Cost / Year</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="component-list">
+    {% for comp in vehicle.service_components | sort(attribute='cost', reverse=True) %}
+    <div class="comp-row">
+      <div class="comp-info">
+        <div><span class="comp-name">{{ comp.name }}</span><span class="comp-freq">{{ comp.freq }}</span></div>
+        <div class="comp-bar-track"><div class="comp-bar-fill" style="width: {{ comp.pct }}%;"></div></div>
+      </div>
+      <div class="comp-amount">{{ comp.cost_display }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="engagement-card">
+    <div class="eng-question">Own a {{ vehicle.short_name }}?</div>
+    <div class="eng-cta">Comment your actual service cost — help others plan!</div>
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

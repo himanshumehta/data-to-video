@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    body { width: {{ width }}px; height: {{ height }}px; font-family: 'Inter', sans-serif; transform-origin: top left; }
+
+    .slide {
+      width: {{ width }}px; height: {{ height }}px;
+      position: relative; overflow: hidden;
+      background: #08080a; color: #f4f4f5;
+    }
+
+    .glow-1 { position: absolute; top: -8%; left: 20%; width: 4000px; height: 2400px; background: radial-gradient(ellipse, rgba(71,131,255,0.06) 0%, transparent 65%); pointer-events: none; z-index: 1; }
+    .glow-2 { position: absolute; bottom: -5%; right: 10%; width: 3000px; height: 2000px; background: radial-gradient(ellipse, rgba(71,131,255,0.03) 0%, transparent 60%); pointer-events: none; z-index: 1; }
+    .edge-light { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent 5%, rgba(71,131,255,0.15) 30%, rgba(71,131,255,0.25) 50%, rgba(71,131,255,0.15) 70%, transparent 95%); z-index: 20; }
+
+    .brand-logo { position: absolute; top: 140px; right: 260px; z-index: 20; font-size: 160px; font-weight: 800; letter-spacing: -3px; }
+    .brand-logo .b { color: #4783ff; }
+    .brand-logo .n { color: #fff; display: inline-block; transform: rotate(-12deg); text-shadow: 0 0 50px rgba(255,255,255,0.4); font-style: italic; }
+    .brand-logo .c { color: #f43f5e; }
+
+    /* Top left — header */
+    .top-block { position: absolute; top: 200px; left: 300px; z-index: 10; }
+    .accent-strip {
+      display: inline-block;
+      background: rgba(71,131,255,0.12);
+      padding: 16px 48px 16px 0;
+      margin-bottom: 40px;
+      border-left: 10px solid #4783ff;
+      padding-left: 40px; width: fit-content;
+    }
+    .accent-strip .label { font-size: 64px; font-weight: 800; color: #4783ff; text-transform: uppercase; letter-spacing: 0.2em; }
+    .hero-title { font-size: 160px; font-weight: 900; letter-spacing: -5px; margin-bottom: 16px; }
+    .hero-sub { font-size: 72px; font-weight: 700; color: #52525b; }
+    .hero-sub .w { color: #a1a1aa; font-weight: 800; }
+
+    /* 4 category cards — centered middle */
+    .cat-cards {
+      position: absolute; top: 37.5%; left: 50%; transform: translate(-50%, -50%);
+      z-index: 12;
+      display: flex; gap: 80px;
+    }
+    .cat-card {
+      padding: 100px 100px; border-radius: 48px;
+      background: rgba(255,255,255,0.03);
+      border: 3px solid rgba(255,255,255,0.06);
+      border-top: 12px solid;
+      text-align: center; min-width: 600px;
+    }
+    .cat-card.fuel { border-top-color: #f59e0b; }
+    .cat-card.svc { border-top-color: #3b82f6; }
+    .cat-card.tyr { border-top-color: #f97316; }
+    .cat-card.ins { border-top-color: #8b5cf6; }
+    .cc-val { font-size: 216px; font-weight: 900; line-height: 1; margin-bottom: 24px; }
+    .cc-val.fuel { color: #f59e0b; }
+    .cc-val.svc { color: #3b82f6; }
+    .cc-val.tyr { color: #f97316; }
+    .cc-val.ins { color: #8b5cf6; }
+    .cc-label { font-size: 120px; font-weight: 800; color: #52525b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .cc-sub { font-size: 108px; font-weight: 700; color: #3f3f46; }
+
+    /* Bar chart — ascending totals, bottom half */
+    .chart-area {
+      position: absolute; bottom: 160px; left: 300px; right: 300px;
+      height: 2400px; z-index: 10;
+      display: flex; align-items: flex-end; gap: 32px;
+    }
+
+    .v-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+    .v-total { font-size: 60px; font-weight: 900; color: #f4f4f5; margin-bottom: 12px; white-space: nowrap; }
+    .v-total.red { color: #ef4444; }
+    .v-bar { width: 75%; border-radius: 18px 18px 0 0; }
+    .v-bar.normal { background: linear-gradient(180deg, #4783ff, #1e40af); }
+    .v-bar.oh { background: linear-gradient(180deg, #ef4444 0%, #4783ff 30%, #1e40af 100%); }
+    .v-yr { font-size: 52px; font-weight: 800; color: #71717a; margin-top: 20px; }
+    .v-yr.red { color: #ef4444; }
+    .v-oh-tag { font-size: 36px; font-weight: 800; color: #ef4444; margin-top: 6px; }
+
+    .watermark { position: absolute; bottom: 48px; right: 72px; font-size: 42px; color: rgba(255,255,255,0.15); font-weight: 600; letter-spacing: 0.1em; z-index: 10; }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div><div class="edge-light"></div>
+  <div class="brand-logo"><span class="b">Bike</span><span class="n">N</span><span class="c">Cars</span></div>
+
+  <div class="top-block">
+    <div class="accent-strip"><div class="label">Annual Breakdown · {{ vehicle.brand_name }} {{ vehicle.short_name }}</div></div>
+    {% set yr1_total = vehicle.yearly_breakdown[0].total | int %}
+    {% set yr10_total = vehicle.yearly_breakdown[9].total | int if vehicle.yearly_breakdown | length >= 10 else vehicle.yearly_breakdown[-1].total | int %}
+    {% macro inr_short(v) %}{% if v >= 100000 %}₹{{ "%.2f" | format(v / 100000) }}L{% else %}₹{{ (v / 1000) | round(0) | int }}K{% endif %}{% endmacro %}
+    <div class="hero-title">{{ inr_short(yr1_total) }} → {{ inr_short(yr10_total) }}</div>
+    <div class="hero-sub"><span class="w">Running cost doubles</span> in 10 years · {{ "{:,}".format(vehicle.assumed_annual_km | int) }} km/yr</div>
+  </div>
+
+  {% set totals_10yr = vehicle.yearly_breakdown[:10] %}
+  {% set sum_fuel = totals_10yr | sum(attribute='fuel') %}
+  {% set sum_service = totals_10yr | sum(attribute='service') %}
+  {% set sum_tyres = totals_10yr | sum(attribute='tyres') %}
+  {% set sum_insurance = totals_10yr | sum(attribute='insurance') %}
+  {% set grand_total = sum_fuel + sum_service + sum_tyres + sum_insurance %}
+  <div class="cat-cards">
+    <div class="cat-card fuel">
+      <div class="cc-val fuel">~{{ ((sum_fuel / grand_total) * 100) | round(0) | int }}%</div>
+      <div class="cc-label">Fuel</div>
+      <div class="cc-sub">Largest share</div>
+    </div>
+    <div class="cat-card svc">
+      <div class="cc-val svc">~{{ ((sum_service / grand_total) * 100) | round(0) | int }}%</div>
+      <div class="cc-label">Service</div>
+      <div class="cc-sub">Grows fastest</div>
+    </div>
+    <div class="cat-card tyr">
+      <div class="cc-val tyr">~{{ ((sum_tyres / grand_total) * 100) | round(0) | int }}%</div>
+      <div class="cc-label">Tyres</div>
+      <div class="cc-sub">Every 2 yrs</div>
+    </div>
+    <div class="cat-card ins">
+      <div class="cc-val ins">~{{ ((sum_insurance / grand_total) * 100) | round(0) | int }}%</div>
+      <div class="cc-label">Insurance</div>
+      <div class="cc-sub">Drops yearly</div>
+    </div>
+  </div>
+
+  {% if step is not defined or step >= 2 %}
+  <div class="chart-area" id="chart"></div>
+  {% endif %}
+
+  <div class="watermark">bikencars.com</div>
+</div>
+<script>
+(function() {
+  var w = {{ width }}, h = {{ height }};
+  function fit() {
+    var sx = window.innerWidth / w, sy = window.innerHeight / h, s = Math.min(sx, sy);
+    var body = document.body;
+    body.style.transform = 'scale(' + s + ')'; body.style.transformOrigin = 'top left';
+    body.style.width = w + 'px'; body.style.height = h + 'px';
+    body.style.marginLeft = ((window.innerWidth - w * s) / 2) + 'px';
+    body.style.marginTop = ((window.innerHeight - h * s) / 2) + 'px';
+    document.documentElement.style.overflow = 'hidden'; document.documentElement.style.background = '#000';
+  }
+  fit(); window.addEventListener('resize', fit);
+
+  var data = [
+    {% for yr in vehicle.yearly_breakdown if yr.year <= 10 %}
+    { yr: 'Yr {{ yr.year }}', total: {{ yr.total | int }}, oh: {{ yr.overhauls | default(0) | int }} }{{ "," if not loop.last }}
+    {% endfor %}
+  ];
+
+  var maxTotal = 0;
+  data.forEach(function(d) { if (d.total > maxTotal) maxTotal = d.total; });
+  var maxBarH = 1900;
+
+  var chart = document.getElementById('chart');
+  if (!chart) return;
+  data.forEach(function(d) {
+    var col = document.createElement('div');
+    col.className = 'v-col';
+
+    var totalEl = document.createElement('div');
+    totalEl.className = 'v-total' + (d.oh > 0 ? ' red' : '');
+    totalEl.textContent = '\u20B9' + (d.total >= 100000 ? (d.total / 100000).toFixed(2) + 'L' : (d.total / 1000).toFixed(0) + 'K');
+    col.appendChild(totalEl);
+
+    var bar = document.createElement('div');
+    bar.className = 'v-bar ' + (d.oh > 0 ? 'oh' : 'normal');
+    bar.style.height = ((d.total / maxTotal) * maxBarH) + 'px';
+    col.appendChild(bar);
+
+    var yrEl = document.createElement('div');
+    yrEl.className = 'v-yr' + (d.oh > 0 ? ' red' : '');
+    yrEl.textContent = d.yr;
+    col.appendChild(yrEl);
+
+    if (d.oh > 0) {
+      var ohEl = document.createElement('div');
+      ohEl.className = 'v-oh-tag';
+      ohEl.textContent = 'OH';
+      col.appendChild(ohEl);
+    }
+
+    chart.appendChild(col);
+  });
+})();
+</script>
+</body>
+</html>

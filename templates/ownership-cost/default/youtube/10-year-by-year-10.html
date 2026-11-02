@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    body { width: {{ width }}px; height: {{ height }}px; font-family: 'Inter', sans-serif; transform-origin: top left; }
+
+    .slide {
+      width: {{ width }}px; height: {{ height }}px;
+      position: relative; overflow: hidden;
+      background: #08080a; color: #f4f4f5;
+      display: flex; flex-direction: row;
+    }
+
+    .glow-1 { position: absolute; top: -8%; left: 25%; width: 4000px; height: 2400px; background: radial-gradient(ellipse, rgba(239,68,68,0.04) 0%, transparent 65%); pointer-events: none; z-index: 1; }
+    .glow-2 { position: absolute; bottom: -5%; right: 8%; width: 3000px; height: 2000px; background: radial-gradient(ellipse, rgba(239,68,68,0.025) 0%, transparent 60%); pointer-events: none; z-index: 1; }
+    .glow-3 { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 5000px; height: 3000px; background: radial-gradient(ellipse, rgba(255,255,255,0.008) 0%, transparent 50%); pointer-events: none; z-index: 1; }
+    .edge-light { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent 5%, rgba(71,131,255,0.15) 30%, rgba(71,131,255,0.25) 50%, rgba(71,131,255,0.15) 70%, transparent 95%); z-index: 20; }
+
+    .brand-logo { position: absolute; top: 140px; right: 260px; z-index: 20; font-size: 160px; font-weight: 800; letter-spacing: -3px; }
+    .brand-logo .b { color: #4783ff; }
+    .brand-logo .n { color: #fff; display: inline-block; transform: rotate(-12deg); text-shadow: 0 0 50px rgba(255,255,255,0.4); font-style: italic; }
+    .brand-logo .c { color: #f43f5e; }
+
+    /* Left panel - 60% */
+    .left-panel {
+      width: 60%; height: 100%;
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 200px 80px 200px 300px;
+    }
+
+    .top-label { font-size: 72px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.35em; color: #3f3f46; margin-bottom: 24px; }
+    .title-line { font-size: 148px; font-weight: 900; line-height: 1.08; color: #71717a; letter-spacing: -2px; margin-bottom: 80px; }
+    .title-line strong { color: #f4f4f5; }
+    .title-line .dim { color: #52525b; font-weight: 700; }
+
+    /* Legend */
+    .legend {
+      display: flex; gap: 72px;
+      margin-bottom: 80px;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 24px;
+      font-size: 52px; font-weight: 700; color: #71717a;
+    }
+    .legend-swatch {
+      width: 48px; height: 48px; border-radius: 12px;
+    }
+
+    /* Year bars */
+    .year-bars {
+      display: flex; flex-direction: column;
+      gap: 48px;
+    }
+    .year-row {
+      display: flex; align-items: center; gap: 40px;
+    }
+    .year-label {
+      font-size: 72px; font-weight: 800;
+      color: #71717a;
+      width: 240px; flex-shrink: 0;
+    }
+    .year-bar-track {
+      flex: 1; height: 100px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 24px;
+      overflow: hidden;
+      display: flex;
+    }
+    .year-bar-base {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(16,185,129,0.8) 0%, #10B981 100%);
+      border-radius: 24px 0 0 24px;
+    }
+    .year-bar-overhaul {
+      height: 100%;
+      background: linear-gradient(90deg, #f97316 0%, rgba(249,115,22,0.85) 100%);
+    }
+    .year-bar-base.solo {
+      border-radius: 24px;
+    }
+    .year-amount {
+      font-size: 72px; font-weight: 900;
+      color: #f4f4f5;
+      width: 480px; flex-shrink: 0;
+      text-align: right;
+      letter-spacing: -2px;
+    }
+    .year-row.overhaul .year-label { color: #ef4444; }
+    .year-row.overhaul .year-amount { color: #ef4444; }
+
+    /* Insight */
+    .insight-card {
+      margin-top: 80px;
+      padding: 48px 72px;
+      background: rgba(239,68,68,0.06);
+      border: 3px solid rgba(239,68,68,0.15);
+      border-radius: 32px;
+    }
+    .insight-text {
+      font-size: 56px; font-weight: 600;
+      color: #a1a1aa;
+      line-height: 1.5;
+    }
+    .insight-text .hl { color: #ef4444; font-weight: 800; }
+
+    /* Right panel - 40% */
+    .right-panel {
+      width: 40%; height: 100%;
+      position: relative; z-index: 5;
+      display: flex; flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 200px 260px 200px 0;
+    }
+
+    .bike-img {
+      width: 100%; max-height: 1400px;
+      object-fit: contain;
+      filter: drop-shadow(0 80px 200px rgba(0,0,0,0.6)) drop-shadow(0 0 120px rgba(239,68,68,0.06));
+      margin-bottom: 80px;
+    }
+
+    .summary-cards {
+      display: flex; flex-direction: column;
+      gap: 40px; width: 100%;
+    }
+    .summary-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 60px 80px;
+      background: rgba(255,255,255,0.04);
+      border: 3px solid rgba(255,255,255,0.08);
+      border-radius: 42px;
+    }
+    .summary-card .sc-label {
+      font-size: 52px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.18em;
+      color: #52525b;
+    }
+    .summary-card .sc-value {
+      font-size: 72px; font-weight: 900;
+    }
+    .summary-card .sc-value.red { color: #ef4444; }
+    .summary-card .sc-value.orange { color: #f97316; }
+    .summary-card .sc-value.amber { color: #f59e0b; }
+
+    .watermark {
+      position: absolute; bottom: 48px; right: 72px;
+      font-size: 42px; color: rgba(255,255,255,0.15);
+      font-weight: 600; letter-spacing: 0.1em; z-index: 10;
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="glow-1"></div><div class="glow-2"></div><div class="glow-3"></div><div class="edge-light"></div>
+  <div class="brand-logo"><span class="b">Bike</span><span class="n">N</span><span class="c">Cars</span></div>
+
+  {# Compute max for years 6-10 bar sizing #}
+  {% set ns = namespace(max_yr=1, yr6_total=0, yr10_total=0) %}
+  {% for yr in vehicle.yearly_breakdown if yr.year >= 6 and yr.year <= 10 %}
+    {% if yr.total > ns.max_yr %}{% set ns.max_yr = yr.total %}{% endif %}
+    {% if yr.year == 6 %}{% set ns.yr6_total = yr.total %}{% endif %}
+    {% if yr.year == 10 %}{% set ns.yr10_total = yr.total %}{% endif %}
+  {% endfor %}
+
+  <div class="left-panel">
+    <div class="top-label">Year by Year &middot; 6-10</div>
+    <div class="title-line"><strong>{{ vehicle.brand_name }} {{ vehicle.short_name }}</strong> <span class="dim">&middot; Years 6-10</span></div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background: #10B981;"></div>
+        Base running cost
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background: #f97316;"></div>
+        Overhaul
+      </div>
+    </div>
+
+    <div class="year-bars">
+      {% for yr in vehicle.yearly_breakdown if yr.year >= 6 and yr.year <= 10 %}
+        {% set oh_amount = yr.get('overhauls', 0) %}
+        {% set base = yr.total - oh_amount %}
+        {% set base_pct = ((base / ns.max_yr) * 100) | round(1) if ns.max_yr > 0 else 0 %}
+        {% set oh_pct = ((oh_amount / ns.max_yr) * 100) | round(1) if oh_amount > 0 else 0 %}
+      <div class="year-row{% if oh_amount > 0 %} overhaul{% endif %}">
+        <div class="year-label">Yr {{ yr.year }}</div>
+        <div class="year-bar-track">
+          {% if oh_amount > 0 %}
+          <div class="year-bar-base" style="width: {{ base_pct }}%;"></div>
+          <div class="year-bar-overhaul" style="width: {{ oh_pct }}%;"></div>
+          {% else %}
+          <div class="year-bar-base solo" style="width: {{ ((yr.total / ns.max_yr) * 100) | round(1) }}%;"></div>
+          {% endif %}
+        </div>
+        <div class="year-amount">&#8377; {{ "{:,}".format(yr.total | int) }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-text">
+        Costs in <span class="hl">years 6-10 are significantly higher</span> due to major overhauls,
+        part replacements, and inflation compounding over time
+      </div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    {% if vehicle.primary_nobg_url %}
+    <img class="bike-img" src="{{ vehicle.primary_nobg_url }}" alt="{{ vehicle.brand_name }} {{ vehicle.short_name }}">
+    {% endif %}
+
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="sc-label">Year 6</div>
+        <div class="sc-value orange">&#8377; {{ "{:,}".format(ns.yr6_total | int) }}</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label">Year 10</div>
+        <div class="sc-value red">&#8377; {{ "{:,}".format(ns.yr10_total | int) }}</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label">Growth</div>
+        <div class="sc-value amber">{% if ns.yr6_total > 0 %}{{ (((ns.yr10_total - ns.yr6_total) / ns.yr6_total) * 100) | round(0) | int }}%{% else %}--{% endif %}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="watermark">bikencars.com</div>
+</div>
+</body>
+</html>

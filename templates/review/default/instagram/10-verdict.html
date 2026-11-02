@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width={{ width }}, initial-scale=1.0">
+<title>{{ vehicle.brand_name }} {{ vehicle.short_name }} — Verdict</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+<style>
+  html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+
+  .verdict-content {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .verdict-rating {
+    margin-bottom: 28px;
+  }
+
+  .verdict-name {
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 20px;
+  }
+
+  .verdict-text {
+    font-size: 26px;
+    color: var(--text-2);
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0 auto 28px;
+  }
+
+  .verdict-best-for {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--brand-primary);
+    margin-bottom: 28px;
+  }
+
+  .verdict-badges {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>
+</head>
+<body>
+<div class="slide" style="background: var(--section-verdict);">
+  <div class="slide-bg"><div class="glow-accent"></div></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span>
+      <span class="total">/ {{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="slide-content verdict-content">
+    <div class="section-label" style="color: var(--color-orange);">The Verdict</div>
+
+    <div class="verdict-rating">
+      <div class="rating-circle" style="border-color: {{ vehicle.rating_color }};">
+        {{ vehicle.expert_rating }}
+      </div>
+    </div>
+
+    <div class="verdict-name">{{ vehicle.brand_name }} {{ vehicle.short_name }}</div>
+
+    {% if vehicle.verdict_text %}
+    <div class="verdict-text">{{ vehicle.verdict_text }}</div>
+    {% endif %}
+
+    {% if vehicle.best_for %}
+    <div class="verdict-best-for">Best For: {{ vehicle.best_for }}</div>
+    {% endif %}
+
+    {% if vehicle.tags %}
+    <div class="verdict-badges">
+      {% for tag in vehicle.tags[:3] %}
+      <div class="badge-tag" style="background: rgba(16,185,129,0.15); color: var(--color-emerald);">
+        {{ tag }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% include '_shared/progress-dots.html' %}
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

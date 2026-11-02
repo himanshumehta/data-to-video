@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="file://{{ templates_abs_dir }}/_base.css">
+  <style>
+    html, body { width: {{ width }}px; height: {{ height }}px; overflow: hidden; }
+    .dep-chart {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 20px 24px;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .dep-point { text-align: center; flex: 1; }
+    .dep-bar-wrap {
+      height: 100px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    .dep-bar {
+      width: 40px;
+      border-radius: 6px 6px 0 0;
+      background: var(--color-blue);
+      min-height: 8px;
+    }
+    .dep-pct {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+    .dep-year {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+    .dep-label {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="slide">
+  <div class="slide-bg"><div class="glow-amber"></div></div>
+
+  <div class="slide-header">
+    {% include '_shared/brand-logo.html' %}
+    <div class="slide-counter">
+      <span class="current">{{ slide_number }}</span><span class="total">/{{ total_slides }}</span>
+    </div>
+  </div>
+
+  <div class="slide-content">
+    <div class="section-label" style="color: var(--color-amber);">THE 20-YEAR PICTURE</div>
+
+    <div class="milestone-grid">
+      <div class="milestone-card glass-card" style="border-left: 3px solid var(--color-emerald);">
+        <div class="milestone-years" style="color: var(--color-emerald);">5 Years</div>
+        <div class="milestone-amount" style="color: var(--color-emerald);">{{ vehicle.net_5yr_display }}</div>
+      </div>
+      <div class="milestone-card glass-card" style="border-left: 3px solid var(--color-amber);">
+        <div class="milestone-years" style="color: var(--color-amber);">10 Years</div>
+        <div class="milestone-amount" style="color: var(--color-amber);">{{ vehicle.net_10yr_display }}</div>
+      </div>
+      <div class="milestone-card glass-card" style="border-left: 3px solid var(--color-orange);">
+        <div class="milestone-years" style="color: var(--color-orange);">15 Years</div>
+        <div class="milestone-amount" style="color: var(--color-orange);">{{ vehicle.net_15yr_display }}</div>
+      </div>
+      <div class="milestone-card glass-card" style="border-left: 3px solid var(--color-red);">
+        <div class="milestone-years" style="color: var(--color-red);">20 Years</div>
+        <div class="milestone-amount" style="color: var(--color-red);">{{ vehicle.net_20yr_display }}</div>
+      </div>
+    </div>
+
+    <div class="dep-label">Depreciation Curve</div>
+
+    <div class="dep-chart glass-card">
+      {% set dep_points = vehicle.depreciation_curve[:4] if vehicle.depreciation_curve | length > 4 else vehicle.depreciation_curve %}
+      {% for dp in dep_points %}
+      <div class="dep-point">
+        <div class="dep-bar-wrap">
+          <div class="dep-bar" style="height: {{ dp.retention_pct }}%;{% if dp.rto_expired %} background: var(--color-red);{% endif %}"></div>
+        </div>
+        <div class="dep-pct">{{ dp.retention_pct }}%</div>
+        <div class="dep-year">Yr {{ dp.age_years }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% include '_shared/watermark.html' %}
+</div>
+</body>
+</html>

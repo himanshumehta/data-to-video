@@ -6,16 +6,16 @@ import re
 
 
 def _indian_number_to_words(num: int) -> str:
-    """Convert integer to spoken form that matches the short figure on the slide.
+    """Convert an integer amount to the rounded form a narrator says.
 
-    Mirrors the screen's rounding exactly so narration says the same number shown:
-      ≥ 1 lakh  → "X.x lakh"   (matches ₹X.xL on screen)
-      ≥ 1K      → "about X thousand"  (matches ₹XK on screen)
+    The slide shows the exact amount; the narration rounds it for the ear:
+      ≥ 1 lakh  → "X.x lakh"
+      ≥ 1K      → "about X thousand"
       < 1K      → exact digits
 
-    e.g. 7,55,084 → "7.6 lakh"   (screen shows ₹7.6L)
-         2,99,888 → "3 lakh"      (screen shows ₹3.0L)
-         89,685   → "about 90 thousand"  (screen shows ₹90K)
+    e.g. 7,55,084 → "7.6 lakh"
+         2,99,888 → "3 lakh"
+         89,685   → "about 90 thousand"
     """
     if num < 1000:
         return str(num)

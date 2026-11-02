@@ -61,7 +61,7 @@ Each stage is a separate script you can run alone. `scripts/ownership_pipeline.p
 ## Design decisions and trade-offs
 
 **The LLM rewrites text that was already rendered from data; it never sees raw numbers to format.**
-Why: templates plus `speech_friendly()` decide how every figure is spoken (`₹ 4,28,321` becomes "rupees 4.3 lakh", matching the `₹4.3L` on screen). The model only changes the words around the figures.
+Why: templates plus `speech_friendly()` decide how every figure is spoken. The slide shows the exact `₹ 4,28,321`; the narration rounds it the way a listener takes it in, "rupees 4.3 lakh". The model only changes the words around the figures.
 Trade-off: less freedom for the model. Asking it to write from the raw JSON would give more varied scripts, but there would be no source text to check its numbers against.
 
 **The guard compares sets of numbers, not meaning.**

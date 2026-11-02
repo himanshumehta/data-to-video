@@ -8,15 +8,15 @@
     "gallery": "vite dev --config src/gallery/vite.config.ts"
   },
   "dependencies": {
-    "@remotion/bundler": "4.0.536",
-    "@remotion/cli": "4.0.536",
-    "@remotion/google-fonts": "4.0.536",
-    "@remotion/player": "4.0.536",
-    "@remotion/renderer": "4.0.536",
+    "@remotion/bundler": "4.0.539",
+    "@remotion/cli": "4.0.539",
+    "@remotion/google-fonts": "4.0.539",
+    "@remotion/player": "4.0.539",
+    "@remotion/renderer": "4.0.539",
     "p-limit": "^5.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "remotion": "4.0.536"
+    "remotion": "4.0.539"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

@@ -103,7 +103,30 @@ Trade-off: the full path needs more flags than the demo.
 - **Determinism.** The same data and templates give the same script and the same curation. Only the LLM and TTS steps vary, and their output is cached per language.
 - **Cost and latency controls.** One TTS call per slide with a 25 s gap (free-tier quota), cached WAVs reused unless `--force`, one Remotion bundle shared by all slide renders, `--scale 1` for drafts.
 - **Human in the loop.** Publishing is a dry run that prints the request until you pass `--send`, and a sent video lands in social-publisher as a `pending_review` post that an admin must approve before anything goes out. `npm run gallery` previews every slide with the current vehicle before a render.
-- **Evals.** `tests/test_guard.py` runs the real retry-and-refuse loop against a fake `claude` executable that replays scripted answers: the known 2.51 → 2.69 drift, a URL, a banned phrase. It also runs the guard over the shipped sample scripts. On the prebaked Royal Enfield Classic 350 narration it flags 4 English slides (3 banned phrases, 1 "dot com") and 2 Hindi slides (year numbers said as words, "dot com"). That audio predates the guard, so `make demo` prints these as warnings and plays it as shipped.
+- **Evals.** `tests/test_guard.py` runs the real retry-and-refuse loop against a fake `claude` executable that replays scripted answers: the known 2.51 → 2.69 drift, a URL, a banned phrase. It also runs the guard over the shipped sample scripts. On the prebaked Royal Enfield Classic 350 narration it flags 4 English slides (3 banned phrases, 1 "dot com") and 2 Hindi slides (year numbers said as words, "dot com"). That audio predates the guard, so `make demo` prints these as warnings and plays it as shipped. How often the guard catches a wrong number is measured separately, in [Evals](#evals).
+
+## Evals
+
+`evals/numeric_guard/` measures the numeric guard offline, with a fixed seed and no model calls. It renders every slide of the 5 sample vehicles that states a data figure, using the real templates, and takes 50 correct rewrites of them: 10 each of an English paraphrase, the Hindi template, the Telugu template, and those two again with Devanagari or Telugu digits. Each correct script then gets one copy per mutation type that applies, with one figure made wrong. The score is the pipeline's own check, `number_mismatch(source, candidate, identity_numbers(vehicle))`.
+
+```bash
+make eval    # prints the table, writes evals/numeric_guard/results.json and results.md
+```
+
+| Mutation | Example | Mutants | Caught | Recall |
+|---|---|---:|---:|---:|
+| Digit swap | 58 → 85 | 25 | 25 | 100% |
+| Off by 10% | 2.34 times → 2.57 times | 50 | 50 | 100% |
+| Unit or scale | 5.2 lakh → 5.2 crore | 49 | 0 | 0% |
+| Rounding past the data | 4.3 lakh → 4 lakh | 37 | 37 | 100% |
+| Wrong number in words | 77 thousand → sixty-nine thousand | 50 | 50 | 100% |
+| Swapped fields | year 1 at 58 thousand, year 4 at 77 thousand → year 1 at 77 thousand, year 4 at 58 thousand | 37 | 0 | 0% |
+| Dropped decimal point | 4.3 lakh → 43 lakh | 18 | 18 | 100% |
+| **All** | | **266** | **180** | **67.7%** |
+
+False positives: 0 of the 50 correct scripts (0 in each of the five styles).
+
+The guard catches every mutation that changes a digit and none that keeps the same digits. A wrong unit, or two figures that trade places, leaves the same set of numbers, so both pass. `results.json` lists them as known gaps with every missed case. CI runs the same check on every push: the five other types must stay at 100%, overall recall at 67% or more, and false positives at 0. The correct scripts keep every number in digits, as the prompts require, so the 0% says nothing about numbers written as words, which the guard still rejects.
 
 ## Reliability and operations
 
@@ -209,7 +232,8 @@ social-publisher's `scripts/e2e_data_to_video.sh` automates that whole run.
 ### Testing
 
 ```bash
-make test    # 69 offline tests; pytest reported 1.7 to 3.3 s over three runs
+make test    # 71 offline tests; pytest reported 1.8 to 2.0 s over three runs
+make eval    # numeric guard eval (see Evals)
 make lint    # ruff + TypeScript type-check of slides and gallery
 make audit   # pip-audit, bandit, npm audit
 ```
@@ -218,6 +242,7 @@ make audit   # pip-audit, bandit, npm audit
 |---|---|---|
 | `tests/test_pipeline.py` | 26 | Sample data completeness, every template renders for every vehicle in en and hi, curation respects the limit and story order, fan-out to one request with per-platform caption limits, registry ↔ component wiring |
 | `tests/test_guard.py` | 9 | Number extraction (Indian grouping, Devanagari, Telugu), the 2.51 → 2.69 case, URL detection, retry and refusal through a fake `claude`, CLI flags |
+| `tests/test_numeric_guard_eval.py` | 2 | The numeric guard eval meets its thresholds, and the committed `results.json` matches a fresh run |
 | `tests/test_security.py` | 34 | Path traversal in slugs, vehicle files and image paths, output path validation, publisher URL rules, dry run sends nothing and prints no token, the upload request (path, headers, metadata first, no redirects, timeouts), 409 and redirect handling, idempotency key, network → platform mapping |
 
 Rendering and ffmpeg assembly are covered by `make demo`, not by unit tests.
@@ -243,6 +268,7 @@ remotion/
   src/gallery/            live preview (npm run gallery)
 config/platforms.json     targets, languages and time limits per network
 sample_data/              5 vehicles, placeholder images, prebaked en/hi narration for one
+evals/numeric_guard/      seeded offline eval of the numeric guard: generate, mutate, run
 tests/
 ```
 
@@ -250,7 +276,7 @@ tests/
 
 - One content type (ownership cost) and one format (9:16) ship. The 16:9, 4:5 and other content types from the original project were removed because they did not run on the sample data.
 - Sample data is 5 vehicles with spec, price and ownership-cost fields. The live database loader is not included. Point `VEHICLE_DATA_DIR` at your own JSON or replace `load_vehicle()`.
-- The guard checks numbers, not meaning. A model could still drop a qualifier such as "estimated". A semantic check on qualifier words is the next step.
+- The guard checks numbers, not meaning. A model could still drop a qualifier such as "estimated". It also passes a wrong unit ("5.2 crore" for "5.2 lakh") and two figures swapped between attributes, the two known gaps in [Evals](#evals). Checking each number together with its unit and the words around it, and a semantic check on qualifier words, are the next steps.
 - The prebaked sample narration predates the guard and contains "dot com" and banned phrases (see the warnings in the `make demo` log).
 - `--tts silent` sizes clips from word count. Use it for render tests, not for publishing.
 - The LLM step needs the Claude Code CLI. A direct API client with structured output would remove that dependency.

@@ -1,0 +1,711 @@
+{
+  "seed": 1,
+  "check": "scripts/lib/guard.py number_mismatch(source, candidate, identity_numbers(vehicle))",
+  "correct": {
+    "scripts": 50,
+    "flagged": 0,
+    "false_positive_rate": 0.0,
+    "by_style": {
+      "en_reword": {
+        "scripts": 10,
+        "flagged": 0,
+        "false_positive_rate": 0.0
+      },
+      "hi": {
+        "scripts": 10,
+        "flagged": 0,
+        "false_positive_rate": 0.0
+      },
+      "hi_devanagari": {
+        "scripts": 10,
+        "flagged": 0,
+        "false_positive_rate": 0.0
+      },
+      "te": {
+        "scripts": 10,
+        "flagged": 0,
+        "false_positive_rate": 0.0
+      },
+      "te_telugu": {
+        "scripts": 10,
+        "flagged": 0,
+        "false_positive_rate": 0.0
+      }
+    }
+  },
+  "mutated": {
+    "scripts": 266,
+    "caught": 180,
+    "recall": 0.6767,
+    "by_type": {
+      "digit_swap": {
+        "mutants": 25,
+        "caught": 25,
+        "recall": 1.0
+      },
+      "off_by_10pct": {
+        "mutants": 50,
+        "caught": 50,
+        "recall": 1.0
+      },
+      "unit_scale": {
+        "mutants": 49,
+        "caught": 0,
+        "recall": 0.0
+      },
+      "rounding": {
+        "mutants": 37,
+        "caught": 37,
+        "recall": 1.0
+      },
+      "number_in_words": {
+        "mutants": 50,
+        "caught": 50,
+        "recall": 1.0
+      },
+      "swapped_field": {
+        "mutants": 37,
+        "caught": 0,
+        "recall": 0.0
+      },
+      "dropped_separator": {
+        "mutants": 18,
+        "caught": 18,
+        "recall": 1.0
+      }
+    }
+  },
+  "known_gaps": [
+    {
+      "type": "unit_scale",
+      "recall": 0.0,
+      "missed": 49,
+      "why": "the digits are unchanged, only the unit word differs, and the guard compares numbers only",
+      "example": {
+        "id": "bajaj-pulsar-ns400z/01-hook/hi/unit_scale",
+        "change": "5.2 lakh -> 5.2 crore",
+        "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+        "candidate": "Paanch saal mein rupees 5.2 crore. Yeh purchase price se 2.7 guna hai. Aaiye dekhte hain poora breakdown.",
+        "problems": []
+      }
+    },
+    {
+      "type": "swapped_field",
+      "recall": 0.0,
+      "missed": 37,
+      "why": "the same numbers in other places give the same set of numbers, and the guard compares sets",
+      "example": {
+        "id": "bajaj-pulsar-ns400z/01-hook/hi/swapped_field",
+        "change": "5.2 <-> 2.7",
+        "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+        "candidate": "Paanch saal mein rupees 2.7 lakh. Yeh purchase price se 5.2 guna hai. Aaiye dekhte hain poora breakdown.",
+        "problems": []
+      }
+    }
+  ],
+  "false_positives": [],
+  "misses": [
+    {
+      "id": "bajaj-pulsar-ns400z/01-hook/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "5.2 lakh -> 5.2 crore",
+      "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+      "candidate": "Paanch saal mein rupees 5.2 crore. Yeh purchase price se 2.7 guna hai. Aaiye dekhte hain poora breakdown."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/01-hook/hi/swapped_field",
+      "type": "swapped_field",
+      "change": "5.2 <-> 2.7",
+      "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+      "candidate": "Paanch saal mein rupees 2.7 lakh. Yeh purchase price se 5.2 guna hai. Aaiye dekhte hain poora breakdown."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/01-hook/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "५.२ lakh -> ५.२ crore",
+      "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+      "candidate": "Paanch saal mein rupees ५.२ crore. Yeh purchase price se २.७ guna hai. Aaiye dekhte hain poora breakdown."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/01-hook/hi_devanagari/swapped_field",
+      "type": "swapped_field",
+      "change": "५.२ <-> २.७",
+      "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+      "candidate": "Paanch saal mein rupees २.७ lakh. Yeh purchase price se ५.२ guna hai. Aaiye dekhte hain poora breakdown."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/01-hook/te/unit_scale",
+      "type": "unit_scale",
+      "change": "5.2 lakh -> 5.2 crore",
+      "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees 5.2 crore. ఇది కొనుగోలు ధరకు 2.7 రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/01-hook/te/swapped_field",
+      "type": "swapped_field",
+      "change": "5.2 <-> 2.7",
+      "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees 2.7 lakh. ఇది కొనుగోలు ధరకు 5.2 రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/01-hook/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౫.౨ lakh -> ౫.౨ crore",
+      "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees ౫.౨ crore. ఇది కొనుగోలు ధరకు ౨.౭ రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/01-hook/te_telugu/swapped_field",
+      "type": "swapped_field",
+      "change": "౫.౨ <-> ౨.౭",
+      "source": "rupees 5.2 lakh over five years. That's 2.7 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees ౨.౭ lakh. ఇది కొనుగోలు ధరకు ౫.౨ రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/03-service-deep-dive/en_reword/unit_scale",
+      "type": "unit_scale",
+      "change": "5 thousand -> 5 lakh",
+      "source": "Oil changes, chain, brakes, coolant. Service adds up to rupees about 5 thousand every year. Here's what each component costs.",
+      "candidate": "Servicing covers oil changes, chain, brakes, coolant. It costs rupees about 5 lakh a year. Each part is priced next."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/04-year-by-year/en_reword/unit_scale",
+      "type": "unit_scale",
+      "change": "77 thousand -> 77 lakh",
+      "source": "Year 1 is the lightest at about 58 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 77 thousand.",
+      "candidate": "Year 1 costs the least: about 58 thousand. Year 4 brings a new chain sprocket set. Year 4 is the most expensive: about 77 lakh."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/04-year-by-year/en_reword/swapped_field",
+      "type": "swapped_field",
+      "change": "58 <-> 77",
+      "source": "Year 1 is the lightest at about 58 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 77 thousand.",
+      "candidate": "Year 1 costs the least: about 77 thousand. Year 4 brings a new chain sprocket set. Year 4 is the most expensive: about 58 thousand."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/04-year-by-year/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "77 thousand -> 77 million",
+      "source": "Year 1 is the lightest at about 58 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 77 thousand.",
+      "candidate": "Saal 1 sabse halka, about 58 thousand. Saal 4 mein chain sprocket set replacement aata hai. Saal 4 ka bill sabse bada, about 77 million."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/04-year-by-year/hi/swapped_field",
+      "type": "swapped_field",
+      "change": "58 <-> 77",
+      "source": "Year 1 is the lightest at about 58 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 77 thousand.",
+      "candidate": "Saal 1 sabse halka, about 77 thousand. Saal 4 mein chain sprocket set replacement aata hai. Saal 4 ka bill sabse bada, about 58 thousand."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/04-year-by-year/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "७७ thousand -> ७७ million",
+      "source": "Year 1 is the lightest at about 58 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 77 thousand.",
+      "candidate": "Saal १ sabse halka, about ५८ thousand. Saal ४ mein chain sprocket set replacement aata hai. Saal ४ ka bill sabse bada, about ७७ million."
+    },
+    {
+      "id": "bajaj-pulsar-ns400z/04-year-by-year/hi_devanagari/swapped_field",
+      "type": "swapped_field",
+      "change": "५८ <-> ७७",
+      "source": "Year 1 is the lightest at about 58 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 77 thousand.",
+      "candidate": "Saal १ sabse halka, about ७७ thousand. Saal ४ mein chain sprocket set replacement aata hai. Saal ४ ka bill sabse bada, about ५८ thousand."
+    },
+    {
+      "id": "hyundai-creta/00-what-you-will-learn/en_reword/swapped_field",
+      "type": "swapped_field",
+      "change": "1.5 <-> 1497",
+      "source": "Thinking of buying a Hyundai Creta? The SX (O) 1.5 Petrol — 1497cc naturally aspirated petrol. Here's the complete ownership cost. Not just the showroom price. The total cost over five years.",
+      "candidate": "Considering a Hyundai Creta? The SX (O) 1497 Petrol — 1.5cc naturally aspirated petrol. This is what it costs to own across five years, not just to buy."
+    },
+    {
+      "id": "hyundai-creta/02-annual-breakdown/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "52 thousand -> 52 lakh",
+      "source": "rupees 1.4 lakh per year in running costs. Insurance at rupees about 52 thousand, fuel at rupees 374 a day.",
+      "candidate": "Saalana running cost rupees 1.4 lakh. Insurance rupees about 52 lakh, aur fuel rupees 374 roz."
+    },
+    {
+      "id": "hyundai-creta/02-annual-breakdown/hi/swapped_field",
+      "type": "swapped_field",
+      "change": "52 <-> 374",
+      "source": "rupees 1.4 lakh per year in running costs. Insurance at rupees about 52 thousand, fuel at rupees 374 a day.",
+      "candidate": "Saalana running cost rupees 1.4 lakh. Insurance rupees about 374 thousand, aur fuel rupees 52 roz."
+    },
+    {
+      "id": "hyundai-creta/02-annual-breakdown/te/unit_scale",
+      "type": "unit_scale",
+      "change": "1.4 lakh -> 1.4 crore",
+      "source": "rupees 1.4 lakh per year in running costs. Insurance at rupees about 52 thousand, fuel at rupees 374 a day.",
+      "candidate": "వార్షిక running cost rupees 1.4 crore. Insurance rupees about 52 thousand, fuel రోజుకు rupees 374."
+    },
+    {
+      "id": "hyundai-creta/02-annual-breakdown/te/swapped_field",
+      "type": "swapped_field",
+      "change": "1.4 <-> 52",
+      "source": "rupees 1.4 lakh per year in running costs. Insurance at rupees about 52 thousand, fuel at rupees 374 a day.",
+      "candidate": "వార్షిక running cost rupees 52 lakh. Insurance rupees about 1.4 thousand, fuel రోజుకు rupees 374."
+    },
+    {
+      "id": "hyundai-creta/02-annual-breakdown/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౫౨ thousand -> ౫౨ million",
+      "source": "rupees 1.4 lakh per year in running costs. Insurance at rupees about 52 thousand, fuel at rupees 374 a day.",
+      "candidate": "వార్షిక running cost rupees ౧.౪ lakh. Insurance rupees about ౫౨ million, fuel రోజుకు rupees ౩౭౪."
+    },
+    {
+      "id": "hyundai-creta/02-annual-breakdown/te_telugu/swapped_field",
+      "type": "swapped_field",
+      "change": "౫౨ <-> ౩౭౪",
+      "source": "rupees 1.4 lakh per year in running costs. Insurance at rupees about 52 thousand, fuel at rupees 374 a day.",
+      "candidate": "వార్షిక running cost rupees ౧.౪ lakh. Insurance rupees about ౩౭౪ thousand, fuel రోజుకు rupees ౫౨."
+    },
+    {
+      "id": "hyundai-creta/03-service-deep-dive/en_reword/unit_scale",
+      "type": "unit_scale",
+      "change": "7 thousand -> 7 lakh",
+      "source": "Oil changes, filters, brakes, coolant, AC service. Service adds up to rupees about 7 thousand every year. Here's what each component costs.",
+      "candidate": "Budget rupees about 7 lakh a year for service: oil, filters, brakes, coolant, AC service. Each part is priced next."
+    },
+    {
+      "id": "hyundai-creta/03-service-deep-dive/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "७ thousand -> ७ million",
+      "source": "Oil changes, filters, brakes, coolant, AC service. Service adds up to rupees about 7 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, filter, brake, coolant, AC service. Service ka saalana khurcha rupees about ७ million. Har component ka cost yahan dekhiye."
+    },
+    {
+      "id": "hyundai-creta/03-service-deep-dive/te/unit_scale",
+      "type": "unit_scale",
+      "change": "7 thousand -> 7 lakh",
+      "source": "Oil changes, filters, brakes, coolant, AC service. Service adds up to rupees about 7 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, filter, brake, coolant, AC service. Service వార్షిక ఖర్చు rupees about 7 lakh. ప్రతి component ఖర్చు ఇక్కడ చూడండి."
+    },
+    {
+      "id": "hyundai-creta/03-service-deep-dive/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౭ thousand -> ౭ million",
+      "source": "Oil changes, filters, brakes, coolant, AC service. Service adds up to rupees about 7 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, filter, brake, coolant, AC service. Service వార్షిక ఖర్చు rupees about ౭ million. ప్రతి component ఖర్చు ఇక్కడ చూడండి."
+    },
+    {
+      "id": "hyundai-creta/04-year-by-year/en_reword/unit_scale",
+      "type": "unit_scale",
+      "change": "1.5 lakh -> 1.5 crore",
+      "source": "Year 2 is the lightest at 1.4 lakh. Year 4 sees the highest bill at 1.5 lakh.",
+      "candidate": "The lightest year is year 2, at 1.4 lakh. Year 4 is the most expensive: 1.5 crore."
+    },
+    {
+      "id": "hyundai-creta/04-year-by-year/en_reword/swapped_field",
+      "type": "swapped_field",
+      "change": "2 <-> 4",
+      "source": "Year 2 is the lightest at 1.4 lakh. Year 4 sees the highest bill at 1.5 lakh.",
+      "candidate": "The lightest year is year 4, at 1.4 lakh. Year 2 is the most expensive: 1.5 lakh."
+    },
+    {
+      "id": "hyundai-creta/04-year-by-year/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "१.४ lakh -> १.४ crore",
+      "source": "Year 2 is the lightest at 1.4 lakh. Year 4 sees the highest bill at 1.5 lakh.",
+      "candidate": "Saal २ sabse halka, १.४ crore. Saal ४ ka bill sabse bada, १.५ lakh."
+    },
+    {
+      "id": "hyundai-creta/04-year-by-year/hi_devanagari/swapped_field",
+      "type": "swapped_field",
+      "change": "२ <-> ४",
+      "source": "Year 2 is the lightest at 1.4 lakh. Year 4 sees the highest bill at 1.5 lakh.",
+      "candidate": "Saal ४ sabse halka, १.४ lakh. Saal २ ka bill sabse bada, १.५ lakh."
+    },
+    {
+      "id": "hyundai-creta/04-year-by-year/te/unit_scale",
+      "type": "unit_scale",
+      "change": "1.5 lakh -> 1.5 crore",
+      "source": "Year 2 is the lightest at 1.4 lakh. Year 4 sees the highest bill at 1.5 lakh.",
+      "candidate": "సంవత్సరం 2 అతి తక్కువ, 1.4 lakh. సంవత్సరం 4 బిల్లు అతి ఎక్కువ, 1.5 crore."
+    },
+    {
+      "id": "hyundai-creta/04-year-by-year/te/swapped_field",
+      "type": "swapped_field",
+      "change": "2 <-> 4",
+      "source": "Year 2 is the lightest at 1.4 lakh. Year 4 sees the highest bill at 1.5 lakh.",
+      "candidate": "సంవత్సరం 4 అతి తక్కువ, 1.4 lakh. సంవత్సరం 2 బిల్లు అతి ఎక్కువ, 1.5 lakh."
+    },
+    {
+      "id": "hyundai-creta/04-year-by-year/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౧.౫ lakh -> ౧.౫ crore",
+      "source": "Year 2 is the lightest at 1.4 lakh. Year 4 sees the highest bill at 1.5 lakh.",
+      "candidate": "సంవత్సరం ౨ అతి తక్కువ, ౧.౪ lakh. సంవత్సరం ౪ బిల్లు అతి ఎక్కువ, ౧.౫ crore."
+    },
+    {
+      "id": "hyundai-creta/04-year-by-year/te_telugu/swapped_field",
+      "type": "swapped_field",
+      "change": "౧.౪ <-> ౧.౫",
+      "source": "Year 2 is the lightest at 1.4 lakh. Year 4 sees the highest bill at 1.5 lakh.",
+      "candidate": "సంవత్సరం ౨ అతి తక్కువ, ౧.౫ lakh. సంవత్సరం ౪ బిల్లు అతి ఎక్కువ, ౧.౪ lakh."
+    },
+    {
+      "id": "ktm-250-duke/01-hook/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "5.2 lakh -> 5.2 crore",
+      "source": "rupees 5.2 lakh over five years. That's 2.44 times the purchase price. Here's how it breaks down.",
+      "candidate": "Paanch saal mein rupees 5.2 crore. Yeh purchase price se 2.44 guna hai. Aaiye dekhte hain poora breakdown."
+    },
+    {
+      "id": "ktm-250-duke/01-hook/hi/swapped_field",
+      "type": "swapped_field",
+      "change": "5.2 <-> 2.44",
+      "source": "rupees 5.2 lakh over five years. That's 2.44 times the purchase price. Here's how it breaks down.",
+      "candidate": "Paanch saal mein rupees 2.44 lakh. Yeh purchase price se 5.2 guna hai. Aaiye dekhte hain poora breakdown."
+    },
+    {
+      "id": "ktm-250-duke/01-hook/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౫.౨ lakh -> ౫.౨ crore",
+      "source": "rupees 5.2 lakh over five years. That's 2.44 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees ౫.౨ crore. ఇది కొనుగోలు ధరకు ౨.౪౪ రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "ktm-250-duke/01-hook/te_telugu/swapped_field",
+      "type": "swapped_field",
+      "change": "౫.౨ <-> ౨.౪౪",
+      "source": "rupees 5.2 lakh over five years. That's 2.44 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees ౨.౪౪ lakh. ఇది కొనుగోలు ధరకు ౫.౨ రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "ktm-250-duke/02-annual-breakdown/en_reword/unit_scale",
+      "type": "unit_scale",
+      "change": "14 thousand -> 14 lakh",
+      "source": "rupees about 54 thousand per year in running costs. Insurance at rupees about 14 thousand, fuel at rupees 173 a day.",
+      "candidate": "On the KTM 250 Duke, every year, rupees about 54 thousand goes into running costs. Fuel takes rupees 173 a day, and insurance rupees about 14 lakh."
+    },
+    {
+      "id": "ktm-250-duke/02-annual-breakdown/en_reword/swapped_field",
+      "type": "swapped_field",
+      "change": "54 <-> 173",
+      "source": "rupees about 54 thousand per year in running costs. Insurance at rupees about 14 thousand, fuel at rupees 173 a day.",
+      "candidate": "On the KTM 250 Duke, every year, rupees about 173 thousand goes into running costs. Fuel takes rupees 54 a day, and insurance rupees about 14 thousand."
+    },
+    {
+      "id": "ktm-250-duke/02-annual-breakdown/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "५४ thousand -> ५४ lakh",
+      "source": "rupees about 54 thousand per year in running costs. Insurance at rupees about 14 thousand, fuel at rupees 173 a day.",
+      "candidate": "Saalana running cost rupees about ५४ lakh. Insurance rupees about १४ thousand, aur fuel rupees १७३ roz."
+    },
+    {
+      "id": "ktm-250-duke/02-annual-breakdown/hi_devanagari/swapped_field",
+      "type": "swapped_field",
+      "change": "५४ <-> १४",
+      "source": "rupees about 54 thousand per year in running costs. Insurance at rupees about 14 thousand, fuel at rupees 173 a day.",
+      "candidate": "Saalana running cost rupees about १४ thousand. Insurance rupees about ५४ thousand, aur fuel rupees १७३ roz."
+    },
+    {
+      "id": "ktm-250-duke/03-service-deep-dive/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౧౦ thousand -> ౧౦ lakh",
+      "source": "Oil changes, chain, brakes, coolant. Service adds up to rupees about 10 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, chain, brake, coolant. Service వార్షిక ఖర్చు rupees about ౧౦ lakh. ప్రతి component ఖర్చు ఇక్కడ చూడండి."
+    },
+    {
+      "id": "ktm-250-duke/04-year-by-year/en_reword/unit_scale",
+      "type": "unit_scale",
+      "change": "72 thousand -> 72 million",
+      "source": "Year 1 is the lightest at about 54 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 72 thousand.",
+      "candidate": "On the KTM 250 Duke, year 1 costs the least: about 54 thousand. In year 4 the chain and sprockets are due. Year 4 is the most expensive: about 72 million."
+    },
+    {
+      "id": "ktm-250-duke/04-year-by-year/en_reword/swapped_field",
+      "type": "swapped_field",
+      "change": "54 <-> 72",
+      "source": "Year 1 is the lightest at about 54 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 72 thousand.",
+      "candidate": "On the KTM 250 Duke, year 1 costs the least: about 72 thousand. In year 4 the chain and sprockets are due. Year 4 is the most expensive: about 54 thousand."
+    },
+    {
+      "id": "ktm-250-duke/04-year-by-year/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "54 thousand -> 54 million",
+      "source": "Year 1 is the lightest at about 54 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 72 thousand.",
+      "candidate": "Saal 1 sabse halka, about 54 million. Saal 4 mein chain sprocket set replacement aata hai. Saal 4 ka bill sabse bada, about 72 thousand."
+    },
+    {
+      "id": "ktm-250-duke/04-year-by-year/hi/swapped_field",
+      "type": "swapped_field",
+      "change": "54 <-> 72",
+      "source": "Year 1 is the lightest at about 54 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 72 thousand.",
+      "candidate": "Saal 1 sabse halka, about 72 thousand. Saal 4 mein chain sprocket set replacement aata hai. Saal 4 ka bill sabse bada, about 54 thousand."
+    },
+    {
+      "id": "ktm-250-duke/04-year-by-year/te/unit_scale",
+      "type": "unit_scale",
+      "change": "72 thousand -> 72 lakh",
+      "source": "Year 1 is the lightest at about 54 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 72 thousand.",
+      "candidate": "సంవత్సరం 1 అతి తక్కువ, about 54 thousand. సంవత్సరం 4లో chain sprocket set replacement వస్తుంది. సంవత్సరం 4 బిల్లు అతి ఎక్కువ, about 72 lakh."
+    },
+    {
+      "id": "ktm-250-duke/04-year-by-year/te/swapped_field",
+      "type": "swapped_field",
+      "change": "54 <-> 72",
+      "source": "Year 1 is the lightest at about 54 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 72 thousand.",
+      "candidate": "సంవత్సరం 1 అతి తక్కువ, about 72 thousand. సంవత్సరం 4లో chain sprocket set replacement వస్తుంది. సంవత్సరం 4 బిల్లు అతి ఎక్కువ, about 54 thousand."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/01-hook/en_reword/unit_scale",
+      "type": "unit_scale",
+      "change": "4.3 lakh -> 4.3 crore",
+      "source": "rupees 4.3 lakh over five years. That's 2.34 times the purchase price. Here's how it breaks down.",
+      "candidate": "Plan for rupees 4.3 crore across five years. That is 2.34 times what you pay up front."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/01-hook/en_reword/swapped_field",
+      "type": "swapped_field",
+      "change": "4.3 <-> 2.34",
+      "source": "rupees 4.3 lakh over five years. That's 2.34 times the purchase price. Here's how it breaks down.",
+      "candidate": "Plan for rupees 2.34 lakh across five years. That is 4.3 times what you pay up front."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/01-hook/te/unit_scale",
+      "type": "unit_scale",
+      "change": "4.3 lakh -> 4.3 crore",
+      "source": "rupees 4.3 lakh over five years. That's 2.34 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees 4.3 crore. ఇది కొనుగోలు ధరకు 2.34 రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/01-hook/te/swapped_field",
+      "type": "swapped_field",
+      "change": "4.3 <-> 2.34",
+      "source": "rupees 4.3 lakh over five years. That's 2.34 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees 2.34 lakh. ఇది కొనుగోలు ధరకు 4.3 రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/02-annual-breakdown/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "१२ thousand -> १२ million",
+      "source": "rupees about 43 thousand per year in running costs. Insurance at rupees about 12 thousand, fuel at rupees 154 a day.",
+      "candidate": "Saalana running cost rupees about ४३ thousand. Insurance rupees about १२ million, aur fuel rupees १५४ roz."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/02-annual-breakdown/hi_devanagari/swapped_field",
+      "type": "swapped_field",
+      "change": "४३ <-> १२",
+      "source": "rupees about 43 thousand per year in running costs. Insurance at rupees about 12 thousand, fuel at rupees 154 a day.",
+      "candidate": "Saalana running cost rupees about १२ thousand. Insurance rupees about ४३ thousand, aur fuel rupees १५४ roz."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/02-annual-breakdown/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౪౩ thousand -> ౪౩ lakh",
+      "source": "rupees about 43 thousand per year in running costs. Insurance at rupees about 12 thousand, fuel at rupees 154 a day.",
+      "candidate": "వార్షిక running cost rupees about ౪౩ lakh. Insurance rupees about ౧౨ thousand, fuel రోజుకు rupees ౧౫౪."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/02-annual-breakdown/te_telugu/swapped_field",
+      "type": "swapped_field",
+      "change": "౪౩ <-> ౧౨",
+      "source": "rupees about 43 thousand per year in running costs. Insurance at rupees about 12 thousand, fuel at rupees 154 a day.",
+      "candidate": "వార్షిక running cost rupees about ౧౨ thousand. Insurance rupees about ౪౩ thousand, fuel రోజుకు rupees ౧౫౪."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/03-service-deep-dive/en_reword/unit_scale",
+      "type": "unit_scale",
+      "change": "2 thousand -> 2 million",
+      "source": "Oil changes, chain, brakes, coolant. Service adds up to rupees about 2 thousand every year. Here's what each component costs.",
+      "candidate": "On the Royal Enfield Classic 350, servicing covers oil changes, chain, brakes, coolant. It costs rupees about 2 million a year."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/03-service-deep-dive/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "2 thousand -> 2 million",
+      "source": "Oil changes, chain, brakes, coolant. Service adds up to rupees about 2 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, chain, brake, coolant. Service ka saalana khurcha rupees about 2 million. Har component ka cost yahan dekhiye."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/03-service-deep-dive/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "२ thousand -> २ lakh",
+      "source": "Oil changes, chain, brakes, coolant. Service adds up to rupees about 2 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, chain, brake, coolant. Service ka saalana khurcha rupees about २ lakh. Har component ka cost yahan dekhiye."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/03-service-deep-dive/te/unit_scale",
+      "type": "unit_scale",
+      "change": "2 thousand -> 2 million",
+      "source": "Oil changes, chain, brakes, coolant. Service adds up to rupees about 2 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, chain, brake, coolant. Service వార్షిక ఖర్చు rupees about 2 million. ప్రతి component ఖర్చు ఇక్కడ చూడండి."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/04-year-by-year/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "43 thousand -> 43 million",
+      "source": "Year 1 is the lightest at about 43 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 58 thousand.",
+      "candidate": "Saal 1 sabse halka, about 43 million. Saal 4 mein chain sprocket set replacement aata hai. Saal 4 ka bill sabse bada, about 58 thousand."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/04-year-by-year/hi/swapped_field",
+      "type": "swapped_field",
+      "change": "43 <-> 58",
+      "source": "Year 1 is the lightest at about 43 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 58 thousand.",
+      "candidate": "Saal 1 sabse halka, about 58 thousand. Saal 4 mein chain sprocket set replacement aata hai. Saal 4 ka bill sabse bada, about 43 thousand."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/04-year-by-year/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "५८ thousand -> ५८ lakh",
+      "source": "Year 1 is the lightest at about 43 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 58 thousand.",
+      "candidate": "Saal १ sabse halka, about ४३ thousand. Saal ४ mein chain sprocket set replacement aata hai. Saal ४ ka bill sabse bada, about ५८ lakh."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/04-year-by-year/hi_devanagari/swapped_field",
+      "type": "swapped_field",
+      "change": "४३ <-> ५८",
+      "source": "Year 1 is the lightest at about 43 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 58 thousand.",
+      "candidate": "Saal १ sabse halka, about ५८ thousand. Saal ४ mein chain sprocket set replacement aata hai. Saal ४ ka bill sabse bada, about ४३ thousand."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/04-year-by-year/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౪౩ thousand -> ౪౩ million",
+      "source": "Year 1 is the lightest at about 43 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 58 thousand.",
+      "candidate": "సంవత్సరం ౧ అతి తక్కువ, about ౪౩ million. సంవత్సరం ౪లో chain sprocket set replacement వస్తుంది. సంవత్సరం ౪ బిల్లు అతి ఎక్కువ, about ౫౮ thousand."
+    },
+    {
+      "id": "royal-enfield-classic-350-2024/04-year-by-year/te_telugu/swapped_field",
+      "type": "swapped_field",
+      "change": "౪౩ <-> ౫౮",
+      "source": "Year 1 is the lightest at about 43 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 58 thousand.",
+      "candidate": "సంవత్సరం ౧ అతి తక్కువ, about ౫౮ thousand. సంవత్సరం ౪లో chain sprocket set replacement వస్తుంది. సంవత్సరం ౪ బిల్లు అతి ఎక్కువ, about ౪౩ thousand."
+    },
+    {
+      "id": "royal-enfield-hunter-350/01-hook/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "4.1 lakh -> 4.1 crore",
+      "source": "rupees 4.1 lakh over five years. That's 3.0 times the purchase price. Here's how it breaks down.",
+      "candidate": "Paanch saal mein rupees 4.1 crore. Yeh purchase price se 3.0 guna hai. Aaiye dekhte hain poora breakdown."
+    },
+    {
+      "id": "royal-enfield-hunter-350/01-hook/hi/swapped_field",
+      "type": "swapped_field",
+      "change": "4.1 <-> 3.0",
+      "source": "rupees 4.1 lakh over five years. That's 3.0 times the purchase price. Here's how it breaks down.",
+      "candidate": "Paanch saal mein rupees 3.0 lakh. Yeh purchase price se 4.1 guna hai. Aaiye dekhte hain poora breakdown."
+    },
+    {
+      "id": "royal-enfield-hunter-350/01-hook/te/unit_scale",
+      "type": "unit_scale",
+      "change": "4.1 lakh -> 4.1 crore",
+      "source": "rupees 4.1 lakh over five years. That's 3.0 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees 4.1 crore. ఇది కొనుగోలు ధరకు 3.0 రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "royal-enfield-hunter-350/01-hook/te/swapped_field",
+      "type": "swapped_field",
+      "change": "4.1 <-> 3.0",
+      "source": "rupees 4.1 lakh over five years. That's 3.0 times the purchase price. Here's how it breaks down.",
+      "candidate": "ఐదు సంవత్సరాలలో rupees 3.0 lakh. ఇది కొనుగోలు ధరకు 4.1 రెట్లు. పూర్తి breakdown చూద్దాం."
+    },
+    {
+      "id": "royal-enfield-hunter-350/02-annual-breakdown/en_reword/unit_scale",
+      "type": "unit_scale",
+      "change": "10 thousand -> 10 million",
+      "source": "rupees about 47 thousand per year in running costs. Insurance at rupees about 10 thousand, fuel at rupees 143 a day.",
+      "candidate": "Every year, rupees about 47 thousand goes into running costs. Insurance is rupees about 10 million. Fuel runs rupees 143 a day."
+    },
+    {
+      "id": "royal-enfield-hunter-350/02-annual-breakdown/en_reword/swapped_field",
+      "type": "swapped_field",
+      "change": "47 <-> 10",
+      "source": "rupees about 47 thousand per year in running costs. Insurance at rupees about 10 thousand, fuel at rupees 143 a day.",
+      "candidate": "Every year, rupees about 10 thousand goes into running costs. Insurance is rupees about 47 thousand. Fuel runs rupees 143 a day."
+    },
+    {
+      "id": "royal-enfield-hunter-350/02-annual-breakdown/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౪౭ thousand -> ౪౭ lakh",
+      "source": "rupees about 47 thousand per year in running costs. Insurance at rupees about 10 thousand, fuel at rupees 143 a day.",
+      "candidate": "వార్షిక running cost rupees about ౪౭ lakh. Insurance rupees about ౧౦ thousand, fuel రోజుకు rupees ౧౪౩."
+    },
+    {
+      "id": "royal-enfield-hunter-350/02-annual-breakdown/te_telugu/swapped_field",
+      "type": "swapped_field",
+      "change": "౧౦ <-> ౧౪౩",
+      "source": "rupees about 47 thousand per year in running costs. Insurance at rupees about 10 thousand, fuel at rupees 143 a day.",
+      "candidate": "వార్షిక running cost rupees about ౪౭ thousand. Insurance rupees about ౧౪౩ thousand, fuel రోజుకు rupees ౧౦."
+    },
+    {
+      "id": "royal-enfield-hunter-350/03-service-deep-dive/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "6 thousand -> 6 million",
+      "source": "Oil changes, chain, brakes, coolant. Service adds up to rupees about 6 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, chain, brake, coolant. Service ka saalana khurcha rupees about 6 million. Har component ka cost yahan dekhiye."
+    },
+    {
+      "id": "royal-enfield-hunter-350/03-service-deep-dive/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "६ thousand -> ६ million",
+      "source": "Oil changes, chain, brakes, coolant. Service adds up to rupees about 6 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, chain, brake, coolant. Service ka saalana khurcha rupees about ६ million. Har component ka cost yahan dekhiye."
+    },
+    {
+      "id": "royal-enfield-hunter-350/03-service-deep-dive/te/unit_scale",
+      "type": "unit_scale",
+      "change": "6 thousand -> 6 lakh",
+      "source": "Oil changes, chain, brakes, coolant. Service adds up to rupees about 6 thousand every year. Here's what each component costs.",
+      "candidate": "Oil change, chain, brake, coolant. Service వార్షిక ఖర్చు rupees about 6 lakh. ప్రతి component ఖర్చు ఇక్కడ చూడండి."
+    },
+    {
+      "id": "royal-enfield-hunter-350/04-year-by-year/hi/unit_scale",
+      "type": "unit_scale",
+      "change": "65 thousand -> 65 million",
+      "source": "Year 1 is the lightest at about 47 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 65 thousand.",
+      "candidate": "Saal 1 sabse halka, about 47 thousand. Saal 4 mein chain sprocket set replacement aata hai. Saal 4 ka bill sabse bada, about 65 million."
+    },
+    {
+      "id": "royal-enfield-hunter-350/04-year-by-year/hi/swapped_field",
+      "type": "swapped_field",
+      "change": "47 <-> 65",
+      "source": "Year 1 is the lightest at about 47 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 65 thousand.",
+      "candidate": "Saal 1 sabse halka, about 65 thousand. Saal 4 mein chain sprocket set replacement aata hai. Saal 4 ka bill sabse bada, about 47 thousand."
+    },
+    {
+      "id": "royal-enfield-hunter-350/04-year-by-year/hi_devanagari/unit_scale",
+      "type": "unit_scale",
+      "change": "६५ thousand -> ६५ million",
+      "source": "Year 1 is the lightest at about 47 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 65 thousand.",
+      "candidate": "Saal १ sabse halka, about ४७ thousand. Saal ४ mein chain sprocket set replacement aata hai. Saal ४ ka bill sabse bada, about ६५ million."
+    },
+    {
+      "id": "royal-enfield-hunter-350/04-year-by-year/hi_devanagari/swapped_field",
+      "type": "swapped_field",
+      "change": "४७ <-> ६५",
+      "source": "Year 1 is the lightest at about 47 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 65 thousand.",
+      "candidate": "Saal १ sabse halka, about ६५ thousand. Saal ४ mein chain sprocket set replacement aata hai. Saal ४ ka bill sabse bada, about ४७ thousand."
+    },
+    {
+      "id": "royal-enfield-hunter-350/04-year-by-year/te/unit_scale",
+      "type": "unit_scale",
+      "change": "65 thousand -> 65 lakh",
+      "source": "Year 1 is the lightest at about 47 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 65 thousand.",
+      "candidate": "సంవత్సరం 1 అతి తక్కువ, about 47 thousand. సంవత్సరం 4లో chain sprocket set replacement వస్తుంది. సంవత్సరం 4 బిల్లు అతి ఎక్కువ, about 65 lakh."
+    },
+    {
+      "id": "royal-enfield-hunter-350/04-year-by-year/te/swapped_field",
+      "type": "swapped_field",
+      "change": "47 <-> 65",
+      "source": "Year 1 is the lightest at about 47 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 65 thousand.",
+      "candidate": "సంవత్సరం 1 అతి తక్కువ, about 65 thousand. సంవత్సరం 4లో chain sprocket set replacement వస్తుంది. సంవత్సరం 4 బిల్లు అతి ఎక్కువ, about 47 thousand."
+    },
+    {
+      "id": "royal-enfield-hunter-350/04-year-by-year/te_telugu/unit_scale",
+      "type": "unit_scale",
+      "change": "౬౫ thousand -> ౬౫ million",
+      "source": "Year 1 is the lightest at about 47 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 65 thousand.",
+      "candidate": "సంవత్సరం ౧ అతి తక్కువ, about ౪౭ thousand. సంవత్సరం ౪లో chain sprocket set replacement వస్తుంది. సంవత్సరం ౪ బిల్లు అతి ఎక్కువ, about ౬౫ million."
+    },
+    {
+      "id": "royal-enfield-hunter-350/04-year-by-year/te_telugu/swapped_field",
+      "type": "swapped_field",
+      "change": "౪౭ <-> ౬౫",
+      "source": "Year 1 is the lightest at about 47 thousand. Year 4, chain sprocket set replacement adds to the cost. Year 4 sees the highest bill at about 65 thousand.",
+      "candidate": "సంవత్సరం ౧ అతి తక్కువ, about ౬౫ thousand. సంవత్సరం ౪లో chain sprocket set replacement వస్తుంది. సంవత్సరం ౪ బిల్లు అతి ఎక్కువ, about ౪౭ thousand."
+    }
+  ]
+}

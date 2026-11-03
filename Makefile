@@ -9,7 +9,7 @@ SLUG   ?= royal-enfield-classic-350-2024
 LANG_  ?= en
 SCALE  ?= 1
 
-.PHONY: help setup demo demo-hi demo-silent test lint audit clean
+.PHONY: help setup demo demo-hi demo-silent test eval lint audit clean
 
 help:
 	@echo "make setup        Python venv + Remotion node modules"
@@ -17,6 +17,7 @@ help:
 	@echo "make demo-hi      same, Hindi narration"
 	@echo "make demo-silent  any sample vehicle with silent narration: make demo-silent SLUG=ktm-250-duke"
 	@echo "make test         offline unit tests"
+	@echo "make eval         numeric guard eval: recall per mutation type, false-positive rate"
 	@echo "make lint         ruff + TypeScript type-check"
 	@echo "make audit        dependency audits (pip-audit, npm audit) + bandit"
 
@@ -38,6 +39,9 @@ demo-silent:
 
 test:
 	$(PY) -m pytest -q
+
+eval:
+	$(PY) evals/numeric_guard/run.py --check
 
 lint:
 	$(VENV)/bin/ruff check .
